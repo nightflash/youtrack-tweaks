@@ -34,12 +34,12 @@ function runFileAsCode(details, path) {
 
 function injectTweak(details, tweakName) {
   console.log('YouTrack Tweaks: injecting', tweakName);
-  runFileAsCode(details, `tweaks/agile/${tweakName}.css`);
-  runFileAsCode(details, `tweaks/agile/${tweakName}.js`);
+  runFileAsCode(details, `tweaks/${tweakName}/inject.css`);
+  runFileAsCode(details, `tweaks/${tweakName}/inject.js`);
 }
 
 chrome.webNavigation.onCompleted.addListener(function(details) {
-  injectTweak(details, 'agile')
+  injectTweak(details, 'agile-board/card-fields')
 }, {
   url: [{
     hostContains: 'youtrack'

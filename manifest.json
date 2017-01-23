@@ -4,10 +4,14 @@
   "version": "0.0.0.1",
   "manifest_version": 2,
   "icons": {
-    "128": "icon_128.png"
+    "128": "images/icon_128.png"
   },
   "background": {
     "scripts": ["extension.js"]
+  },
+  "browser_action": {
+    "default_icon": "images/icon_128.png",
+    "default_popup": "menu/index.html"
   },
   "permissions": [ "webNavigation", "*://*/*" ]
 }
