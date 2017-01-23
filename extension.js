@@ -22,7 +22,7 @@ function runFileAsCode(details, path) {
                 const script = document.createElement('${isJS ? 'script' : 'style'}');
                 script.textContent = '${code}';
                 (document.head || document.body || document.documentElement).appendChild(script);
-              })();
+              })(); 
             `
           });
         };

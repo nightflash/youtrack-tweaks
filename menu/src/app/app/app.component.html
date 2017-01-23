@@ -1,0 +1,6 @@
+<h1 class="block">
+  {{title}}
+
+  <input #simple type="text" (input)="onInput(simple.value)" [value]="value">
+  Value: {{simple.value}}
+</h1>
