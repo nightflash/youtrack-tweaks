@@ -1,0 +1,23 @@
+.yt-tweak-field {
+    display: inline-block;
+    float: right;
+    margin-left: 8px;
+}
+
+.yt-tweak-field-value-letter {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    vertical-align: top;
+    text-align: center;
+}
+
+.yt-tweak-field-value-letter:first-child {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+}
+
+.yt-tweak-field-value-letter:last-child {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
