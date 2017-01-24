@@ -2,11 +2,7 @@
   const ytTweaks = window.ytTweaks;
 
   function run() {
-    const injector = ytTweaks.injector;
-    const $compile = injector.get('$compile');
-    const $timeout = injector.get('$timeout');
-    const $rootScope = injector.get('$rootScope');
-    const $q = injector.get('$q');
+    const {$compile, $timeout, $rootScope, $q} = ytTweaks.inject('$compile', '$timeout', '$rootScope', '$q');
 
     const fieldsToShow = [
       {name: 'Subsystems', conversion: 'letter'},
@@ -21,7 +17,7 @@
     function attachToBoardEvents() {
       agileBoardNode = document.querySelector('[data-test="agileBoard"]');
       agileBoardController = angular.element(agileBoardNode).controller();
-      agileBoardEventSource = injector.get('agileBoardLiveUpdater').getEventSource();
+      agileBoardEventSource = ytTweaks.inject('agileBoardLiveUpdater').getEventSource();
 
       ytTweaks.mockMethod(agileBoardController, 'onBoardSelect', () => {
         ytTweaks.log('board changed');
@@ -48,12 +44,8 @@
     }
 
     const conversions = {
-      no: {
-        fn: name => name
-      },
-      letter: {
-        fn: name => name.substr(0, 1)
-      }
+      no: name => name,
+      letter: name => name.substr(0, 1)
     };
 
     const tweakClass = 'yt-tweak-agile-fields';
@@ -95,7 +87,7 @@
                   name: f.projectCustomField.field.name,
                   values,
                   conversionType,
-                  getValueName: conversions[conversionType].fn
+                  getValueName: conversions[conversionType]
                 };
 
                 return f;

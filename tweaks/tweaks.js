@@ -6,6 +6,16 @@
       'agile-board': []
     },
 
+    inject(...args) {
+      const result = {};
+      let lastDI;
+      args.forEach(di => {
+        lastDI = result[di] = this.injector.get(di);
+      });
+
+      return args.length === 1 ? lastDI : result;
+    },
+
     registerTweak(tweak) {
       this.tweakGroups[tweak.group].push(tweak);
     },
