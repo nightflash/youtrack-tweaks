@@ -7,7 +7,6 @@
     const $timeout = injector.get('$timeout');
     const $rootScope = injector.get('$rootScope');
     const $q = injector.get('$q');
-    const agileBoardEventSource = injector.get('agileBoardLiveUpdater').getEventSource();
 
     const fieldsToShow = [
       {name: 'Subsystems', conversion: 'letter'},
@@ -15,26 +14,35 @@
       {name: 'Type', conversion: 'no'}
     ];
 
+    let agileBoardEventSource;
     let agileBoardNode;
     let agileBoardController;
 
-    function refreshDeps() {
+    function attachToBoardEvents() {
       agileBoardNode = document.querySelector('[data-test="agileBoard"]');
       agileBoardController = angular.element(agileBoardNode).controller();
+      agileBoardEventSource = injector.get('agileBoardLiveUpdater').getEventSource();
 
-      mockMethod(agileBoardController, 'onBoardSelect', () => {
+      ytTweaks.mockMethod(agileBoardController, 'onBoardSelect', () => {
         ytTweaks.log('board changed');
         waitForCards(() => {
           tweakNewCards();
-          refreshDeps();
+          attachToBoardEvents();
         });
       });
 
-      mockMethod(agileBoardController, 'onSprintSelect', () => {
+      ytTweaks.mockMethod(agileBoardController, 'onSprintSelect', () => {
         ytTweaks.log('sprint changed');
         waitForCards(() => {
           tweakNewCards();
-          refreshDeps();
+          attachToBoardEvents();
+        });
+      });
+
+      agileBoardEventSource.on('sprintCellUpdate', function (data) {
+        $timeout(function () {
+          const cardNode = agileBoardNode.querySelector(`[data-issue-id="${data.issue.id}"]`);
+          processCardNode(cardNode);
         });
       });
     }
@@ -49,14 +57,6 @@
     };
 
     const tweakClass = 'yt-tweak-agile-fields';
-
-    function mockMethod(object, propertyName, mockFn) {
-      const original = object[propertyName];
-      object[propertyName] = (...args) => {
-        original(...args);
-        mockFn(...args);
-      };
-    }
 
     function processCardNode(cardNode) {
       if (cardNode.hasAttribute('yt-tweak')) {
@@ -125,29 +125,20 @@
       document.querySelectorAll('[data-test="yt-agile-board-card"]:not([yt-tweak])').forEach(processCardNode);
     }
 
-    agileBoardEventSource.on('sprintCellUpdate', function (data) {
-      $timeout(function () {
-        const cardNode = agileBoardNode.querySelector(`[data-issue-id="${data.issue.id}"]`);
-        processCardNode(cardNode);
-      });
-    });
 
-
-    refreshDeps();
+    attachToBoardEvents();
     waitForCards(tweakNewCards);
   }
 
   function waitForCards(callback) {
-    const interval = window.setInterval(() => {
-      const cards = document.querySelectorAll('[data-test="yt-agile-board-card"]:not([yt-tweak]');
-      if (cards.length) {
-        window.clearInterval(interval);
-        callback(cards);
-      }
-    }, 500);
+    ytTweaks.wait(
+        () => document.querySelectorAll('[data-test="yt-agile-board-card"]:not([yt-tweak]').length,
+        callback
+    );
   }
 
   ytTweaks.registerTweak({
+    name: 'Agile Board Custom Fields',
     group: 'agile-board',
     wait: waitForCards,
     run

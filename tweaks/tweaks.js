@@ -16,34 +16,53 @@
 
         groupTweaks.forEach(tweak => {
           if (tweak.wait) {
-            this.log('wait to run tweak', tweak.name);
-            tweak.wait(() => {
-              this.log('wait finished, running tweak', tweak.name);
-              tweak.run();
-            });
+            tweak.wait(() => this.runTweak(tweak));
           } else {
-            this.log('no wait, running tweak', tweak.name);
-            tweak.run();
+            this.runTweak(tweak)
           }
         });
       });
     },
 
-    waitForAngularAndRun() {
-      this.log('running');
-      
-      const interval = window.setInterval(() => {
-        this.log('waiting for angular');
-        
-        if (window.angular) {
-          this.log('angular ready');
-          
-          window.clearInterval(interval);
-          this.injector = angular.element(document.body).injector();
+    runTweak(tweak) {
+      this.log('running tweak', tweak.name);
+      tweak.run();
+    },
 
-          this.runTweaks();
+    mockMethod(object, propertyName, mockFn) {
+      const original = object[propertyName];
+      object[propertyName] = (...args) => {
+        original(...args);
+        mockFn(...args);
+      };
+    },
+
+    wait(waitFn, successFn, errorFn) {
+      this.log('wait created');
+
+      const interval = window.setInterval(() => {
+        this.log('wait iteration');
+        const result = waitFn();
+
+        if (result) {
+          this.log('wait successfully finished');
+          window.clearInterval(interval);
+          successFn(result);
+        } else {
+          errorFn && errorFn();
         }
       }, 500);
+    },
+
+    waitForAngularAndRun() {
+      this.log('waiting for angular');
+
+      this.wait(() => window.angular, angular => {
+        this.log('angular ready');
+
+        this.injector = angular.element(document.body).injector();
+        this.runTweaks();
+      });
     },
 
     log(...args) {
