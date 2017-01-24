@@ -4,10 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app/app.component';
+import { TweakComponent } from './tweak/tweak.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    TweakComponent
   ],
   imports: [
     BrowserModule,

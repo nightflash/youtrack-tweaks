@@ -7,10 +7,17 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'YouTrack Tweaks!';
-  value = 'text';
 
-  onInput = ($event) => {
-    console.log($event);
-    // this.value = val;
+  tweaks = [];
+
+  addEmptyTweak = () => {
+    this.tweaks.push({
+      url: '*wdwdwd'
+    });
+  };
+
+  removeTweak = tweak => {
+    const index = this.tweaks.indexOf(tweak);
+    this.tweaks.splice(index, 1);
   };
 }

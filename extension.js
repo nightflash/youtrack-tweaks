@@ -13,7 +13,10 @@ function runFileAsCode(details, path) {
           // contents are in this.result
           const extension = path.split('.').pop();
           const isJS = extension === 'js';
-          const code = this.result.replace(new RegExp("'", 'g'), "\\'").replace(new RegExp("\\n", 'g'), ' ');
+          const code = this.result
+            .replace(/(\/\/(\s*).+(\n|$))/ig, '') // remove one line comments
+            .replace(new RegExp("'", 'g'), "\\'") // escape single quotes
+            .replace(new RegExp("\\n", 'g'), ' ');// remove new lines
 
 
           chrome.tabs.executeScript(details.tabId, {
@@ -39,7 +42,8 @@ function injectTweak(details, tweakName) {
 }
 
 chrome.webNavigation.onCompleted.addListener(function(details) {
-  injectTweak(details, 'agile-board/card-fields')
+  runFileAsCode(details, `tweaks/tweaks.js`);
+  injectTweak(details, 'agile-board/card-fields');
 }, {
   url: [{
     hostContains: 'youtrack'

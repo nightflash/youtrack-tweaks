@@ -1,6 +1,9 @@
 <h1 class="block">
   {{title}}
 
-  <input #simple type="text" (input)="onInput(simple.value)" [value]="value">
-  Value: {{simple.value}}
+  <button (click)="addEmptyTweak()">Add new tweak</button>
+
+  <app-tweak [data]="tweak" [url]="tweak.url" *ngFor="let tweak of tweaks;">
+    <button (click)="removeTweak(tweak)">Remove tweak</button>
+  </app-tweak>
 </h1>
