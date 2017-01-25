@@ -1,9 +1,15 @@
 (function () {
   const ytTweaks = window.ytTweaks = {
     injector: null,
+    tweaksConfiguration: [],
 
     tweakGroups: {
       'agile-board': []
+    },
+
+    configure(config) {
+      this.log('recieve configuration', config);
+      this.tweaksConfiguration = config;
     },
 
     inject(...args) {

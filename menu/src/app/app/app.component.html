@@ -1,9 +1,22 @@
-<h1 class="block">
-  {{title}}
+<div class="block">
+  <h3>
+    {{title}}
+  </h3>
 
-  <button (click)="addEmptyTweak()">Add new tweak</button>
+  <select #newTweackselect (change)="addEmptyTweak(newTweackselect.value); newTweackselect.value = '';">
+    <option value="">Add new tweak</option>
+    <option *ngFor="let option of tweakOptions;" value="{{option.name}}">{{option.label}}</option>
+  </select>
 
-  <app-tweak [data]="tweak" [url]="tweak.url" *ngFor="let tweak of tweaks;">
-    <button (click)="removeTweak(tweak)">Remove tweak</button>
-  </app-tweak>
-</h1>
+  <button class="btn btn-xs" (click)="reload()">Reload (sync)</button>
+
+  <div>
+    <app-tweak [data]="tweak" [configParams]="getConfigParams(tweak.type)" *ngFor="let tweak of tweaks;">
+      <button class="btn btn-xs" (click)="removeTweak(tweak)">Remove tweak</button>
+    </app-tweak>
+  </div>
+
+  <div>
+    <button class="btn btn-xs btn-primary" data-color="primary" (click)="saveTweaks()">Save tweaks</button>
+  </div>
+</div>

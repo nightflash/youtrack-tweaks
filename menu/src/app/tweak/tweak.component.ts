@@ -7,10 +7,12 @@ import {Component, OnInit, Input} from '@angular/core';
 })
 export class TweakComponent implements OnInit {
   @Input()
-  data = {};
+  data = {
+    url: '*'
+  };
 
   @Input()
-  url = "*";
+  configParams = [];
 
   constructor() {
   }

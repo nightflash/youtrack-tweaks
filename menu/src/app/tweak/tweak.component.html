@@ -1,6 +1,11 @@
 <div>
-  <h3>Url match</h3>
-  <input type="text" [(ngModel)]="url" />
-  {{url}}
-  <ng-content></ng-content>
+  <input type="text" [(ngModel)]="data.url" placeholder="Url pattern">
+
+  <div *ngFor="let configParam of configParams;">
+    <div *ngIf="configParam.type === 'string'">
+      <input type="text" [placeholder]="configParam.label" [(ngModel)]="data.config[configParam.name]">
+    </div>
+  </div>
+
+  <div><ng-content></ng-content></div>
 </div>
