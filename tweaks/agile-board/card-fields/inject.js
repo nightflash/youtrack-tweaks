@@ -98,7 +98,7 @@
         const compiledElement = $compile(`
       <span class="${tweakClass}">
         <span class="yt-tweak-field" ng-repeat="field in ytTweakFields(ytAgileCardCtrl.enumeratedFieldValues) track by field.id">
-          <span ng-repeat="value in field.ytTweakData.values track by value.id"
+          <span ng-repeat="value in field.ytTweakData.values track by value.id" title="{{value.name}}"
             class="yt-tweak-field-value-{{field.ytTweakData.conversionType}} color-fields__background-{{value.color.id}} color-fields__field-{{value.color.id}}">
                   {{field.ytTweakData.getValueName(value.name)}}
           </span>
