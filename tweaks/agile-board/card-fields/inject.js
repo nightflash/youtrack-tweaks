@@ -1,8 +1,11 @@
 (function () {
   const ytTweaks = window.ytTweaks;
+  const name = 'agile-board/card-fields';
 
   function run() {
     const {$compile, $timeout, $rootScope, $q} = ytTweaks.inject('$compile', '$timeout', '$rootScope', '$q');
+
+    const config = ytTweaks.getTweakConfig(group, name);
 
     const fieldsToShow = [
       {name: 'Subsystems', conversion: 'letter'},
@@ -135,8 +138,7 @@
   }
 
   ytTweaks.registerTweak({
-    name: 'Agile Board Custom Fields',
-    group: 'agile-board',
+    name,
     wait: waitForCards,
     run
   })

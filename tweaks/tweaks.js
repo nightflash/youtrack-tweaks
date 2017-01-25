@@ -3,13 +3,17 @@
     injector: null,
     tweaksConfiguration: [],
 
-    tweakGroups: {
-      'agile-board': []
-    },
+    registeredTweaks: [],
 
     configure(config) {
       this.log('recieve configuration', config);
       this.tweaksConfiguration = config;
+      this.stopTweaks();
+      this.waitForAngularAndRun();
+    },
+
+    getTweakConfigs(name) {
+      return this.tweaksConfiguration.filter(c => c.name === name);
     },
 
     inject(...args) {
@@ -23,20 +27,22 @@
     },
 
     registerTweak(tweak) {
-      this.tweakGroups[tweak.group].push(tweak);
+      this.registeredTweaks.push(tweak);
     },
     
     runTweaks() {
-      Object.keys(this.tweakGroups).forEach(groupName => {
-        const groupTweaks = this.tweakGroups[groupName];
+      this.registeredTweaks.forEach(tweak => {
+        if (tweak.wait) {
+          tweak.wait(() => this.runTweak(tweak));
+        } else {
+          this.runTweak(tweak)
+        }
+      });
+    },
 
-        groupTweaks.forEach(tweak => {
-          if (tweak.wait) {
-            tweak.wait(() => this.runTweak(tweak));
-          } else {
-            this.runTweak(tweak)
-          }
-        });
+    stopTweaks() {
+      this.registeredTweaks.forEach(tweak => {
+        tweak.stop && tweak.stop();
       });
     },
 
@@ -85,6 +91,4 @@
       console.log('YouTrack Tweaks:', ...args);
     }
   };
-
-  ytTweaks.waitForAngularAndRun();
 })();

@@ -90,9 +90,9 @@ const navigationFilter = {
 chrome.webNavigation.onCompleted.addListener(function(details) {
   youtrackTabs.add(details.tabId);
 
-  runFileAsCode(details, `tweaks/tweaks.js`).then(sendConfiguration).then(() => {
+  runFileAsCode(details, `tweaks/tweaks.js`).then(() => {
     return injectTweak(details, 'agile-board/card-fields');
-  });
+  }).then(sendConfiguration);
 }, navigationFilter);
 
 chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
