@@ -87,7 +87,14 @@
                   name: f.projectCustomField.field.name,
                   values,
                   conversionType,
-                  getValueName: conversions[conversionType]
+                  getValueName: conversions[conversionType],
+                  getValueClasses(value) {
+                    let classes = `yt-tweak-field-value-${conversionType}`;
+                    if (+value.color.id) {
+                      classes += ` color-fields__background-${value.color.id} color-fields__field-${value.color.id}`;
+                    }
+                    return classes;
+                  }
                 };
 
                 return f;
@@ -99,9 +106,7 @@
       <span class="${tweakClass}">
         <span class="yt-tweak-field" ng-repeat="field in ytTweakFields(ytAgileCardCtrl.enumeratedFieldValues) track by field.id">
           <span ng-repeat="value in field.ytTweakData.values track by value.id" title="{{value.name}}"
-            class="yt-tweak-field-value-{{field.ytTweakData.conversionType}} color-fields__background-{{value.color.id}} color-fields__field-{{value.color.id}}">
-                  {{field.ytTweakData.getValueName(value.name)}}
-          </span>
+            class="{{field.ytTweakData.getValueClasses(value)}}">{{field.ytTweakData.getValueName(value.name)}}</span>
         </span>
       </span>
     `)(scope);
