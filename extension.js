@@ -77,27 +77,26 @@ function executeJSForAllYouTrackTabs(code) {
 
 function sendConfiguration() {
   return executeJSForAllYouTrackTabs(`
-    window.ytTweaks.configure('${JSON.stringify(tweaksConfiguration)}');
+    window.ytTweaks.configure(${JSON.stringify(tweaksConfiguration)});
   `);
 }
 
-const navigationFilter = {
-  url: [{
-    hostContains: 'youtrack'
-  }]
-};
-
 chrome.webNavigation.onCompleted.addListener(function(details) {
+  if (!tweaksConfiguration.some(config => (details.url.indexOf(config.url) !== -1))) return;
+
   youtrackTabs.add(details.tabId);
 
   runFileAsCode(details, `tweaks/tweaks.js`).then(() => {
     return injectTweak(details, 'agile-board/card-fields');
   }).then(sendConfiguration);
-}, navigationFilter);
+});
 
 chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
-  youtrackTabs.delete(details.tabId);
-}, navigationFilter);
+  const tabId = details.tabId;
+  if (youtrackTabs.has(tabId)) {
+    youtrackTabs.delete(tabId);
+  }
+});
 
 chrome.runtime.onConnect.addListener(port => {
   if (port.name === 'ytTweaks') {

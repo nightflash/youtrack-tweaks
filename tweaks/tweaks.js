@@ -3,6 +3,9 @@
     injector: null,
     tweaksConfiguration: [],
 
+    baseClass: 'yt-tweaks',
+    baseAttribute: 'yt-tweaks',
+
     registeredTweaks: [],
 
     configure(config) {
@@ -13,7 +16,8 @@
     },
 
     getTweakConfigs(name) {
-      return this.tweaksConfiguration.filter(c => c.name === name);
+      console.log(this.tweaksConfiguration);
+      return this.tweaksConfiguration.filter(c => c.type === name);
     },
 
     inject(...args) {
@@ -32,23 +36,18 @@
     
     runTweaks() {
       this.registeredTweaks.forEach(tweak => {
-        if (tweak.wait) {
-          tweak.wait(() => this.runTweak(tweak));
-        } else {
-          this.runTweak(tweak)
-        }
+        this.log('running tweak', tweak.name);
+        tweak.run();
       });
     },
 
     stopTweaks() {
       this.registeredTweaks.forEach(tweak => {
-        tweak.stop && tweak.stop();
+        if (tweak.stop) {
+          this.log('stopping tweak', tweak.name);
+          tweak.stop();
+        }
       });
-    },
-
-    runTweak(tweak) {
-      this.log('running tweak', tweak.name);
-      tweak.run();
     },
 
     mockMethod(object, propertyName, mockFn) {
@@ -57,17 +56,20 @@
         original(...args);
         mockFn(...args);
       };
+
+      return () => object[propertyName] = original;
     },
 
-    wait(waitFn, successFn, errorFn) {
-      this.log('wait created');
+    waitNum: 0,
+    wait(waitFn, successFn, errorFn, name = this.waitNum++) {
+      this.log('wait created', name);
 
       const interval = window.setInterval(() => {
-        this.log('wait iteration');
+        this.log('wait iteration', name);
         const result = waitFn();
 
         if (result) {
-          this.log('wait successfully finished');
+          this.log('wait successfully finished', name);
           window.clearInterval(interval);
           successFn(result);
         } else {
@@ -77,13 +79,15 @@
     },
 
     waitForAngularAndRun() {
-      this.log('waiting for angular');
-
       this.wait(() => window.angular, angular => {
-        this.log('angular ready');
-
         this.injector = angular.element(document.body).injector();
         this.runTweaks();
+      }, null, 'angular');
+    },
+
+    removeNodes(selector, element = document) {
+      element.querySelectorAll(selector).forEach(node => {
+        node.parentNode.removeChild(node);
       });
     },
 
