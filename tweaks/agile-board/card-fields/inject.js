@@ -2,13 +2,14 @@
   const ytTweaks = window.ytTweaks;
   const name = 'agile-board/card-fields';
 
-  const tweakClass = `${ytTweaks.baseClass}-${name.replace('/', '.')}`;
+  const tweakClass = `${ytTweaks.baseClass}-${name.replace('/', '-')}`;
   const tweakAttribute = `${ytTweaks.baseAttribute}-${name.replace('/', '-')}`;
 
   let stopFns = [];
   let timeToken;
 
   function run() {
+    ytTweaks.log(name, 'run()');
     const {$compile, $timeout, $rootScope, $q} = ytTweaks.inject('$compile', '$timeout', '$rootScope', '$q');
     timeToken = +(new Date());
 
@@ -29,7 +30,7 @@
       });
     });
 
-    console.log(fieldsToShow);
+    ytTweaks.log(name, 'fields to show', fieldsToShow);
 
     let agileBoardEventSource;
     let agileBoardNode;
@@ -141,7 +142,7 @@
     }
 
     function tweakNewCards() {
-      document.querySelectorAll(`[data-test="yt-agile-board-card"]:not([${tweakAttribute}])`).forEach(processCardNode);
+      document.querySelectorAll(`yt-agile-card:not([${tweakAttribute}])`).forEach(processCardNode);
     }
 
 
@@ -163,7 +164,7 @@
 
   function waitForCards(callback) {
     ytTweaks.wait(
-        () => document.querySelectorAll(`[data-test="yt-agile-board-card"]:not([${tweakAttribute}]`).length,
+        () => document.querySelectorAll(`yt-agile-card`).length,
         callback,
         null,
         `run ${name}`

@@ -81,7 +81,11 @@
     waitForAngularAndRun() {
       this.wait(() => window.angular, angular => {
         this.injector = angular.element(document.body).injector();
-        this.runTweaks();
+        if (this.injector) {
+          this.runTweaks();
+        } else {
+          ytTweaks.error('injector unreachable')
+        }
       }, null, 'angular');
     },
 
@@ -93,6 +97,10 @@
 
     log(...args) {
       console.log('YouTrack Tweaks:', ...args);
+    },
+
+    error(...args) {
+      console.error('YouTrack Tweaks:', ...args);
     }
   };
 })();

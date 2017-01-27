@@ -4,7 +4,7 @@ function errorHandler(...args) {
   console.error(...args);
 }
 
-function executeCode(details, code, isJS) {
+function executeCode(details, code, isJS = true) {
   const escapedCode = code
       .replace(/(\/\/(\s*).+(\n|$))/ig, '') // remove one line comments
       .replace(new RegExp("'", 'g'), "\\'") // escape single quotes
@@ -63,39 +63,42 @@ function getTabById(tabId) {
   });
 }
 
-function executeJSForAllYouTrackTabs(code) {
+function forAllTabs(action) {
   const promises = [];
   youtrackTabs.forEach(tabId => {
-    const p = getTabById(tabId).then(details => {
-      executeCode(details, code, true);
-    });
+    const p = getTabById(tabId).then(action);
     promises.push(p);
   });
 
   return Promise.all(promises);
 }
 
-function sendConfiguration() {
-  return executeJSForAllYouTrackTabs(`
-    window.ytTweaks.configure(${JSON.stringify(tweaksConfiguration)});
+const configFilter = (config, details) => (details.url.indexOf(config.url) !== -1);
+
+function sendConfiguration(details) {
+  const filteredConfigs = tweaksConfiguration.filter(config => configFilter(config, details));
+  console.log('sending configuration', details.url, filteredConfigs);
+  return executeCode(details, `
+    window.ytTweaks.configure(${JSON.stringify(filteredConfigs)});
   `);
 }
 
-chrome.webNavigation.onCompleted.addListener(function(details) {
-  if (!tweaksConfiguration.some(config => (details.url.indexOf(config.url) !== -1))) return;
+function broadcastConfiguration() {
+  return forAllTabs(sendConfiguration);
+}
+
+chrome.webNavigation.onCompleted.addListener(details => {
+  if (!tweaksConfiguration.some(config => configFilter(config, details))) return;
 
   youtrackTabs.add(details.tabId);
 
   runFileAsCode(details, `tweaks/tweaks.js`).then(() => {
     return injectTweak(details, 'agile-board/card-fields');
-  }).then(sendConfiguration);
+  }).then(() => sendConfiguration(details));
 });
 
-chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
-  const tabId = details.tabId;
-  if (youtrackTabs.has(tabId)) {
-    youtrackTabs.delete(tabId);
-  }
+chrome.webNavigation.onBeforeNavigate.addListener(details => {
+  youtrackTabs.delete(details.tabId);
 });
 
 chrome.runtime.onConnect.addListener(port => {
@@ -104,7 +107,7 @@ chrome.runtime.onConnect.addListener(port => {
       if (msg.tweaks) {
         console.log('Recieve new tweaks config', tweaksConfiguration);
         tweaksConfiguration = msg.tweaks;
-        sendConfiguration();
+        broadcastConfiguration();
       }
     });
   }
