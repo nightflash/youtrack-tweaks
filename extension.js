@@ -55,7 +55,7 @@ function injectTweak(details, tweakName) {
       .then(() => runFileAsCode(details, `tweaks/${tweakName}/inject.js`));
 }
 
-const youtrackTabs = new Set();
+const youtrackTabs = new Map();
 
 function getTabById(tabId) {
   return new Promise(function(resolve, reject) {
@@ -64,13 +64,9 @@ function getTabById(tabId) {
 }
 
 function forAllTabs(action) {
-  const promises = [];
-  youtrackTabs.forEach(tabId => {
-    const p = getTabById(tabId).then(action);
-    promises.push(p);
+  youtrackTabs.forEach(tabData => {
+    action(tabData.details);
   });
-
-  return Promise.all(promises);
 }
 
 const configFilter = (config, details) => (details.url.indexOf(config.url) !== -1);
@@ -87,14 +83,21 @@ function broadcastConfiguration() {
   return forAllTabs(sendConfiguration);
 }
 
-chrome.webNavigation.onCompleted.addListener(details => {
+function checkAndInject(details) {
   if (!tweaksConfiguration.some(config => configFilter(config, details))) return;
-
-  youtrackTabs.add(details.tabId);
 
   runFileAsCode(details, `tweaks/tweaks.js`).then(() => {
     return injectTweak(details, 'agile-board/card-fields');
   }).then(() => sendConfiguration(details));
+}
+
+chrome.webNavigation.onCompleted.addListener(details => {
+  youtrackTabs.set(details.tabId, {
+    details: details,
+    injected: false
+  });
+
+  checkAndInject(details);
 });
 
 chrome.webNavigation.onBeforeNavigate.addListener(details => {
