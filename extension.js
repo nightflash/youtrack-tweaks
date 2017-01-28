@@ -4,21 +4,21 @@ function errorHandler(...args) {
   console.error(...args);
 }
 
-function executeCode(details, code, isJS = true) {
-  const escapedCode = code
-      .replace(/(\/\/(\s*).+(\n|$))/ig, '') // remove one line comments
+function injectTagWithContent(details, content, isJS = true) {
+  const newLineReplacement = '!nl!';
+  const escapedContent = content
       .replace(new RegExp("'", 'g'), "\\'") // escape single quotes
-      .replace(new RegExp("\\n", 'g'), ' ');// remove new lines
+      .replace(new RegExp("\\n", 'g'), newLineReplacement);// remove new lines
 
-  chrome.tabs.executeScript(details.tabId, {
-    code: `
-              (function () {
-                const script = document.createElement('${isJS ? 'script' : 'style'}');
-                script.textContent = '${escapedCode}';
-                (document.head || document.body || document.documentElement).appendChild(script);
-              })(); 
-            `
-  });
+  const code = `
+    (function () {
+      const script = document.createElement('${isJS ? 'script' : 'style'}');
+      script.textContent = '${escapedContent}'.replace(new RegExp("${newLineReplacement}", 'g'), '\\n');
+      (document.head || document.body || document.documentElement).appendChild(script);
+    })(); 
+  `;
+
+  chrome.tabs.executeScript(details.tabId, {code});
 }
 
 function runFileAsCode(details, path) {
@@ -32,7 +32,7 @@ function runFileAsCode(details, path) {
             const extension = path.split('.').pop();
             const isJS = extension === 'js';
 
-            executeCode(details, this.result, isJS);
+            injectTagWithContent(details, this.result, isJS);
             resolve();
           };
           reader.readAsText(file);
@@ -74,7 +74,7 @@ const configFilter = (config, details) => (details.url.indexOf(config.url) !== -
 function sendConfiguration(details) {
   const filteredConfigs = tweaksConfiguration.filter(config => configFilter(config, details));
   console.log('sending configuration', details.url, filteredConfigs);
-  return executeCode(details, `
+  return injectTagWithContent(details, `
     window.ytTweaks.configure(${JSON.stringify(filteredConfigs)});
   `);
 }

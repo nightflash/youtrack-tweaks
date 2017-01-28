@@ -19,12 +19,12 @@
 
     const unMockOnBoardSelect = ytTweaks.mockMethod(agileBoardController, 'onBoardSelect', (...args) => {
       ytTweaks.log('board changed', ...args);
-      waitForBoard();
+      run();
     });
 
     const unMockOnSprintSelect = ytTweaks.mockMethod(agileBoardController, 'onSprintSelect', (...args) => {
       ytTweaks.log('sprint changed', ...args);
-      waitForBoard();
+      run();
     });
 
     stopFns.push(unMockOnBoardSelect, unMockOnSprintSelect);
@@ -54,7 +54,6 @@
     }
     cardNode.setAttribute(tweakAttribute, true);
 
-    console.error(fieldsToShow);
     if (!fieldsToShow.length) return;
     const allowedFieldNames = fieldsToShow.map(f => f.name);
 
@@ -63,7 +62,8 @@
 
     const scope = injects.$rootScope.$new();
     scope.ytAgileCardCtrl = cardCtrl;
-    cardCtrl.ytTweakFields = (enumeratedIssueFields = []) => {
+
+    scope.ytTweakFields = (enumeratedIssueFields = []) => {
       return enumeratedIssueFields
           .filter(f => allowedFieldNames.indexOf(f.projectCustomField.field.name) !== -1)
           .map(f => {
@@ -97,6 +97,8 @@
           .sort((a, b) => (a.ytTweakData.index > b.ytTweakData.index));
     };
 
+    stopFns.push(() => scope.$destroy());
+
     const compiledElement = injects.$compile(`
           <span class="${tweakClass}">
             <span class="yt-tweak-field" ng-repeat="field in ytTweakFields(ytAgileCardCtrl.enumeratedFieldValues) track by field.id">
@@ -114,14 +116,50 @@
     document.querySelectorAll(`yt-agile-card:not([${tweakAttribute}])`).forEach(processCardNode);
   }
 
-  function run() {
-    ytTweaks.log(name, 'run()');
-    waitForBoard();
-  }
-
   function revertCardNode(node) {
     ytTweaks.removeNodes(`.${tweakClass}`, node);
     node.removeAttribute(tweakAttribute);
+  }
+
+  function runWait() {
+    agileBoardNode = document.querySelector(agileBoardSelector);
+    if (agileBoardNode) {
+      agileBoardController = angular.element(agileBoardNode).controller();
+      agileBoardEventSource = ytTweaks.inject('agileBoardLiveUpdater').getEventSource();
+      return agileBoardEventSource && agileBoardController && !agileBoardController.loading;
+    }
+  }
+
+  function runAction() {
+    fieldsToShow = [];
+    injects = ytTweaks.inject('$compile', '$timeout', '$rootScope');
+
+    const configs = ytTweaks.getTweakConfigs(name);
+    if (!configs.length) {
+      ytTweaks.log(name, 'no suitable config, sorry');
+      return;
+    }
+
+
+    const sutableConfigs = configs.filter(config => {
+      return config.config.sprintName === agileBoardController.sprint.name &&
+          config.config.boardName === agileBoardController.agile.name;
+    });
+
+    const sizeParams = sutableConfigs.length ? sutableConfigs[0].config.sizeParams0 : '';
+    sizeParams && sizeParams.split(',').forEach(f => {
+      const [fieldName, filedConversion = 'no'] = f.split(':');
+
+      fieldName && fieldsToShow.push({
+        name: fieldName,
+        conversion: filedConversion
+      });
+    });
+
+    ytTweaks.log(name, 'fields to show', fieldsToShow);
+
+    attachToBoardEvents();
+    tweakNewCards();
   }
 
   function stop() {
@@ -129,51 +167,10 @@
     document.querySelectorAll(`[${tweakAttribute}]`).forEach(revertCardNode);
   }
 
-  function waitForBoard() {
-    ytTweaks.wait(
-        () => {
-          agileBoardNode = document.querySelector(agileBoardSelector);
-          if (agileBoardNode) {
-            agileBoardController = angular.element(agileBoardNode).controller();
-            agileBoardEventSource = ytTweaks.inject('agileBoardLiveUpdater').getEventSource();
-            return agileBoardEventSource && agileBoardController && !agileBoardController.loading;
-          }
-        },
-        () => {
-          injects = ytTweaks.inject('$compile', '$timeout', '$rootScope');
-          const configs = ytTweaks.getTweakConfigs(name);
-
-          if (!configs.length) {
-            ytTweaks.log(name, 'no suitable config, sorry');
-            stop();
-            return;
-          }
-
-          const sutableConfigs = configs.filter(config => {
-            return config.config.sprintName === agileBoardController.sprint.name &&
-                config.config.boardName === agileBoardController.agile.name;
-          });
-
-          const sizeParams = sutableConfigs.length ? sutableConfigs[0].config.sizeParams0 : '';
-
-          fieldsToShow = [];
-          sizeParams && sizeParams.split(',').forEach(f => {
-            const [fieldName, filedConversion = 'no'] = f.split(':');
-
-            fieldName && fieldsToShow.push({
-              name: fieldName,
-              conversion: filedConversion
-            });
-          });
-
-          ytTweaks.log(name, 'fields to show', fieldsToShow);
-
-          attachToBoardEvents();
-          tweakNewCards();
-        },
-        null,
-        `run ${name}`
-    );
+  function run() {
+    timeToken = +(new Date());
+    stop();
+    ytTweaks.wait(runWait, runAction, null, `wait run() ${name}`);
   }
 
   ytTweaks.registerTweak({

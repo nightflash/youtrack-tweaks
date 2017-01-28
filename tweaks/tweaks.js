@@ -16,7 +16,6 @@
     },
 
     getTweakConfigs(name) {
-      console.log(this.tweaksConfiguration);
       return this.tweaksConfiguration.filter(c => c.type === name);
     },
 
