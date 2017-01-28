@@ -4,11 +4,21 @@ function errorHandler(...args) {
   console.error(...args);
 }
 
-function injectTagWithContent(details, content, isJS = true) {
+function injectTagWithContent(details, content, isJS = true, fnArgs = []) {
   const newLineReplacement = '!nl!';
-  const escapedContent = content
+  let escapedContent = content.trim()
       .replace(new RegExp("'", 'g'), "\\'") // escape single quotes
       .replace(new RegExp("\\n", 'g'), newLineReplacement);// remove new lines
+
+  const getArg = arg => typeof arg === 'string' ? `\\'${arg}\\'` : arg;
+
+  if (isJS) { // wrap into function
+    if (escapedContent.indexOf('function') === 0) {
+      escapedContent = `(${escapedContent})(${fnArgs.map(getArg).join(',')});`;
+    } else {
+      escapedContent = `(function() { ${escapedContent} })();`;
+    }
+  }
 
   const code = `
     (function () {
@@ -21,7 +31,7 @@ function injectTagWithContent(details, content, isJS = true) {
   chrome.tabs.executeScript(details.tabId, {code});
 }
 
-function runFileAsCode(details, path) {
+function runFileAsCode(details, path, ...args) {
   return new Promise(function(resolve, reject) {
     chrome.runtime.getPackageDirectoryEntry(function(root) {
       root.getFile(path, {}, function(fileEntry) {
@@ -32,7 +42,7 @@ function runFileAsCode(details, path) {
             const extension = path.split('.').pop();
             const isJS = extension === 'js';
 
-            injectTagWithContent(details, this.result, isJS);
+            injectTagWithContent(details, this.result, isJS, ...args);
             resolve();
           };
           reader.readAsText(file);
@@ -79,39 +89,51 @@ function sendConfiguration(details) {
   `);
 }
 
-function broadcastConfiguration() {
-  return forAllTabs(sendConfiguration);
-}
-
 function checkAndInject(details) {
-  if (!tweaksConfiguration.some(config => configFilter(config, details))) return;
+  const tabData = youtrackTabs.get(details.tabId);
 
-  runFileAsCode(details, `tweaks/tweaks.js`).then(() => {
-    return injectTweak(details, 'agile-board/card-fields');
-  }).then(() => sendConfiguration(details));
+  if (!tabData.injected) {
+    const hasConfigMatches = tweaksConfiguration.some(config => configFilter(config, details));
+
+    if (hasConfigMatches) {
+      runFileAsCode(details, `tweaks/core.js`).then(() => {
+        return injectTweak(details, 'agile-board/card-fields');
+      }).then(() => sendConfiguration(details));
+
+      tabData.injected = true;
+    }
+  } else {
+    sendConfiguration(details);
+  }
 }
-
-chrome.webNavigation.onCompleted.addListener(details => {
-  youtrackTabs.set(details.tabId, {
-    details: details,
-    injected: false
-  });
-
-  checkAndInject(details);
-});
 
 chrome.webNavigation.onBeforeNavigate.addListener(details => {
   youtrackTabs.delete(details.tabId);
 });
 
 chrome.runtime.onConnect.addListener(port => {
+  console.log('new connection');
   if (port.name === 'ytTweaks') {
     port.onMessage.addListener(msg => {
       if (msg.tweaks) {
         console.log('Recieve new tweaks config', tweaksConfiguration);
         tweaksConfiguration = msg.tweaks;
-        broadcastConfiguration();
+        forAllTabs(checkAndInject);
       }
+    });
+  }
+});
+
+chrome.runtime.onMessage.addListener((request, sender) => {
+  if (request.probe) {
+    console.log('Successful probe', request);
+
+    getTabById(sender.tab.id).then(details => {
+      youtrackTabs.set(details.tabId, {
+        details: details,
+        injected: false
+      });
+      checkAndInject(details);
     });
   }
 });
