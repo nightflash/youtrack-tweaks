@@ -28,7 +28,7 @@ function injectTagWithContent(details, content, isJS = true, fnArgs = []) {
     })(); 
   `;
 
-  chrome.tabs.executeScript(details.tabId, {code});
+  chrome.tabs.executeScript(details.id, {code});
 }
 
 function runFileAsCode(details, path, ...args) {
@@ -67,14 +67,9 @@ function injectTweak(details, tweakName) {
 
 const youtrackTabs = new Map();
 
-function getTabById(tabId) {
-  return new Promise(function(resolve, reject) {
-    chrome.tabs.get(tabId, resolve);
-  });
-}
-
 function forAllTabs(action) {
-  youtrackTabs.forEach(tabData => {
+  youtrackTabs.forEach((tabData, tabId) => {
+    console.log('updating tab', tabId);
     action(tabData.details);
   });
 }
@@ -90,7 +85,7 @@ function sendConfiguration(details) {
 }
 
 function checkAndInject(details) {
-  const tabData = youtrackTabs.get(details.tabId);
+  const tabData = youtrackTabs.get(details.id);
 
   if (!tabData.injected) {
     const hasConfigMatches = tweaksConfiguration.some(config => configFilter(config, details));
@@ -108,7 +103,11 @@ function checkAndInject(details) {
 }
 
 chrome.webNavigation.onBeforeNavigate.addListener(details => {
-  youtrackTabs.delete(details.tabId);
+  youtrackTabs.delete(details.id);
+});
+
+chrome.tabs.onRemoved.addListener(tabId => {
+  youtrackTabs.delete(tabId);
 });
 
 chrome.runtime.onConnect.addListener(port => {
@@ -128,12 +127,12 @@ chrome.runtime.onMessage.addListener((request, sender) => {
   if (request.probe) {
     console.log('Successful probe', request);
 
-    getTabById(sender.tab.id).then(details => {
-      youtrackTabs.set(details.tabId, {
-        details: details,
-        injected: false
-      });
-      checkAndInject(details);
+    const details = sender.tab;
+
+    youtrackTabs.set(details.id, {
+      details: details,
+      injected: false
     });
+    checkAndInject(details);
   }
 });
