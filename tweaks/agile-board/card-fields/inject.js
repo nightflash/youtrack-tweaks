@@ -135,8 +135,11 @@ function runAction() {
 
 
   const sutableConfigs = configs.filter(config => {
-    return config.config.sprintName === agileBoardController.sprint.name &&
-        config.config.boardName === agileBoardController.agile.name;
+    const sprintNames = ytTweaks.trimmedSplit(config.config.sprintName);
+    const boardNames = ytTweaks.trimmedSplit(config.config.boardName);
+
+    return ytTweaks.inArray(sprintNames, agileBoardController.sprint.name) &&
+        ytTweaks.inArray(boardNames, agileBoardController.agile.name);
   });
 
   //cardDetailLevel

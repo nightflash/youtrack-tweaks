@@ -93,6 +93,14 @@ const ytTweaks = window.ytTweaks = {
     });
   },
 
+  trimmedSplit(str, separator = ',') {
+    return str.split(separator).map(v => v.trim()).filter(v => v);
+  },
+
+  inArray(arr, str) {
+    return arr.indexOf(str) !== -1;
+  },
+
   log(...args) {
     console.log('YouTrack Tweaks:', ...args);
   },
