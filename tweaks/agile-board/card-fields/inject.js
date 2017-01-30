@@ -62,6 +62,7 @@ function processCardNode(cardNode) {
         .map(f => {
           const index = allowedFieldNames.indexOf(f.projectCustomField.field.name);
           const conversionType = fieldsToShow[index].conversion;
+          const useColors = !fieldsToShow[index].ignoreColors;
 
           let values = f.value;
           if (!Array.isArray(values)) {
@@ -78,7 +79,7 @@ function processCardNode(cardNode) {
             getValueName: conversions[conversionType],
             getValueClasses(value) {
               let classes = `yt-tweak-field-value-${conversionType}`;
-              if (+value.color.id) {
+              if (+value.color.id && useColors) {
                 classes += ` color-fields__background-${value.color.id} color-fields__field-${value.color.id}`;
               }
               return classes;
@@ -138,18 +139,19 @@ function runAction() {
     const sprintNames = ytTweaks.trimmedSplit(config.config.sprintName);
     const boardNames = ytTweaks.trimmedSplit(config.config.boardName);
 
-    return ytTweaks.inArray(sprintNames, agileBoardController.sprint.name) &&
-        ytTweaks.inArray(boardNames, agileBoardController.agile.name);
+    return ytTweaks.inArray(sprintNames, agileBoardController.sprint.name, true) &&
+        ytTweaks.inArray(boardNames, agileBoardController.agile.name, true);
   });
 
   //cardDetailLevel
   const sizeParams = sutableConfigs.length ? sutableConfigs[0].config[`sizeParams${agileBoardController.cardDetailLevel}`] : '';
   ytTweaks.trimmedSplit(sizeParams).forEach(f => {
-    const [fieldName, filedConversion = 'no'] = ytTweaks.trimmedSplit(f, ':');
+    const [fieldName, filedConversion = 'no', ignoreColors = false] = ytTweaks.trimmedSplit(f, ':');
 
     fieldName && fieldsToShow.push({
       name: fieldName,
-      conversion: filedConversion
+      conversion: filedConversion,
+      ignoreColors
     });
   });
 

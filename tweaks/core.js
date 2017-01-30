@@ -97,8 +97,8 @@ const ytTweaks = window.ytTweaks = {
     return str.split(separator).map(v => v.trim()).filter(v => v);
   },
 
-  inArray(arr, str) {
-    return arr.indexOf(str) !== -1;
+  inArray(arr, str, emptyArrayAsTrue = false) {
+    return (arr.indexOf(str) !== -1) || (emptyArrayAsTrue && arr.length === 0);
   },
 
   log(...args) {
