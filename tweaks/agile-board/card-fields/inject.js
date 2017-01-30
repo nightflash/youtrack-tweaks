@@ -144,8 +144,8 @@ function runAction() {
 
   //cardDetailLevel
   const sizeParams = sutableConfigs.length ? sutableConfigs[0].config[`sizeParams${agileBoardController.cardDetailLevel}`] : '';
-  sizeParams && sizeParams.split(',').forEach(f => {
-    const [fieldName, filedConversion = 'no'] = f.split(':');
+  ytTweaks.trimmedSplit(sizeParams).forEach(f => {
+    const [fieldName, filedConversion = 'no'] = ytTweaks.trimmedSplit(f, ':');
 
     fieldName && fieldsToShow.push({
       name: fieldName,
