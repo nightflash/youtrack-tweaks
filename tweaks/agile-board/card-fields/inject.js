@@ -16,17 +16,11 @@ let injects = {};
 function attachToBoardEvents() {
   stopFns = [];
 
-  const unMockOnBoardSelect = ytTweaks.mockMethod(agileBoardController, 'onBoardSelect', (...args) => {
-    ytTweaks.log('board changed', ...args);
-    run();
-  });
+  const revertOnBoardSelect = ytTweaks.mockMethod(agileBoardController, 'onBoardSelect', run);
+  const revertOnSprintSelect = ytTweaks.mockMethod(agileBoardController, 'onSprintSelect', run);
+  const revertOnChangeCardDetailLevel = ytTweaks.mockMethod(agileBoardController, 'onChangeCardDetailLevel', run);
 
-  const unMockOnSprintSelect = ytTweaks.mockMethod(agileBoardController, 'onSprintSelect', (...args) => {
-    ytTweaks.log('sprint changed', ...args);
-    run();
-  });
-
-  stopFns.push(unMockOnBoardSelect, unMockOnSprintSelect);
+  stopFns.push(revertOnBoardSelect, revertOnSprintSelect, revertOnChangeCardDetailLevel);
 
   const onSprintCellUpdate = data => {
     const localTimeToken = timeToken;
@@ -145,7 +139,8 @@ function runAction() {
         config.config.boardName === agileBoardController.agile.name;
   });
 
-  const sizeParams = sutableConfigs.length ? sutableConfigs[0].config.sizeParams0 : '';
+  //cardDetailLevel
+  const sizeParams = sutableConfigs.length ? sutableConfigs[0].config[`sizeParams${agileBoardController.cardDetailLevel}`] : '';
   sizeParams && sizeParams.split(',').forEach(f => {
     const [fieldName, filedConversion = 'no'] = f.split(':');
 

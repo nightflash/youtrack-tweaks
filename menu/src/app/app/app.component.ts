@@ -21,17 +21,17 @@ const tweakOptions = [
         type: 'string'
       },
       {
-        name: 'sizeParams2',
+        name: 'sizeParams1',
         label: 'M size card',
         type: 'string'
       },
       {
-        name: 'sizeParams3',
+        name: 'sizeParams2',
         label: 'L size card',
         type: 'string'
       },
       {
-        name: 'sizeParams4',
+        name: 'sizeParams3',
         label: 'XL size card',
         type: 'string'
       }
