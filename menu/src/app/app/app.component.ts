@@ -1,43 +1,5 @@
 import {Component, OnInit, NgZone} from '@angular/core';
-
-const tweakOptions = [
-  {
-    name: 'agile-board/card-fields',
-    label: 'Agile Board Custom Fields',
-    configParams: [
-      {
-        name: 'boardName',
-        label: 'Board name',
-        type: 'string'
-      },
-      {
-        name: 'sprintName',
-        label: 'Sprint name',
-        type: 'string'
-      },
-      {
-        name: 'sizeParams0',
-        label: 'S size card',
-        type: 'string'
-      },
-      {
-        name: 'sizeParams1',
-        label: 'M size card',
-        type: 'string'
-      },
-      {
-        name: 'sizeParams2',
-        label: 'L size card',
-        type: 'string'
-      },
-      {
-        name: 'sizeParams3',
-        label: 'XL size card',
-        type: 'string'
-      }
-    ]
-  }
-];
+import {options as tweakOptions} from '../app.options';
 
 @Component({
   selector: 'app-root',

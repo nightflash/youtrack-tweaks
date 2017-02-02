@@ -14,6 +14,7 @@ let fieldsToShow;
 let injects = {};
 
 function attachToBoardEvents() {
+  const localTimeToken = timeToken;
   stopFns = [];
 
   const revertOnBoardSelect = ytTweaks.mockMethod(agileBoardController, 'onBoardSelect', run);
@@ -23,7 +24,6 @@ function attachToBoardEvents() {
   stopFns.push(revertOnBoardSelect, revertOnSprintSelect, revertOnChangeCardDetailLevel);
 
   const onSprintCellUpdate = data => {
-    const localTimeToken = timeToken;
     if (localTimeToken !== timeToken) return false;
 
     injects.$timeout(function () {

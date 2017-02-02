@@ -91,9 +91,10 @@ function checkAndInject(details) {
     const hasConfigMatches = tweaksConfiguration.some(config => configFilter(config, details));
 
     if (hasConfigMatches) {
-      runFileAsCode(details, `tweaks/core.js`).then(() => {
-        return injectTweak(details, 'agile-board/card-fields');
-      }).then(() => sendConfiguration(details));
+      runFileAsCode(details, `tweaks/core.js`).
+        then(injectTweak(details, 'agile-board/card-fields')).
+        then(injectTweak(details, 'agile-board/desktop-notifications')).
+        then(() => sendConfiguration(details));
 
       tabData.injected = true;
     }
