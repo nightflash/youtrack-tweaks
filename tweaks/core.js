@@ -93,7 +93,7 @@ const ytTweaks = window.ytTweaks = {
     });
   },
 
-  trimmedSplit(str, separator = ',') {
+  trimmedSplit(str = '', separator = ',') {
     return str.split(separator).map(v => v.trim()).filter(v => v);
   },
 
