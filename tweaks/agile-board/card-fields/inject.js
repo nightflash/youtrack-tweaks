@@ -135,7 +135,7 @@ function runAction() {
   }
 
 
-  const sutableConfigs = configs.filter(config => {
+  const suitableConfigs = configs.filter(config => {
     const sprintNames = ytTweaks.trimmedSplit(config.config.sprintName);
     const boardNames = ytTweaks.trimmedSplit(config.config.boardName);
 
@@ -144,7 +144,7 @@ function runAction() {
   });
 
   //cardDetailLevel
-  const sizeParams = sutableConfigs.length ? sutableConfigs[0].config[`sizeParams${agileBoardController.cardDetailLevel}`] : '';
+  const sizeParams = suitableConfigs.length ? suitableConfigs[0].config[`sizeParams${agileBoardController.cardDetailLevel}`] : '';
   ytTweaks.trimmedSplit(sizeParams).forEach(f => {
     const [fieldName, filedConversion = 'no', ignoreColors = false] = ytTweaks.trimmedSplit(f, ':');
 

@@ -3,11 +3,10 @@ const name = 'agile-board/desktop-notifications';
 
 const agileBoardSelector = '[data-test="agileBoard"]';
 
-let timeToken;
-
+let injects, timeToken;
 let agileBoardNode, agileBoardController, agileBoardEventSource;
-let newIssueWatcher = '';
-let injects = {};
+
+let tweakData;
 
 const alreadyNotified = new Map();
 
@@ -29,7 +28,7 @@ function isFieldEquals(issue, fieldName, testValue) {
 }
 
 function shouldNotify(issue) {
-  const orCases = ytTweaks.trimmedSplit(newIssueWatcher, ';');
+  const orCases = ytTweaks.trimmedSplit(tweakData.newIssueWatcher, ';');
 
   const testResult = orCases.some(orExpression => {
     const andCases = ytTweaks.trimmedSplit(orExpression, ',');
@@ -51,7 +50,26 @@ function shouldNotify(issue) {
 function notify(issue) {
   alreadyNotified.set(issue.id, true);
 
-  new Notification(issue.summary);
+  let closeTimeout;
+  const closeTTL = +tweakData.ttl || 0;
+  const notification = new Notification(issue.summary);
+  notification.onclick = () => {
+    const cardNode = agileBoardNode.querySelector(`[data-issue-id="${issue.id}"]`);
+    const ytAgileCardCtrl = angular.element(cardNode).controller('ytAgileCard');
+
+    ytAgileCardCtrl.openIssueView(ytAgileCardCtrl.issue, ytAgileCardCtrl.analyticsModifier);
+    notification.close();
+  };
+
+  notification.onshow = () => {
+    if (closeTTL) {
+      closeTimeout = window.setTimeout(() => notification.close(), closeTTL);
+    }
+  };
+
+  notification.onclose = () => {
+    window.clearTimeout(closeTimeout);
+  }
 }
 
 function attachToBoardEvents() {
@@ -79,8 +97,8 @@ function runWait() {
 
 function runAction() {
   Notification.requestPermission();
+  tweakData = {};
 
-  newIssueWatcher = '';
   injects = ytTweaks.inject('$compile', '$timeout', '$rootScope');
 
   const configs = ytTweaks.getTweakConfigs(name);
@@ -99,11 +117,10 @@ function runAction() {
   });
 
   if (suitableConfigs.length) {
-    const pickedConfig = suitableConfigs.shift().config;
-    newIssueWatcher = pickedConfig.newIssueWatcher;
+    tweakData = suitableConfigs.shift().config;
   }
 
-  ytTweaks.log(name, 'watchers', newIssueWatcher);
+  ytTweaks.log(name, 'watchers', tweakData.newIssueWatcher);
 
   attachToBoardEvents();
 }
