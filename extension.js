@@ -1,9 +1,5 @@
 console.log('YouTrack tweaks');
 
-function errorHandler(...args) {
-  console.error(...args);
-}
-
 function injectTagWithContent(details, content, isJS = true, fnArgs = []) {
   const newLineReplacement = '!nl!';
   let escapedContent = content.trim()
@@ -111,22 +107,11 @@ chrome.tabs.onRemoved.addListener(tabId => {
   youtrackTabs.delete(tabId);
 });
 
-chrome.runtime.onConnect.addListener(port => {
-  console.log('new connection');
-  if (port.name === 'ytTweaks') {
-    port.onMessage.addListener(msg => {
-      if (msg.tweaks) {
-        console.log('Recieve new tweaks config', tweaksConfiguration);
-        tweaksConfiguration = msg.tweaks;
-        forAllTabs(checkAndInject);
-      }
-    });
-  }
-});
-
 chrome.runtime.onMessage.addListener((request, sender) => {
+  console.log('New messsage', request, sender);
+
   if (request.probe) {
-    console.log('Successful probe', request);
+    console.log('Successful probe');
 
     const details = sender.tab;
 
@@ -135,5 +120,10 @@ chrome.runtime.onMessage.addListener((request, sender) => {
       injected: false
     });
     checkAndInject(details);
+  } else if (request.tweaks) {
+    console.log('Recieve new tweaks config');
+
+    tweaksConfiguration = request.tweaks;
+    forAllTabs(checkAndInject);
   }
 });

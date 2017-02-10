@@ -13,13 +13,9 @@ export class AppComponent implements OnInit {
 
   tweakOptions = [];
   tweakOptionsMap = {};
-  connection = null;
 
   constructor(private zone: NgZone) {
-    const connection = this.connection = chrome.runtime.connect({
-      name: "ytTweaks"
-    });
-    connection.onMessage.addListener(function(msg) {
+    chrome.runtime.onMessage.addListener(function(msg) {
       console.log("message recieved: " + msg);
     });
   }
@@ -81,8 +77,8 @@ export class AppComponent implements OnInit {
 
   saveTweaks = () => {
     chrome.storage && chrome.storage.sync.set({'tweaks': this.tweaks}, () => {
-      console.log('tweaks are saved');
-      this.connection.postMessage({
+      console.log('tweaks are saved, sending to background script');
+      chrome.runtime.sendMessage({
         tweaks: this.tweaks
       });
     });
