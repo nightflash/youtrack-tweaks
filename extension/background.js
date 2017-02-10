@@ -28,37 +28,44 @@ function injectTagWithContent(details, content, isJS = true, fnArgs = []) {
 }
 
 function runFileAsCode(details, path, ...args) {
-  return new Promise(function(resolve, reject) {
-    chrome.runtime.getPackageDirectoryEntry(function(root) {
-      root.getFile(path, {}, function(fileEntry) {
-        fileEntry.file(function(file) {
-          var reader = new FileReader();
-          reader.onloadend = function(e) {
-            // contents are in this.result
-            const extension = path.split('.').pop();
-            const isJS = extension === 'js';
+  return asyncLoad(path).then(content => {
+    const extension = path.split('.').pop();
+    const isJS = extension === 'js';
 
-            injectTagWithContent(details, this.result, isJS, ...args);
-            resolve();
-          };
-          reader.readAsText(file);
-        }, reject);
-      }, reject);
-    });
+    injectTagWithContent(details, content, isJS, ...args);
   });
 }
+
+function asyncLoad(path) {
+  return new Promise(function(resolve, reject) {
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('GET', 'http://localhost:8080/' + path, true);
+
+    xhr.onload = function () {
+      resolve(this.responseText);
+    };
+
+    xhr.onerror = function () {
+      reject(this.status);
+    };
+
+    xhr.send();
+  });
+}
+
 
 let tweaksConfiguration = [];
 
 chrome.storage.sync.get('tweaks', data => {
   console.log('tweaks are fetched', data['tweaks']);
-  tweaksConfiguration = data['tweaks'];
+  tweaksConfiguration = data['tweaks'] || [];
 });
 
 function injectTweak(details, tweakName) {
   console.log('YouTrack Tweaks: injecting', tweakName);
-  return runFileAsCode(details, `tweaks/${tweakName}/inject.css`)
-      .then(() => runFileAsCode(details, `tweaks/${tweakName}/inject.js`));
+  return runFileAsCode(details, `${tweakName}/inject.css`)
+      .then(() => runFileAsCode(details, `${tweakName}/inject.js`));
 }
 
 const youtrackTabs = new Map();
@@ -87,7 +94,7 @@ function checkAndInject(details) {
     const hasConfigMatches = tweaksConfiguration.some(config => configFilter(config, details));
 
     if (hasConfigMatches) {
-      runFileAsCode(details, `tweaks/core.js`).
+      runFileAsCode(details, `core.js`).
         then(injectTweak(details, 'agile-board/card-fields')).
         then(injectTweak(details, 'agile-board/desktop-notifications')).
         then(() => sendConfiguration(details));
