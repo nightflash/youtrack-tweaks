@@ -59,6 +59,7 @@ function notify(issue) {
 
     ytAgileCardCtrl.openIssueView(ytAgileCardCtrl.issue, ytAgileCardCtrl.analyticsModifier);
     notification.close();
+    window.focus();
   };
 
   notification.onshow = () => {
