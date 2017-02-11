@@ -67,7 +67,7 @@ chrome.storage.sync.get('tweaks', data => {
 
 const youtrackTabs = new Map();
 
-const configFilter = (config, details) => (details.url.indexOf(config.url) !== -1);
+const configFilter = (config, details) => (config.url === '' || details.url.indexOf(config.url) !== -1);
 
 function sendConfiguration(details) {
   const filteredConfigs = tweaksConfiguration.filter(config => configFilter(config, details));
@@ -96,34 +96,36 @@ function checkAndInject(details) {
   let version = 0;
   const tabData = youtrackTabs.get(details.id);
 
-  if (!tabData.injected) {
-    const hasConfigMatches = tweaksConfiguration.some(config => configFilter(config, details));
+    const matchedConfigs = tweaksConfiguration.slice().filter(config => configFilter(config, details)).map(c => c.type);
 
-    if (hasConfigMatches) {
+    if (matchedConfigs.length) {
       asyncLoad('options.json?' + +Math.random()).
       then(content => {
         const json = JSON.parse(content);
         version = json.version;
 
-        return runFileAsCode(details, `index.js?v=${version}`).then(() => getTweaksFromJSON(json));
+        if (tabData.injected.size === 0) {
+          return runFileAsCode(details, `index.js?v=${version}`).then(() => getTweaksFromJSON(json));
+        } else {
+          return getTweaksFromJSON(json);
+        }
       }).
       then(tweaksToInject => {
         const promises = [];
 
         tweaksToInject.forEach(tweak => {
-          tweak.config.js && promises.push(runFileAsCode(details, `${tweak.name}/index.js?v=${version}`, tweak.name));
-          tweak.config.css && promises.push(runFileAsCode(details, `${tweak.name}/index.css?v=${version}`));
+          if (!tabData.injected.has(tweak.name) && matchedConfigs.indexOf(tweak.name) !== -1) {
+            tweak.config.js && promises.push(runFileAsCode(details, `${tweak.name}/index.js?v=${version}`, tweak.name));
+            tweak.config.css && promises.push(runFileAsCode(details, `${tweak.name}/index.css?v=${version}`));
+
+            tabData.injected.set(tweak.name, version);
+          }
         });
 
         return Promise.all(promises);
       }).
       then(() => sendConfiguration(details));
-
-      tabData.injected = true;
     }
-  } else {
-    sendConfiguration(details);
-  }
 }
 
 chrome.webNavigation.onBeforeNavigate.addListener(details => {
@@ -144,7 +146,7 @@ chrome.runtime.onMessage.addListener((request, sender) => {
 
     youtrackTabs.set(details.id, {
       details: details,
-      injected: false
+      injected: new Map()
     });
     checkAndInject(details);
   } else if (request.tweaks) {
