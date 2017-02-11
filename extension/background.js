@@ -1,5 +1,23 @@
 console.log('YouTrack tweaks');
 
+function asyncLoad(path) {
+  return new Promise(function(resolve, reject) {
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('GET', 'http://localhost:8080/' + path, true);
+
+    xhr.onload = function () {
+      resolve(this.responseText);
+    };
+
+    xhr.onerror = function () {
+      reject(this.status);
+    };
+
+    xhr.send();
+  });
+}
+
 function injectTagWithContent(details, content, isJS = true, fnArgs = []) {
   const newLineReplacement = '!nl!';
   let escapedContent = content.trim()
@@ -29,31 +47,16 @@ function injectTagWithContent(details, content, isJS = true, fnArgs = []) {
 
 function runFileAsCode(details, path, ...args) {
   return asyncLoad(path).then(content => {
-    const extension = path.split('.').pop();
-    const isJS = extension === 'js';
-
-    injectTagWithContent(details, content, isJS, ...args);
+    injectTagWithContent(details, content, path.indexOf('.js') !== -1, args);
   });
 }
 
-function asyncLoad(path) {
-  return new Promise(function(resolve, reject) {
-    const xhr = new XMLHttpRequest();
-
-    xhr.open('GET', 'http://localhost:8080/' + path, true);
-
-    xhr.onload = function () {
-      resolve(this.responseText);
-    };
-
-    xhr.onerror = function () {
-      reject(this.status);
-    };
-
-    xhr.send();
+function forAllTabs(action) {
+  youtrackTabs.forEach((tabData, tabId) => {
+    console.log('updating tab', tabId);
+    action(tabData.details);
   });
 }
-
 
 let tweaksConfiguration = [];
 
@@ -62,20 +65,7 @@ chrome.storage.sync.get('tweaks', data => {
   tweaksConfiguration = data['tweaks'] || [];
 });
 
-function injectTweak(details, tweakName) {
-  console.log('YouTrack Tweaks: injecting', tweakName);
-  return runFileAsCode(details, `${tweakName}/inject.css`)
-      .then(() => runFileAsCode(details, `${tweakName}/inject.js`));
-}
-
 const youtrackTabs = new Map();
-
-function forAllTabs(action) {
-  youtrackTabs.forEach((tabData, tabId) => {
-    console.log('updating tab', tabId);
-    action(tabData.details);
-  });
-}
 
 const configFilter = (config, details) => (details.url.indexOf(config.url) !== -1);
 
@@ -87,17 +77,47 @@ function sendConfiguration(details) {
   `);
 }
 
+function getTweaksFromJSON(json, path = '') {
+  if (json.tweaks) {
+    let result = [];
+    for (let name in json.tweaks) {
+      result = result.concat(getTweaksFromJSON(json.tweaks[name], (path ? path + '/' : '') + name));
+    }
+    return result;
+  } else {
+    return {
+      name: path,
+      config: json
+    }
+  }
+}
+
 function checkAndInject(details) {
+  let version = 0;
   const tabData = youtrackTabs.get(details.id);
 
   if (!tabData.injected) {
     const hasConfigMatches = tweaksConfiguration.some(config => configFilter(config, details));
 
     if (hasConfigMatches) {
-      runFileAsCode(details, `core.js`).
-        then(injectTweak(details, 'agile-board/card-fields')).
-        then(injectTweak(details, 'agile-board/desktop-notifications')).
-        then(() => sendConfiguration(details));
+      asyncLoad('options.json?' + +Math.random()).
+      then(content => {
+        const json = JSON.parse(content);
+        version = json.version;
+
+        return runFileAsCode(details, `index.js?v=${version}`).then(() => getTweaksFromJSON(json));
+      }).
+      then(tweaksToInject => {
+        const promises = [];
+
+        tweaksToInject.forEach(tweak => {
+          tweak.config.js && promises.push(runFileAsCode(details, `${tweak.name}/index.js?v=${version}`, tweak.name));
+          tweak.config.css && promises.push(runFileAsCode(details, `${tweak.name}/index.css?v=${version}`));
+        });
+
+        return Promise.all(promises);
+      }).
+      then(() => sendConfiguration(details));
 
       tabData.injected = true;
     }
