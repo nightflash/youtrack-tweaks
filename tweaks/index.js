@@ -1,6 +1,6 @@
 const ytTweaks = window.ytTweaks = {
   injector: null,
-  tweaksConfiguration: [],
+  userTweaksConfiguration: [],
 
   baseClass: 'yt-tweaks',
   baseAttribute: 'yt-tweaks',
@@ -9,13 +9,22 @@ const ytTweaks = window.ytTweaks = {
   running: false,
 
   configure(config) {
-    this.log('recieve configuration', config);
-    this.tweaksConfiguration = config;
+    this.log('recieve configuration', config, this.registeredTweaks.size);
+    this.userTweaksConfiguration = config;
+
+    this.registeredTweaks.forEach(tweak => {
+      const hasConfigs = this.getConfigsForTweak(tweak.name).length;
+      console.log('check', tweak.name, hasConfigs);
+      if (!hasConfigs) {
+        this.registeredTweaks.delete(tweak.name);
+      }
+    });
+
     this.waitForAngularAndRun();
   },
 
-  getTweakConfigs(name) {
-    return this.tweaksConfiguration.filter(c => c.type === name);
+  getConfigsForTweak(name) {
+    return this.userTweaksConfiguration.filter(c => c.type === name);
   },
 
   inject(...args) {

@@ -128,7 +128,7 @@ function tweak(name) {
     fieldsToShow = [];
     injects = ytTweaks.inject('$compile', '$timeout', '$rootScope');
 
-    const configs = ytTweaks.getTweakConfigs(name);
+    const configs = ytTweaks.getConfigsForTweak(name);
     if (!configs.length) {
       ytTweaks.log(name, 'no suitable config, sorry');
       return;

@@ -1,10 +1,12 @@
 console.log('YouTrack tweaks');
+const develop = true;
 
 function asyncLoad(path) {
   return new Promise(function(resolve, reject) {
+    const serverUrl = develop ? 'http://localhost:8080/' : 'https://extension.youtrack-tweaks.com/';
     const xhr = new XMLHttpRequest();
 
-    xhr.open('GET', 'http://localhost:8080/' + path, true);
+    xhr.open('GET', serverUrl + path, true);
 
     xhr.onload = function () {
       resolve(this.responseText);
@@ -120,7 +122,7 @@ function getTweaksFromJSON(json, path = '') {
 }
 
 function checkAndInject(details) {
-  const version = repositoryTweaksConfig.version;
+  const version = develop ? Math.random() : repositoryTweaksConfig.version;
   const tabData = youtrackTabs.get(details.id);
 
   const matchedConfigs = userTweaksConfiguration.slice().filter(config => configFilter(config, details)).map(c => c.type);
@@ -186,10 +188,10 @@ chrome.runtime.onMessage.addListener((request, sender) => {
 });
 
 reloadTweaksConfiguration().then(() => {
-  window.setInterval(() => {
+  !develop && window.setInterval(() => {
     reloadTweaksConfiguration().then(shouldUpdate => {
       console.log('check for new version: ', shouldUpdate);
       shouldUpdate && forAllTabs(checkAndInject);
     });
-  }, 5000);
+  }, 60 * 30 * 1000);
 });
