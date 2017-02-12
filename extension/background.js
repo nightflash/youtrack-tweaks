@@ -45,7 +45,7 @@ function injectTagWithContent(details, content, isJS = true, fnArgs = []) {
   chrome.tabs.executeScript(details.id, {code});
 }
 
-function runFileAsCode(details, path, ...args) {
+function loadAndInject(details, path, ...args) {
   return asyncLoad(path).then(content => {
     injectTagWithContent(details, content, path.indexOf('.js') !== -1, args);
   });
@@ -58,23 +58,50 @@ function forAllTabs(action) {
   });
 }
 
-let tweaksConfiguration = [];
+let userTweaksConfiguration = [];
 
 chrome.storage.sync.get('tweaks', data => {
   console.log('tweaks are fetched', data['tweaks']);
-  tweaksConfiguration = data['tweaks'] || [];
+  userTweaksConfiguration = data['tweaks'] || [];
 });
 
 const youtrackTabs = new Map();
 
 const configFilter = (config, details) => (config.url === '' || details.url.indexOf(config.url) !== -1);
 
+function sendSafeStop(details) {
+  console.log('sending stop', details.url);
+  injectTagWithContent(details, `
+    window.ytTweaks && window.ytTweaks.stopTweaks();
+  `);
+  return Promise.resolve();
+}
+
 function sendConfiguration(details) {
-  const filteredConfigs = tweaksConfiguration.filter(config => configFilter(config, details));
+  const filteredConfigs = userTweaksConfiguration.filter(config => configFilter(config, details));
   console.log('sending configuration', details.url, filteredConfigs);
-  return injectTagWithContent(details, `
+  injectTagWithContent(details, `
     window.ytTweaks.configure(${JSON.stringify(filteredConfigs)});
   `);
+  return Promise.resolve();
+}
+
+let repositoryTweaksConfig = {
+  version: -1,
+  tweaks: []
+};
+
+function reloadTweaksConfiguration() {
+  return asyncLoad('options.json?' + +Math.random()).
+  then(content => {
+    const json = JSON.parse(content);
+    const currentVersion = repositoryTweaksConfig.version;
+    repositoryTweaksConfig.tweaks = getTweaksFromJSON(json);
+    repositoryTweaksConfig.version = json.version;
+
+    console.log('Latest version', repositoryTweaksConfig.version);
+    return repositoryTweaksConfig.version !== currentVersion;
+  });
 }
 
 function getTweaksFromJSON(json, path = '') {
@@ -93,39 +120,39 @@ function getTweaksFromJSON(json, path = '') {
 }
 
 function checkAndInject(details) {
-  let version = 0;
+  const version = repositoryTweaksConfig.version;
   const tabData = youtrackTabs.get(details.id);
 
-    const matchedConfigs = tweaksConfiguration.slice().filter(config => configFilter(config, details)).map(c => c.type);
+  const matchedConfigs = userTweaksConfiguration.slice().filter(config => configFilter(config, details)).map(c => c.type);
 
-    if (matchedConfigs.length) {
-      asyncLoad('options.json?' + +Math.random()).
-      then(content => {
-        const json = JSON.parse(content);
-        version = json.version;
+  let chain = sendSafeStop(details);
 
-        if (tabData.injected.size === 0) {
-          return runFileAsCode(details, `index.js?v=${version}`).then(() => getTweaksFromJSON(json));
-        } else {
-          return getTweaksFromJSON(json);
-        }
-      }).
-      then(tweaksToInject => {
-        const promises = [];
-
-        tweaksToInject.forEach(tweak => {
-          if (!tabData.injected.has(tweak.name) && matchedConfigs.indexOf(tweak.name) !== -1) {
-            tweak.config.js && promises.push(runFileAsCode(details, `${tweak.name}/index.js?v=${version}`, tweak.name));
-            tweak.config.css && promises.push(runFileAsCode(details, `${tweak.name}/index.css?v=${version}`));
-
-            tabData.injected.set(tweak.name, version);
-          }
-        });
-
-        return Promise.all(promises);
-      }).
-      then(() => sendConfiguration(details));
+  if (matchedConfigs.length) {
+    if (!tabData.coreInjected || tabData.coreInjected !== version) {
+      chain = chain.then(() => loadAndInject(details, `index.js?v=${version}`));
+      tabData.coreInjected = version;
     }
+
+    chain = chain.
+    then(() => {
+      const promises = [];
+
+      repositoryTweaksConfig.tweaks.forEach(tweak => {
+        const existingVersion = tabData.injected.get(tweak.name);
+        if ((!existingVersion || existingVersion !== version) && matchedConfigs.indexOf(tweak.name) !== -1) {
+          tweak.config.js && promises.push(loadAndInject(details, `${tweak.name}/index.js?v=${version}`, tweak.name));
+          tweak.config.css && promises.push(loadAndInject(details, `${tweak.name}/index.css?v=${version}`));
+
+          tabData.injected.set(tweak.name, version);
+        }
+      });
+
+      return Promise.all(promises);
+    }).
+    then(() => sendConfiguration(details));
+  }
+
+  return chain;
 }
 
 chrome.webNavigation.onBeforeNavigate.addListener(details => {
@@ -146,13 +173,23 @@ chrome.runtime.onMessage.addListener((request, sender) => {
 
     youtrackTabs.set(details.id, {
       details: details,
-      injected: new Map()
+      injected: new Map(),
+      coreInjected: false
     });
     checkAndInject(details);
   } else if (request.tweaks) {
     console.log('Recieve new tweaks config');
 
-    tweaksConfiguration = request.tweaks;
+    userTweaksConfiguration = request.tweaks;
     forAllTabs(checkAndInject);
   }
+});
+
+reloadTweaksConfiguration().then(() => {
+  window.setInterval(() => {
+    reloadTweaksConfiguration().then(shouldUpdate => {
+      console.log('check for new version: ', shouldUpdate);
+      shouldUpdate && forAllTabs(checkAndInject);
+    });
+  }, 5000);
 });

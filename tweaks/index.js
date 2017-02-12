@@ -5,12 +5,12 @@ const ytTweaks = window.ytTweaks = {
   baseClass: 'yt-tweaks',
   baseAttribute: 'yt-tweaks',
 
-  registeredTweaks: [],
+  registeredTweaks: new Map(),
+  running: false,
 
   configure(config) {
     this.log('recieve configuration', config);
     this.tweaksConfiguration = config;
-    this.stopTweaks();
     this.waitForAngularAndRun();
   },
 
@@ -29,7 +29,7 @@ const ytTweaks = window.ytTweaks = {
   },
 
   registerTweak(tweak) {
-    this.registeredTweaks.push(tweak);
+    this.registeredTweaks.set(tweak.name, tweak);
   },
 
   runTweaks() {
@@ -46,6 +46,7 @@ const ytTweaks = window.ytTweaks = {
         tweak.stop();
       }
     });
+    this.running = false;
   },
 
   mockMethod(object, propertyName, mockFn) {
@@ -77,6 +78,12 @@ const ytTweaks = window.ytTweaks = {
   },
 
   waitForAngularAndRun() {
+    if (this.running) {
+      ytTweaks.error('already running');
+      return;
+    }
+    this.running = true;
+
     this.wait(() => window.angular, angular => {
       this.injector = angular.element(document.body).injector();
       if (this.injector) {
