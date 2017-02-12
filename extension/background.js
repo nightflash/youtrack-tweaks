@@ -1,21 +1,23 @@
 console.log('YouTrack tweaks');
 const develop = true;
 
+const youtrackTabs = new Map();
+
+const repositoryTweaksConfig = {
+  version: -1,
+  tweaks: []
+};
+
+let userTweaksConfiguration = [];
+
 function asyncLoad(path) {
   return new Promise(function(resolve, reject) {
     const serverUrl = develop ? 'http://localhost:8080/' : 'https://extension.youtrack-tweaks.com/';
+
     const xhr = new XMLHttpRequest();
-
     xhr.open('GET', serverUrl + path, true);
-
-    xhr.onload = function () {
-      resolve(this.responseText);
-    };
-
-    xhr.onerror = function () {
-      reject(this.status);
-    };
-
+    xhr.onload = () => resolve(xhr.responseText);
+    xhr.onerror = () => reject(xhr.status);
     xhr.send();
   });
 }
@@ -60,15 +62,6 @@ function forAllTabs(action) {
   });
 }
 
-let userTweaksConfiguration = [];
-
-chrome.storage.sync.get('tweaks', data => {
-  console.log('tweaks are fetched', data['tweaks']);
-  userTweaksConfiguration = data['tweaks'] || [];
-});
-
-const youtrackTabs = new Map();
-
 const configFilter = (config, details) => (config.url === '' || details.url.indexOf(config.url) !== -1);
 
 function sendSafeStop(details) {
@@ -88,12 +81,7 @@ function sendConfiguration(details) {
   return Promise.resolve();
 }
 
-let repositoryTweaksConfig = {
-  version: -1,
-  tweaks: []
-};
-
-function reloadTweaksConfiguration() {
+function reloadRepositoryConfiguration() {
   return asyncLoad('options.json?' + +Math.random()).
   then(content => {
     const json = JSON.parse(content);
@@ -101,7 +89,7 @@ function reloadTweaksConfiguration() {
     repositoryTweaksConfig.tweaks = getTweaksFromJSON(json);
     repositoryTweaksConfig.version = json.version;
 
-    console.log('Latest version', repositoryTweaksConfig.version);
+    console.log('Latest repository version', repositoryTweaksConfig.version, repositoryTweaksConfig.tweaks);
     return repositoryTweaksConfig.version !== currentVersion;
   });
 }
@@ -187,9 +175,14 @@ chrome.runtime.onMessage.addListener((request, sender) => {
   }
 });
 
-reloadTweaksConfiguration().then(() => {
+chrome.storage.sync.get('tweaks', data => {
+  userTweaksConfiguration = data.tweaks || [];
+  console.log('initial tweaks fetched', userTweaksConfiguration);
+});
+
+reloadRepositoryConfiguration().then(() => {
   !develop && window.setInterval(() => {
-    reloadTweaksConfiguration().then(shouldUpdate => {
+    reloadRepositoryConfiguration().then(shouldUpdate => {
       console.log('check for new version: ', shouldUpdate);
       shouldUpdate && forAllTabs(checkAndInject);
     });
