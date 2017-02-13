@@ -9,17 +9,11 @@ const uglify = require('uglify-js-harmony');
 //   console.log('changes', type, filename);
 // });
 
-const outputPath = __dirname + 'dist';
+const outputPath = __dirname + '/dist';
 
-if (fs.existsSync(outputPath)) {
-  fs.removeSync(outputPath);
-}
+console.log('output path', outputPath);
 
-fs.mkdirSync(outputPath);
-
-const tweaksMap = {};
-
-function walkDir(dir, currentPointer) {
+function walkDir(dir, rootPointer, currentPointer = rootPointer) {
   const fulldir = __dirname + '/' + dir;
   const files = fs.readdirSync(fulldir);
 
@@ -31,7 +25,7 @@ function walkDir(dir, currentPointer) {
       const extname = path.extname(fullname);
       const distPath = path.relative(__dirname, fullname).replace('tweaks', 'dist');
       if (extname === '.js') {
-        if (currentPointer !== tweaksMap) {
+        if (currentPointer !== rootPointer) {
           currentPointer.js = true;
         }
         const result = uglify.minify([fullname]).code;
@@ -44,16 +38,10 @@ function walkDir(dir, currentPointer) {
       if (!currentPointer[filename]) {
         currentPointer[filename] = {};
       }
-      walkDir(dir + '/' + filename, currentPointer[filename]);
+      walkDir(dir + '/' + filename, rootPointer, currentPointer[filename]);
     }
   });
 }
-
-walkDir('tweaks', tweaksMap);
-
-const options = {
-  version: 1
-};
 
 function applyTweaks(target, source) {
   target.tweaks = {};
@@ -69,6 +57,24 @@ function applyTweaks(target, source) {
   }
 }
 
-applyTweaks(options, tweaksMap);
+function rebuild() {
+  const tweaksMap = {};
 
-fs.outputFileSync(path.join(__dirname, '/dist/options.json'), JSON.stringify(options));
+  if (fs.existsSync(outputPath)) {
+    fs.removeSync(outputPath);
+  }
+
+  fs.mkdirSync(outputPath);
+
+  walkDir('tweaks', tweaksMap);
+
+  const options = {
+    version: +(new Date())
+  };
+
+  applyTweaks(options, tweaksMap);
+
+  fs.outputFileSync(path.join(outputPath, 'options.json'), JSON.stringify(options));
+}
+
+rebuild();
