@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
-const uglify = require('uglify-js');
+const uglify = require('uglify-js-harmony');
 
 
 // fs.watch(__dirname + '/tweaks', {
@@ -37,9 +37,7 @@ function walkDir(dir, currentPointer) {
         const result = uglify.minify([fullname]).code;
         fs.outputFileSync(path.join(__dirname, distPath), result);
       } else {
-        if (currentPointer !== tweaksMap) {
-          currentPointer.css = true;
-        }
+        currentPointer.css = true;
         fs.copySync(fullname, path.join(__dirname, distPath));
       }
     } else {
@@ -53,4 +51,24 @@ function walkDir(dir, currentPointer) {
 
 walkDir('tweaks', tweaksMap);
 
-console.log(tweaksMap);
+const options = {
+  version: 1
+};
+
+function applyTweaks(target, source) {
+  target.tweaks = {};
+
+  for (var i in source) {
+    const node = source[i];
+    if (node.js || node.css) {
+      target.tweaks[i] = node;
+    } else {
+      target.tweaks[i] = {};
+      applyTweaks(target.tweaks[i], node);
+    }
+  }
+}
+
+applyTweaks(options, tweaksMap);
+
+fs.outputFileSync(path.join(__dirname, '/dist/options.json'), JSON.stringify(options));

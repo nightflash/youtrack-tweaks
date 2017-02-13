@@ -1,0 +1,16 @@
+{
+  "name": "repository",
+  "version": "1.0.0",
+  "description": "",
+  "main": "compile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node compile.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs-extra": "^2.0.0",
+    "uglify-js-harmony": "^2.6.2"
+  }
+}
