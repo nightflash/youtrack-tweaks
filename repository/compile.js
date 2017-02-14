@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
-const uglify = require('uglify-js-harmony');
+const uglify = require('uglify-js');
 
 
 // fs.watch(__dirname + '/tweaks', {
