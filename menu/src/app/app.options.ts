@@ -1,3 +1,7 @@
+const fieldExample = `Example: Subsystems:letter, Type
+                      Syntax: FieldName<string>[:DisplayType<enum>[:IgnoreColors<any>]]
+                      DisplayTypes: full, letter`;
+
 export const options = [
   {
     name: 'agile-board/card-fields',
@@ -5,7 +9,7 @@ export const options = [
     configParams: [
       {
         name: 'boardName',
-        label: 'Board name',
+        label: 'Agile board name',
         type: 'string'
       },
       {
@@ -15,22 +19,26 @@ export const options = [
       },
       {
         name: 'sizeParams0',
-        label: 'S size card',
+        label: 'S size fields',
+        example: fieldExample,
         type: 'string'
       },
       {
         name: 'sizeParams1',
-        label: 'M size card',
+        label: 'M size fields',
+        example: fieldExample,
         type: 'string'
       },
       {
         name: 'sizeParams2',
-        label: 'L size card',
+        label: 'L size fields',
+        example: fieldExample,
         type: 'string'
       },
       {
         name: 'sizeParams3',
-        label: 'XL size card',
+        label: 'XL size fields',
+        example: fieldExample,
         type: 'string'
       }
     ]
@@ -41,7 +49,7 @@ export const options = [
     configParams: [
       {
         name: 'boardName',
-        label: 'Board name',
+        label: 'Agile board name',
         type: 'string'
       },
       {
@@ -51,7 +59,10 @@ export const options = [
       },
       {
         name: 'newIssueWatcher',
-        label: 'New issue watcher',
+        label: 'Notify condition',
+        example: `Example: Type: Bug
+                  Syntax: FieldName:FieldValue
+                  Logic: you can use "," as AND and ";" as OR`,
         type: 'string'
       }
     ]

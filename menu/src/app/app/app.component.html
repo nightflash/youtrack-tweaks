@@ -1,14 +1,10 @@
 <div class="block">
-  <h3>
-    {{title}}
-  </h3>
+  Add new tweak:
 
   <select #newTweackselect (change)="addEmptyTweak(newTweackselect.value); newTweackselect.value = '';">
-    <option value="">Add new tweak</option>
+    <option value="">Please select tweak type</option>
     <option *ngFor="let option of tweakOptions;" value="{{option.name}}">{{option.label}}</option>
   </select>
-
-  <button class="btn btn-xs" (click)="reload()">Reload (sync)</button>
 
   <div>
     <app-tweak [data]="tweak" [configParams]="getConfigParams(tweak.type)" *ngFor="let tweak of tweaks;">
@@ -17,6 +13,8 @@
   </div>
 
   <div>
+    <div>Don't forget to save your changes. Any change will be applied to all youtrack tabs immediately.</div>
     <button class="btn btn-xs btn-primary" data-color="primary" (click)="saveTweaks()">Save tweaks</button>
+    <button class="btn btn-xs" (click)="reload()">Reset / Resync</button>
   </div>
 </div>

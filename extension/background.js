@@ -1,5 +1,11 @@
 console.log('YouTrack tweaks');
-const develop = true;
+let develop = false;
+
+chrome.management.getSelf(info => {
+  if (info.installType === 'development') {
+    develop = true;
+  }
+});
 
 const youtrackTabs = new Map();
 
@@ -12,7 +18,7 @@ let userTweaksConfiguration = [];
 
 function asyncLoad(path) {
   return new Promise(function(resolve, reject) {
-    const serverUrl = develop ? 'http://localhost:8080/' : 'https://extension.youtrack-tweaks.com/';
+    const serverUrl = develop ? 'http://localhost:8083/' : 'https://extension.youtrack-tweaks.com/repository/';
 
     const xhr = new XMLHttpRequest();
     xhr.open('GET', serverUrl + path, true);
@@ -181,7 +187,7 @@ chrome.storage.sync.get('tweaks', data => {
 });
 
 reloadRepositoryConfiguration().then(() => {
-  !develop && window.setInterval(() => {
+  window.setInterval(() => {
     reloadRepositoryConfiguration().then(shouldUpdate => {
       console.log('check for new version: ', shouldUpdate);
       shouldUpdate && forAllTabs(checkAndInject);

@@ -2,13 +2,6 @@ const fs = require('fs-extra');
 const path = require('path');
 const uglify = require('uglify-js');
 
-
-// fs.watch(__dirname + '/tweaks', {
-//   recursive: true
-// }, (type, filename) => {
-//   console.log('changes', type, filename);
-// });
-
 const outputPath = __dirname + '/dist';
 
 console.log('output path', outputPath);

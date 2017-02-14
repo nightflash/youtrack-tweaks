@@ -6,6 +6,8 @@ import {Component, OnInit, Input} from '@angular/core';
   styleUrls: ['./tweak.component.css']
 })
 export class TweakComponent implements OnInit {
+  focusedParam = null;
+
   @Input()
   data = {
     url: '*'

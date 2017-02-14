@@ -1,5 +1,6 @@
 function tweak(name) {
   const ytTweaks = window.ytTweaks;
+  let running = false;
 
   const agileBoardSelector = '[data-test="agileBoard"]';
 
@@ -77,7 +78,7 @@ function tweak(name) {
     const localTimeToken = timeToken;
 
     agileBoardEventSource.on('sprintCellUpdate', data => {
-      if (localTimeToken !== timeToken) return false;
+      if (localTimeToken !== timeToken || !running) return false;
 
       const issue = data.issue;
 
@@ -127,11 +128,13 @@ function tweak(name) {
   }
 
   function stop() {
+    running = false;
   }
 
   function run() {
     timeToken = +(new Date());
     stop();
+    running = true;
     ytTweaks.wait(runWait, runAction, null, `wait run() ${name}`);
   }
 

@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node compile.js",
-    "start": "http-server dist"
+    "start": "http-server dist -p 8083"
   },
   "author": "",
   "license": "ISC",

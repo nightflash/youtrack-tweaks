@@ -1,9 +1,12 @@
 <div>
-  <input type="text" [(ngModel)]="data.url" placeholder="Url pattern">
+  <div>{{data.type}}</div>
+  <div><input class="config-field" type="text" [(ngModel)]="data.url" placeholder="Any youtrack url"></div>
 
   <div *ngFor="let configParam of configParams;">
     <div *ngIf="configParam.type === 'string'">
-      <input type="text" [placeholder]="configParam.label" [(ngModel)]="data.config[configParam.name]">
+      <input #configFeild (focus)="focusedParam = configFeild" (blur)="focusedParam = configFeild"
+             class="config-field" type="text" [placeholder]="configParam.label" [(ngModel)]="data.config[configParam.name]">
+      <div *ngIf="focusedParam === configFeild" class="config-field-example">{{configParam.example}}</div>
     </div>
   </div>
 
