@@ -1,6 +1,6 @@
 {
   "name": "YouTrack Tweaks",
-  "description": "Add more functionality to most powerful issue tracker in the world. Customize Agile Board cards, hotkeys and automate everyday process. All these features are here, in YouTrack Tweaks Chrome Extension.",
+  "description": "Add more functionality to YouTrack. Customize Agile Board, hotkeys and much more. All these features are here, in YouTrack Tweaks.",
   "version": "0.0.0.1",
   "manifest_version": 2,
   "icons": {
