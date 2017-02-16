@@ -116,6 +116,8 @@ function getTweaksFromJSON(json, path = '') {
 }
 
 function checkAndInject(details) {
+  console.log(details);
+
   const version = develop ? Math.random() : repositoryTweaksConfig.version;
   const tabData = youtrackTabs.get(details.id);
 
@@ -136,7 +138,7 @@ function checkAndInject(details) {
       repositoryTweaksConfig.tweaks.forEach(tweak => {
         const existingVersion = tabData.injected.get(tweak.name);
         if ((!existingVersion || existingVersion !== version) && matchedConfigs.indexOf(tweak.name) !== -1) {
-          tweak.config.js && promises.push(loadAndInject(details, `${tweak.name}/index.js?v=${version}`, tweak.name));
+          tweak.config.js && promises.push(loadAndInject(details, `${tweak.name}/index.js?v=${version}`, tweak.name, chrome.runtime.id));
           tweak.config.css && promises.push(loadAndInject(details, `${tweak.name}/index.css?v=${version}`));
 
           tabData.injected.set(tweak.name, version);

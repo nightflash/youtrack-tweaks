@@ -22,5 +22,8 @@
   "content_scripts": [{
     "js": ["content_script.js"],
     "matches": ["*://*/*"]
-  }]
+  }],
+  "web_accessible_resources": [
+    "images/*.png"
+  ]
 }

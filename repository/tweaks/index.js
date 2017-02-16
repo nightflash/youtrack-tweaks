@@ -61,8 +61,9 @@ const ytTweaks = window.ytTweaks = {
   mockMethod(object, propertyName, mockFn) {
     const original = object[propertyName];
     object[propertyName] = (...args) => {
-      original(...args);
-      mockFn(...args);
+      const originalResult = original(...args);
+      mockFn(originalResult, ...args);
+      return originalResult;
     };
 
     return () => object[propertyName] = original;
@@ -123,5 +124,10 @@ const ytTweaks = window.ytTweaks = {
 
   error(...args) {
     console.error('YouTrack Tweaks:', ...args);
+  },
+
+  localStorage: {
+    set: (itemKey, itemData) => window.localStorage.setItem(itemKey, JSON.stringify(itemData)),
+    get: itemKey => JSON.parse(window.localStorage.getItem(itemKey))
   }
 };

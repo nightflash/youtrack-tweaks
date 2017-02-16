@@ -20,8 +20,11 @@ function tweak(name) {
     const revertOnBoardSelect = ytTweaks.mockMethod(agileBoardController, 'onBoardSelect', run);
     const revertOnSprintSelect = ytTweaks.mockMethod(agileBoardController, 'onSprintSelect', run);
     const revertOnChangeCardDetailLevel = ytTweaks.mockMethod(agileBoardController, 'onChangeCardDetailLevel', run);
+    const revertLoadMoreCards = ytTweaks.mockMethod(agileBoardController, 'toggleSwimlane', promise => {
+      promise.then(tweakNewCards);
+    });
 
-    stopFns.push(revertOnBoardSelect, revertOnSprintSelect, revertOnChangeCardDetailLevel);
+    stopFns.push(revertOnBoardSelect, revertOnSprintSelect, revertOnChangeCardDetailLevel, revertLoadMoreCards);
 
     const onSprintCellUpdate = data => {
       if (localTimeToken !== timeToken) return false;

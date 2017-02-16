@@ -55,7 +55,7 @@ export class AppComponent implements OnInit {
       let value = '';
 
       switch(p.type) {
-        case 'string':
+        case 'text':
           value = p.value || value;
           break;
       }

@@ -1,6 +1,8 @@
-function tweak(name) {
+function tweak(name, extensionId) {
   const ytTweaks = window.ytTweaks;
   let running = false;
+
+  console.log(`chrome-extension://${extensionId}/images/256.png`);
 
   const agileBoardSelector = '[data-test="agileBoard"]';
 
@@ -9,7 +11,21 @@ function tweak(name) {
 
   let tweakData;
 
-  const alreadyNotified = new Map();
+  const localStorage = ytTweaks.localStorage;
+
+
+  let alreadyNotified = new Map();
+
+  const storageKey = `ytTweaks-${name}-notified`;
+
+  function addNotified(issueId) {
+    alreadyNotified.set(issueId, true);
+    localStorage.set(storageKey, Array.from(alreadyNotified.entries()));
+  }
+
+  function reloadNotified() {
+    alreadyNotified = new Map(localStorage.get(storageKey));
+  }
 
   function isValueEqual(field, testValue) {
     let fieldValues;
@@ -29,9 +45,12 @@ function tweak(name) {
   }
 
   function shouldNotify(issue) {
+    reloadNotified();
+    if (alreadyNotified.has(issue.id)) return false;
+
     const orCases = ytTweaks.trimmedSplit(tweakData.newIssueWatcher, ';');
 
-    const testResult = orCases.some(orExpression => {
+    return orCases.some(orExpression => {
       const andCases = ytTweaks.trimmedSplit(orExpression, ',');
 
       return andCases.every(andExpression => {
@@ -44,16 +63,18 @@ function tweak(name) {
         }
       });
     });
-
-    return testResult && !alreadyNotified.has(issue.id);
   }
 
-  function notify(issue) {
-    alreadyNotified.set(issue.id, true);
+  function notify(issue, reason = '') {
+    addNotified(issue.id);
 
     let closeTimeout;
     const closeTTL = +tweakData.ttl || 0;
-    const notification = new Notification(issue.summary);
+    const notification = new Notification(issue.summary, {
+      requireInteraction: true,
+      icon: `chrome-extension://${extensionId}/images/128.png`,
+      body: reason
+    });
     notification.onclick = () => {
       const cardNode = agileBoardNode.querySelector(`[data-issue-id="${issue.id}"]`);
       const ytAgileCardCtrl = angular.element(cardNode).controller('ytAgileCard');
@@ -71,7 +92,7 @@ function tweak(name) {
 
     notification.onclose = () => {
       window.clearTimeout(closeTimeout);
-    }
+    };
   }
 
   function attachToBoardEvents() {
@@ -83,7 +104,7 @@ function tweak(name) {
       const issue = data.issue;
 
       if (shouldNotify(issue)) {
-        notify(issue);
+        notify(issue, 'New issue on the board');
       }
     });
   }

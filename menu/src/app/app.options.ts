@@ -10,36 +10,36 @@ export const options = [
       {
         name: 'boardName',
         label: 'Agile board name',
-        type: 'string'
+        type: 'text'
       },
       {
         name: 'sprintName',
         label: 'Sprint name',
-        type: 'string'
+        type: 'text'
       },
       {
         name: 'sizeParams0',
         label: 'S size fields',
         example: fieldExample,
-        type: 'string'
+        type: 'text'
       },
       {
         name: 'sizeParams1',
         label: 'M size fields',
         example: fieldExample,
-        type: 'string'
+        type: 'text'
       },
       {
         name: 'sizeParams2',
         label: 'L size fields',
         example: fieldExample,
-        type: 'string'
+        type: 'text'
       },
       {
         name: 'sizeParams3',
         label: 'XL size fields',
         example: fieldExample,
-        type: 'string'
+        type: 'text'
       }
     ]
   },
@@ -50,20 +50,20 @@ export const options = [
       {
         name: 'boardName',
         label: 'Agile board name',
-        type: 'string'
+        type: 'text'
       },
       {
         name: 'sprintName',
         label: 'Sprint name',
-        type: 'string'
+        type: 'text'
       },
       {
         name: 'newIssueWatcher',
         label: 'Notify condition',
         example: `Example: Type: Bug
                   Syntax: FieldName:FieldValue
-                  Logic: you can use "," as AND and ";" as OR`,
-        type: 'string'
+                  Logic: you can use "," as AND and new line as OR`,
+        type: 'text'
       }
     ]
   }
