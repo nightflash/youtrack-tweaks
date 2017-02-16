@@ -1,7 +1,7 @@
 {
   "name": "YouTrack Tweaks",
   "description": "Add more functionality to YouTrack. Customize Agile Board, hotkeys and much more. All these features are here, in YouTrack Tweaks.",
-  "version": "0.0.0.1",
+  "version": "0.0.0.2",
   "manifest_version": 2,
   "icons": {
     "128": "images/128.png",
