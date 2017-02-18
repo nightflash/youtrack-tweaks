@@ -126,8 +126,11 @@ const ytTweaks = window.ytTweaks = {
     console.error('YouTrack Tweaks:', ...args);
   },
 
-  localStorage: {
-    set: (itemKey, itemData) => window.localStorage.setItem(itemKey, JSON.stringify(itemData)),
-    get: itemKey => JSON.parse(window.localStorage.getItem(itemKey))
+  storage(type) {
+    return {
+      set: (itemKey, itemData) => window[`${type}Storage`].setItem(itemKey, JSON.stringify(itemData)),
+      get: itemKey => JSON.parse(window[`${type}Storage`].getItem(itemKey)),
+      removeItem: itemKey => window[`${type}Storage`].removeItem(itemKey)
+    };
   }
 };

@@ -2,29 +2,30 @@ function tweak(name, extensionId) {
   const ytTweaks = window.ytTweaks;
   let running = false;
 
-  console.log(`chrome-extension://${extensionId}/images/256.png`);
-
   const agileBoardSelector = '[data-test="agileBoard"]';
 
-  let injects, timeToken;
+  let injects;
   let agileBoardNode, agileBoardController, agileBoardEventSource;
 
   let tweakData;
 
-  const localStorage = ytTweaks.localStorage;
-
-
-  let alreadyNotified = new Map();
-
+  const storage = ytTweaks.storage('local');
   const storageKey = `ytTweaks-${name}-notified`;
 
+  storage.removeItem(storageKey);
+
   function addNotified(issueId) {
-    alreadyNotified.set(issueId, true);
-    localStorage.set(storageKey, Array.from(alreadyNotified.entries()));
+    const current = storage.get(storageKey) || [];
+    if (current.indexOf(issueId) === -1) {
+      current.push(issueId);
+    }
+
+    storage.set(storageKey, current);
   }
 
-  function reloadNotified() {
-    alreadyNotified = new Map(localStorage.get(storageKey));
+  function isNotified(issueId) {
+    const current = storage.get(storageKey) || [];
+    return current.indexOf(issueId) !== -1;
   }
 
   function isValueEqual(field, testValue) {
@@ -45,8 +46,7 @@ function tweak(name, extensionId) {
   }
 
   function shouldNotify(issue) {
-    reloadNotified();
-    if (alreadyNotified.has(issue.id)) return false;
+    if (isNotified(issue.id)) return false;
 
     const orCases = ytTweaks.trimmedSplit(tweakData.newIssueWatcher, ';');
 
@@ -95,25 +95,25 @@ function tweak(name, extensionId) {
     };
   }
 
+  function cellUpdateHandler(event) {
+    const data = JSON.parse(event.data);
+    const issue = data.issue;
+    const cardNode = agileBoardNode.querySelector(`[data-issue-id="${data.issue.id}"]`);
+
+    if (!cardNode && shouldNotify(issue)) {
+      notify(issue, 'New issue on the board');
+    }
+  }
+
   function attachToBoardEvents() {
-    const localTimeToken = timeToken;
-
-    agileBoardEventSource.on('sprintCellUpdate', data => {
-      if (localTimeToken !== timeToken || !running) return false;
-
-      const issue = data.issue;
-
-      if (shouldNotify(issue)) {
-        notify(issue, 'New issue on the board');
-      }
-    });
+    agileBoardEventSource.addEventListener('sprintCellUpdate', cellUpdateHandler);
   }
 
   function runWait() {
     agileBoardNode = document.querySelector(agileBoardSelector);
     if (agileBoardNode) {
       agileBoardController = angular.element(agileBoardNode).controller();
-      agileBoardEventSource = ytTweaks.inject('agileBoardLiveUpdater').getEventSource();
+      agileBoardEventSource = ytTweaks.inject('agileBoardLiveUpdater').getEventSource()._nativeEventSource;
       return agileBoardEventSource && agileBoardController && !agileBoardController.loading;
     }
   }
@@ -149,11 +149,11 @@ function tweak(name, extensionId) {
   }
 
   function stop() {
+    agileBoardEventSource && agileBoardEventSource.removeEventListener('sprintCellUpdate', cellUpdateHandler);
     running = false;
   }
 
   function run() {
-    timeToken = +(new Date());
     stop();
     running = true;
     ytTweaks.wait(runWait, runAction, null, `wait run() ${name}`);
