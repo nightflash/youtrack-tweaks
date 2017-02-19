@@ -7,14 +7,12 @@ function tweak(name) {
   const agileBoardSelector = '[data-test="agileBoard"]';
 
   let stopFns = [];
-  let timeToken;
 
   let agileBoardNode, agileBoardController, agileBoardEventSource;
   let fieldsToShow;
   let injects = {};
 
   function attachToBoardEvents() {
-    const localTimeToken = timeToken;
     stopFns = [];
 
     const revertOnBoardSelect = ytTweaks.mockMethod(agileBoardController, 'onBoardSelect', run);
@@ -26,17 +24,18 @@ function tweak(name) {
 
     stopFns.push(revertOnBoardSelect, revertOnSprintSelect, revertOnChangeCardDetailLevel, revertLoadMoreCards);
 
-    const onSprintCellUpdate = data => {
-      if (localTimeToken !== timeToken) return false;
-
-      injects.$timeout(function () {
+    const onSprintCellUpdate = event => {
+      const data = JSON.parse(event.data);
+      injects.$rootScope.$evalAsync(() => {
         const cardNode = agileBoardNode.querySelector(`[data-issue-id="${data.issue.id}"]`);
         revertCardNode(cardNode);
         processCardNode(cardNode);
       });
     };
 
-    agileBoardEventSource.on('sprintCellUpdate', onSprintCellUpdate);
+    agileBoardEventSource.addEventListener('sprintCellUpdate', onSprintCellUpdate);
+
+    stopFns.push(() => agileBoardEventSource.removeEventListener('sprintCellUpdate'));
   }
 
   const conversions = {
@@ -122,14 +121,14 @@ function tweak(name) {
     agileBoardNode = document.querySelector(agileBoardSelector);
     if (agileBoardNode) {
       agileBoardController = angular.element(agileBoardNode).controller();
-      agileBoardEventSource = ytTweaks.inject('agileBoardLiveUpdater').getEventSource();
+      agileBoardEventSource = ytTweaks.inject('agileBoardLiveUpdater').getEventSource()._nativeEventSource;
       return agileBoardEventSource && agileBoardController && !agileBoardController.loading;
     }
   }
 
   function runAction() {
     fieldsToShow = [];
-    injects = ytTweaks.inject('$compile', '$timeout', '$rootScope');
+    injects = ytTweaks.inject('$compile', '$rootScope');
 
     const configs = ytTweaks.getConfigsForTweak(name);
     if (!configs.length) {
@@ -170,7 +169,6 @@ function tweak(name) {
   }
 
   function run() {
-    timeToken = +(new Date());
     stop();
     ytTweaks.wait(runWait, runAction, null, `wait run() ${name}`);
   }
