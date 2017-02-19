@@ -35,7 +35,7 @@ function tweak(name) {
 
     agileBoardEventSource.addEventListener('sprintCellUpdate', onSprintCellUpdate);
 
-    stopFns.push(() => agileBoardEventSource.removeEventListener('sprintCellUpdate'));
+    stopFns.push(() => agileBoardEventSource.removeEventListener('sprintCellUpdate', onSprintCellUpdate));
   }
 
   const conversions = {
