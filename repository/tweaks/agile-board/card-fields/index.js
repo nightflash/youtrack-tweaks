@@ -13,8 +13,6 @@ function tweak(name) {
   let injects = {};
 
   function attachToBoardEvents() {
-    stopFns = [];
-
     const revertOnBoardSelect = ytTweaks.mockMethod(agileBoardController, 'onBoardSelect', run);
     const revertOnSprintSelect = ytTweaks.mockMethod(agileBoardController, 'onSprintSelect', run);
     const revertOnChangeCardDetailLevel = ytTweaks.mockMethod(agileBoardController, 'onChangeCardDetailLevel', run);
@@ -165,6 +163,7 @@ function tweak(name) {
 
   function stop() {
     stopFns.forEach(fn => fn());
+    stopFns = [];
     document.querySelectorAll(`[${tweakAttribute}]`).forEach(revertCardNode);
   }
 

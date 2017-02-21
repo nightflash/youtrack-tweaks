@@ -11,6 +11,9 @@ function tweak(name, extensionId) {
 
   const storage = ytTweaks.storage('local');
   const storageKey = `ytTweaks-${name}-notified`;
+  let stopFns = [];
+
+  let activeNotifications = [];
 
   storage.removeItem(storageKey);
 
@@ -76,12 +79,18 @@ function tweak(name, extensionId) {
       body: reason
     });
     notification.onclick = () => {
-      const cardNode = agileBoardNode.querySelector(`[data-issue-id="${issue.id}"]`);
-      const ytAgileCardCtrl = angular.element(cardNode).controller('ytAgileCard');
-
-      ytAgileCardCtrl.openIssueView(ytAgileCardCtrl.issue, ytAgileCardCtrl.analyticsModifier);
       notification.close();
       window.focus();
+
+      const cardNode = agileBoardNode.querySelector(`[data-issue-id="${issue.id}"]`);
+      const ytAgileCardCtrl = cardNode && angular.element(cardNode).controller('ytAgileCard');
+
+      if (ytAgileCardCtrl) {
+        ytAgileCardCtrl.openIssueView(ytAgileCardCtrl.issue, ytAgileCardCtrl.analyticsModifier);
+      } else {
+        const path = window.location.href.split('/agiles')[0];
+        window.open(`${path}/issue/${issue.project.shortName}-${issue.numberInProject}`);
+      }
     };
 
     notification.onshow = () => {
@@ -93,6 +102,8 @@ function tweak(name, extensionId) {
     notification.onclose = () => {
       window.clearTimeout(closeTimeout);
     };
+
+    activeNotifications.push(notification);
   }
 
   function cellUpdateHandler(event) {
@@ -105,8 +116,21 @@ function tweak(name, extensionId) {
     }
   }
 
+  function closeAllNotifications() {
+    activeNotifications.forEach(notification => notification.close());
+    activeNotifications = [];
+  }
+
   function attachToBoardEvents() {
     agileBoardEventSource.addEventListener('sprintCellUpdate', cellUpdateHandler);
+    window.addEventListener('beforeunload', closeAllNotifications);
+
+    const revertOnBoardSelect = ytTweaks.mockMethod(agileBoardController, 'onBoardSelect', run);
+    const revertOnSprintSelect = ytTweaks.mockMethod(agileBoardController, 'onSprintSelect', run);
+    const revertSprintCellUpdate = () => agileBoardEventSource.removeEventListener('sprintCellUpdate', cellUpdateHandler);
+    const revertOnBeforeUnload = () => window.removeEventListener('beforeunload', closeAllNotifications);
+
+    stopFns.push(revertOnBoardSelect, revertOnSprintSelect, revertSprintCellUpdate, revertOnBeforeUnload);
   }
 
   function runWait() {
@@ -149,7 +173,8 @@ function tweak(name, extensionId) {
   }
 
   function stop() {
-    agileBoardEventSource && agileBoardEventSource.removeEventListener('sprintCellUpdate', cellUpdateHandler);
+    stopFns.forEach(fn => fn());
+    stopFns = [];
     running = false;
   }
 
