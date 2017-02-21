@@ -24,7 +24,7 @@ function tweak(name) {
 
     const onSprintCellUpdate = event => {
       const data = JSON.parse(event.data);
-      injects.$rootScope.$evalAsync(() => {
+      injects.$timeout(() => {
         const cardNode = agileBoardNode.querySelector(`[data-issue-id="${data.issue.id}"]`);
         revertCardNode(cardNode);
         processCardNode(cardNode);
@@ -127,7 +127,7 @@ function tweak(name) {
 
   function runAction() {
     fieldsToShow = [];
-    injects = ytTweaks.inject('$compile', '$rootScope');
+    injects = ytTweaks.inject('$compile', '$timeout', '$rootScope');
 
     const configs = ytTweaks.getConfigsForTweak(name);
     if (!configs.length) {
