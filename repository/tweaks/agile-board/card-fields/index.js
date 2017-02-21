@@ -119,7 +119,8 @@ function tweak(name) {
     agileBoardNode = document.querySelector(agileBoardSelector);
     if (agileBoardNode) {
       agileBoardController = angular.element(agileBoardNode).controller();
-      agileBoardEventSource = ytTweaks.inject('agileBoardLiveUpdater').getEventSource()._nativeEventSource;
+      agileBoardEventSource = ytTweaks.inject('agileBoardLiveUpdater').getEventSource();
+      agileBoardEventSource = agileBoardEventSource && agileBoardEventSource._nativeEventSource;
       return agileBoardEventSource && agileBoardController && !agileBoardController.loading;
     }
   }
