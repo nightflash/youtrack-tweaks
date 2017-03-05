@@ -1,0 +1,8 @@
+<div>
+    <h1 class="active">List of tweaks</h1>
+    <div class="list-wrapper" v-for="tweak in tweaks" :tweak="tweak">{{tweak.name}}</div>
+
+    <button @click="addNewTweak()">Add new tweak</button>
+
+    <button @click="updateTweak()">Update tweak</button>
+</div>
