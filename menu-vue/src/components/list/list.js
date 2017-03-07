@@ -6,9 +6,9 @@ import store from '@/vuex/store'
 @Component()
 export default class extends Vue {
   addNewTweak () {
-      store.commit('addTweak', {
-        name: 'new tweak111'
-      })
+    store.dispatch('addTweak', {
+      name: 'new tweak111'
+    })
   }
 
   updateTweak() {

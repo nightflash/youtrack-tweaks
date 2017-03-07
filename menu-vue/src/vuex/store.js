@@ -6,19 +6,10 @@ import actions from './actions'
 
 Vue.use(Vuex)
 
-const state = {
-  tweaks: [
-    {
-      name: 'first tweak'
-    },
-    {
-      name: 'second tweak'
-    }
-  ]
-}
-
 export default new Vuex.Store({
-  state,
+  state: {
+    tweaks: []
+  },
   mutations,
   actions
 })
