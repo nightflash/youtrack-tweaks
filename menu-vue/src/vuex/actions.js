@@ -10,5 +10,10 @@ export default {
   addTweak ({commit, state}, tweak) {
     commit('addTweak', tweak)
     return storage.set('tweaks', state.tweaks)
+  },
+
+  updateTweak ({commit, state}, tweakId, updatedTweak) {
+    commit('updateTweak', tweakId, updatedTweak)
+    return storage.set('tweaks', state.tweaks)
   }
 }
