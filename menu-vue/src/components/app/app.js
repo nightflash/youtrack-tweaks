@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import store from '@/vuex/store'
+import {RELOAD_TWEAKS} from '@/vuex/actions'
 
 @Component()
 export default class extends Vue {
   mounted () {
-    store.dispatch('reloadTweaks');
+    this.$store.dispatch(RELOAD_TWEAKS);
   }
 }

@@ -1,21 +1,19 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import store from '@/vuex/store'
-
 @Component()
 export default class extends Vue {
   addNewTweak () {
-    store.dispatch('addTweak', {
+    this.$store.dispatch('addTweak', {
       name: 'new tweak111'
     })
   }
 
   updateTweak() {
-    store.commit('updateTweak', 0)
+    this.$store.commit('updateTweak', 0)
   }
 
   get tweaks () {
-    return store.state.tweaks
+    return this.$store.state.tweaks
   }
 }
