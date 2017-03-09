@@ -3,19 +3,23 @@ import Component from 'vue-class-component'
 
 import {ADD_TWEAK, UPDATE_TWEAK, REMOVE_ALL_TWEAKS} from '../../vuex/actions'
 
-@Component()
+import TweakViewComponent from '../tweak-view/tweak-view.vue'
+
+@Component({
+  components: {
+    'tweak-view': TweakViewComponent
+  }
+})
 export default class extends Vue {
-  addNewTweak () {
+  addNewTweak (type) {
     this.$store.dispatch(ADD_TWEAK, {
-      tweak: {
-        name: 'new tweak111'
-      }
+      type: type
     })
   }
 
   updateTweak() {
     this.$store.dispatch(UPDATE_TWEAK, {
-      id: 0,
+      index: 0,
       tweak: {
         name: 'updated'
       }

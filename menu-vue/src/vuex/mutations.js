@@ -15,12 +15,12 @@ export default {
     state.tweaks.push(tweak)
   },
 
-  [UPDATE_TWEAK_MUT] (state, {id, tweak}) {
-    Vue.set(state.tweaks, id, tweak)
+  [UPDATE_TWEAK_MUT] (state, {index, tweak}) {
+    Vue.set(state.tweaks, index, tweak)
   },
 
-  [REMOVE_TWEAK_MUT] (state, {id}) {
-    state.tweaks.splice(id, 1)
+  [REMOVE_TWEAK_MUT] (state, {index}) {
+    state.tweaks.splice(index, 1)
   },
 
   [REMOVE_ALL_TWEAKS_MUT] (state) {

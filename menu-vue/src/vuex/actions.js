@@ -15,16 +15,23 @@ export default {
     })
   },
 
-  [ADD_TWEAK] ({commit}, {tweak}) {
-    commit(ADD_TWEAK_MUT, {tweak})
+  [ADD_TWEAK] ({commit}, {type, url = '', config = {}}) {
+    commit(ADD_TWEAK_MUT, {
+      tweak: {
+        id: +new Date(),
+        type,
+        url,
+        config
+      }
+    })
   },
 
-  [UPDATE_TWEAK] ({commit}, {id, tweak}) {
-    commit(UPDATE_TWEAK_MUT, {id, tweak})
+  [UPDATE_TWEAK] ({commit}, {index, tweak}) {
+    commit(UPDATE_TWEAK_MUT, {index, tweak})
   },
 
-  [REMOVE_TWEAK] ({commit}, {id}) {
-    commit(REMOVE_TWEAK_MUT, {id})
+  [REMOVE_TWEAK] ({commit}, {index}) {
+    commit(REMOVE_TWEAK_MUT, {index})
   },
 
   [REMOVE_ALL_TWEAKS] ({commit}) {
