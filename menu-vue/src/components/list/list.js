@@ -7,7 +7,7 @@ import TweakViewComponent from '../tweak-view/tweak-view.vue'
 
 @Component({
   components: {
-    'tweak-view': TweakViewComponent
+    'tweak': TweakViewComponent
   }
 })
 export default class extends Vue {

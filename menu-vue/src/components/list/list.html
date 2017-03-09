@@ -1,10 +1,10 @@
 <div>
     <h1 class="active">List of tweaks</h1>
-    <tweak-view class="list-wrapper" v-for="tweak in tweaks" :tweak="tweak" :key="tweak.id"></tweak-view>
+    <tweak class="list-wrapper" v-for="tweak in tweaks" :edit="true" :tweak="tweak" :key="tweak.id"></tweak>
 
-    <button @click="addNewTweak('a')">Add new tweak A</button>
+    <button @click="addNewTweak('agile-board/card-fields')">Add new tweak A</button>
 
-    <button @click="addNewTweak('b')">Add new tweak B</button>
+    <button @click="addNewTweak('agile-board/desktop-notifications')">Add new tweak B</button>
 
 
     <button @click="updateTweak()">Update tweak</button>
