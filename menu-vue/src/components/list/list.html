@@ -1,6 +1,8 @@
 <div>
     <h1 class="active">List of tweaks</h1>
-    <tweak class="list-wrapper" v-for="tweak in tweaks" :edit="true" :tweak="tweak" :key="tweak.id"></tweak>
+    <tweak class="list-wrapper" v-for="tweak in tweaks" :tweak="tweak" :key="tweak.id">
+        <button>Edit</button>
+    </tweak>
 
     <button @click="addNewTweak('agile-board/card-fields')">Add new tweak A</button>
 

@@ -26,8 +26,17 @@ export default {
     })
   },
 
-  [UPDATE_TWEAK] ({commit}, {index, tweak}) {
-    commit(UPDATE_TWEAK_MUT, {index, tweak})
+  [UPDATE_TWEAK] ({commit, state}, {index, url = '', config = {}}) {
+    const tweak = state.tweaks[index]
+
+    commit(UPDATE_TWEAK_MUT, {index,
+      tweak: {
+        id: tweak.id,
+        type: tweak.type,
+        url: url,
+        config
+      }
+    })
   },
 
   [REMOVE_TWEAK] ({commit}, {index}) {

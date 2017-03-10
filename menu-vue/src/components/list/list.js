@@ -3,11 +3,11 @@ import Component from 'vue-class-component'
 
 import {ADD_TWEAK, UPDATE_TWEAK, REMOVE_ALL_TWEAKS} from '../../vuex/actions'
 
-import TweakViewComponent from '../tweak-view/tweak-view.vue'
+import TweakComponent from '../tweak/tweak.vue'
 
 @Component({
   components: {
-    'tweak': TweakViewComponent
+    'tweak': TweakComponent
   }
 })
 export default class extends Vue {
@@ -28,6 +28,10 @@ export default class extends Vue {
 
   removeAllTweaks() {
     this.$store.dispatch(REMOVE_ALL_TWEAKS)
+  }
+
+  saveHandler() {
+    console.log('list save handler');
   }
 
   get tweaks () {

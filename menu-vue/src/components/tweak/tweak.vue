@@ -1,3 +1,3 @@
-<script src="./tweak-view.js"></script>
+<script src="./tweak.js"></script>
 
-<style lang="scss" src="./tweak-view.scss" scoped></style>
+<style lang="scss" src="./tweak.scss" scoped></style>
