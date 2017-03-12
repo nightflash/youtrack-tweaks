@@ -1,4 +1,5 @@
 <div>
     <div><input v-model="url"></div>
-    <button @click="save()">Save</button>
+
+    <slot :url="url" :config="config"></slot>
 </div>

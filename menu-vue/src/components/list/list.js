@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import {ADD_TWEAK, UPDATE_TWEAK, REMOVE_ALL_TWEAKS} from '../../vuex/actions'
+import {ADD_TWEAK, UPDATE_TWEAK, REMOVE_ALL_TWEAKS, REMOVE_TWEAK} from '../../vuex/actions'
 
 import TweakComponent from '../tweak/tweak.vue'
 
@@ -32,6 +32,16 @@ export default class extends Vue {
 
   saveHandler() {
     console.log('list save handler');
+  }
+
+  edit(index) {
+    this.$router.push(`/edit/${index}`)
+  }
+
+  remove(index) {
+    this.$store.dispatch(REMOVE_TWEAK, {
+      index
+    })
   }
 
   get tweaks () {

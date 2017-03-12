@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
+import TweakMixin from '../../tweak-mixin'
+
 export const type = 'agile-board/card-fields'
 
 export const name = 'Agile Board Card Fields'
@@ -28,34 +30,13 @@ export class View extends Vue {
 
 @Component({
   props: {
-    tweak: Object,
-    onSave: {
-      type: Function
-    }
+    tweak: Object
   },
+  mixins: [TweakMixin],
   template: require('./edit.html')
 })
 export class Edit extends Vue {
-  url = ''
   name = name
   type = type
-
-  config = {}
-
-  save () {
-    // prepare data for save
-
-    this.onSave({
-      url: this.url,
-      config: this.config
-    })
-  }
-
-  mounted () {
-    this.url = this.tweak.url
-
-    Object.keys(schema).forEach(fieldName => {
-      this.config[fieldName] = (this.tweak.config && this.tweak.config[fieldName]) || ''
-    })
-  }
+  schema = schema
 }

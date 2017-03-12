@@ -1,8 +1,6 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import {ADD_TWEAK, UPDATE_TWEAK} from '../../vuex/actions'
-
 import tweaks from '../tweaks/index'
 
 @Component({
@@ -11,10 +9,6 @@ import tweaks from '../tweaks/index'
       type: Boolean,
       default: false
     },
-    onSave: {
-      type: Function,
-      default: () => {}
-    },
     tweak: {
       type: Object,
       required: true
@@ -22,20 +16,6 @@ import tweaks from '../tweaks/index'
   }
 })
 export default class extends Vue {
-  get name () {
-    return 'Type: ' + this.tweak.type
-  }
-
-  save({url, config}) {
-    this.$store.dispatch(UPDATE_TWEAK, {
-      index: this.$store.state.tweaks.indexOf(this.tweak),
-      url,
-      config
-    })
-
-    this.onSave()
-  }
-
   render(h) {
     if (tweaks.has(this.tweak.type)) {
       const TweakExports = tweaks.get(this.tweak.type);
@@ -44,7 +24,8 @@ export default class extends Vue {
       return (
           <div>
             <div>{TweakExports.name}</div>
-            <TweakComponent tweak={this.tweak} onSave={this.save}>
+            <TweakComponent tweak={this.tweak}>
+              {this.$scopedSlots.default}
               {this.$slots.default}
             </TweakComponent>
           </div>

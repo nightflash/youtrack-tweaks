@@ -1,3 +1,8 @@
 <div>
-    <tweak v-if="tweak" :edit="true" :tweak="tweak"></tweak>
+    <tweak v-if="tweak" :edit="true" :tweak="tweak">x
+        <template scope="childProps">
+            <button @click="save(childProps.url, childProps.config)">Save</button>
+            <button @click="save(childProps.url, childProps.config, true)">Save and go to list</button>
+        </template>
+    </tweak>
 </div>
