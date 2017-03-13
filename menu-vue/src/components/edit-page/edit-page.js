@@ -1,5 +1,6 @@
 import Vue from 'vue'
-import Component from 'vue-class-component'
+import { Component, Inject, Model, Prop, Watch } from 'vue-property-decorator'
+
 
 import TweakComponent from '../tweak/tweak.vue'
 
@@ -11,15 +12,23 @@ import {UPDATE_TWEAK} from '../../vuex/actions'
   }
 })
 export default class extends Vue {
+  url = ''
+
   get tweak() {
-    const index = this.$route.params.index;
-    return this.$store.state.tweaks[index];
+    const index = this.$route.params.index
+    const tweak = this.$store.state.tweaks[index]
+
+    if (tweak) {
+      this.url = tweak.url
+    }
+
+    return tweak
   }
 
-  save(url, config, navigateAfterSave) {
+  save(config, navigateAfterSave) {
     this.$store.dispatch(UPDATE_TWEAK, {
       index: this.$store.state.tweaks.indexOf(this.tweak),
-      url,
+      url: this.url,
       config
     })
 
@@ -28,7 +37,7 @@ export default class extends Vue {
     }
   }
 
-  saveHandler() {
-    console.log('save handler');
+  cancel() {
+    this.$router.push('/')
   }
 }

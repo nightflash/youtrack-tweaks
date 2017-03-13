@@ -1,0 +1,24 @@
+<div>
+    <div>
+        <input type="text" v-model="boardName"/>
+    </div>
+
+    <div>
+        <input type="text" v-model="sprintName"/>
+    </div>
+
+    <div>
+        <input type="text" v-model="sizeParams0"/>
+    </div>
+    <div>
+        <input type="text" v-model="sizeParams1"/>
+    </div>
+    <div>
+        <input type="text" v-model="sizeParams2"/>
+    </div>
+    <div>
+        <input type="text" v-model="sizeParams3"/>
+    </div>
+
+    <slot :getConfig="getConfig"></slot>
+</div>

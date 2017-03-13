@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import TweakMixin from '../../tweak-mixin'
+import TweakEditMixin from '../../../tweak-edit-mixin'
 
 export const type = 'agile-board/card-fields'
 
 export const name = 'Agile Board Card Fields'
 
 export const schema = {
+  single: Boolean,
   boardName: String,
   sprintName: String,
   sizeParams0: String,
@@ -29,14 +30,7 @@ export class View extends Vue {
 }
 
 @Component({
-  props: {
-    tweak: Object
-  },
-  mixins: [TweakMixin],
   template: require('./edit.html')
 })
-export class Edit extends Vue {
-  name = name
-  type = type
-  schema = schema
+export class Edit extends TweakEditMixin {
 }

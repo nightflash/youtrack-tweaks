@@ -1,8 +1,12 @@
-<div>
-    <tweak v-if="tweak" :edit="true" :tweak="tweak">x
+<div v-if="tweak">
+    <div>{{tweak.id}} - {{url}}</div>
+    <input v-model="url"/>
+
+    <tweak :edit="true" :tweak="tweak">
         <template scope="childProps">
-            <button @click="save(childProps.url, childProps.config)">Save</button>
-            <button @click="save(childProps.url, childProps.config, true)">Save and go to list</button>
+            <button @click="save(childProps.getConfig())">Save</button>
+            <button @click="save(childProps.getConfig(), true)">Save and go to list</button>
+            <button @click="cancel()">Cancel</button>
         </template>
     </tweak>
 </div>

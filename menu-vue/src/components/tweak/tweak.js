@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import tweaks from '../tweaks/index'
+import tweaks from './library/index'
 
 @Component({
   props: {
@@ -22,13 +22,10 @@ export default class extends Vue {
       const TweakComponent = TweakExports[this.edit ? 'Edit' : 'View'];
 
       return (
-          <div>
-            <div>{TweakExports.name}</div>
-            <TweakComponent tweak={this.tweak}>
-              {this.$scopedSlots.default}
-              {this.$slots.default}
-            </TweakComponent>
-          </div>
+          <TweakComponent tweak={this.tweak} schema={TweakExports.schema}>
+            {this.$scopedSlots.default}
+            {this.$slots.default}
+          </TweakComponent>
       )
     } else {
       return (<div>non registered tweak type</div>)
