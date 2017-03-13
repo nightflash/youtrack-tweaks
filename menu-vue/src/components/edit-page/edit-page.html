@@ -1,12 +1,10 @@
-<div v-if="tweak">
-    <div>{{tweak.id}} - {{url}}</div>
+<div v-if="tweakExports">
+    <div>{{tweakExports.name}}</div>
     <input v-model="url"/>
 
-    <tweak :edit="true" :tweak="tweak">
-        <template scope="childProps">
-            <button @click="save(childProps.getConfig())">Save</button>
-            <button @click="save(childProps.getConfig(), true)">Save and go to list</button>
-            <button @click="cancel()">Cancel</button>
-        </template>
-    </tweak>
+    <component :is="tweakExports.Edit" :tweak="tweak" :schema="tweakExports.schema" :changed="changed"></component>
+
+    <button @click="save(config)">Save</button>
+    <button @click="save(config, true)">Save and go to list</button>
+    <button @click="cancel()">Back</button>
 </div>

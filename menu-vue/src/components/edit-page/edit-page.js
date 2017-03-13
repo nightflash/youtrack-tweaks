@@ -1,28 +1,32 @@
 import Vue from 'vue'
-import { Component, Inject, Model, Prop, Watch } from 'vue-property-decorator'
+import Component from 'vue-class-component'
 
-
-import TweakComponent from '../tweak/tweak.vue'
+import tweaksLibrary from '../tweak/library/index'
 
 import {UPDATE_TWEAK} from '../../vuex/actions'
 
-@Component({
-  components: {
-    'tweak': TweakComponent
-  }
-})
+@Component()
 export default class extends Vue {
   url = ''
+  config = {}
 
   get tweak() {
     const index = this.$route.params.index
-    const tweak = this.$store.state.tweaks[index]
+    return this.$store.state.tweaks[index]
+  }
 
-    if (tweak) {
-      this.url = tweak.url
-    }
+  get tweakExports() {
+    return this.tweak && tweaksLibrary.get(this.tweak.type)
+  }
 
-    return tweak
+  mounted () {
+    this.$watch('tweak', () => {
+      this.url = this.tweak && this.tweak.url
+    }, {immediate: true})
+  }
+
+  changed (newConfig) {
+    this.config = newConfig
   }
 
   save(config, navigateAfterSave) {

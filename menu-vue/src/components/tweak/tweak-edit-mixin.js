@@ -2,36 +2,37 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 @Component({
+  template: require('./tweak-edit-mixin.html'),
   props: {
     tweak: {
       type: Object,
       required: true
     },
-    schema: Object
+    schema: Object,
+    changed: Function
   }
 })
 export default class extends Vue {
-  constructor (...args) {
+  constructor () {
     super()
 
-    Object.keys(this.schema).forEach(key => {
-      this[key] = ''
+    this.config = {}
+    this.schemaKeys = Object.keys(this.schema)
+
+    this.schemaKeys.forEach(key => {
+      this.config[key] = ''
     })
   }
 
   mounted () {
-    Object.keys(this.schema).forEach(key => {
-      this[key] = this.tweak.config[key]
+    this.schemaKeys.forEach(key => {
+      this.config[key] = this.tweak.config[key]
     })
+
+    this.$watch('config', () => this.changed(this.config), {deep: true, immediate: true})
   }
 
   getConfig () {
-    const config = {}
-
-    Object.keys(this.schema).forEach(key => {
-      config[key] = this[key]
-    })
-
-    return config
+    return this.config
   }
 }

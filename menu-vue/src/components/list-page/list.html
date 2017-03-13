@@ -1,9 +1,11 @@
 <div>
     <h1 class="active">List of tweaks</h1>
-    <tweak class="list-wrapper" v-for="(tweak, index) in tweaks" :tweak="tweak" :key="tweak.id">
+
+    <div v-for="(tweak, index) in tweaks">
+        <component :is="getTweakExports(tweak).View" :tweak="tweak" :schema="getTweakExports(tweak).schema"></component>
         <button @click="edit(index)">Edit</button>
         <button @click="remove(index)">Remove</button>
-    </tweak>
+    </div>
 
     <button @click="addNewTweak('agile-board/card-fields')">Add new tweak A</button>
 

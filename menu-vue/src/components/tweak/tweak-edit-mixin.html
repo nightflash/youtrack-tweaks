@@ -2,4 +2,6 @@
     <div v-for="fieldKey in schemaKeys">
         <input type="text" v-model="config[fieldKey]"/>
     </div>
+
+    <slot :getConfig="getConfig"></slot>
 </div>

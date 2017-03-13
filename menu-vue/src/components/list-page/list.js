@@ -3,13 +3,9 @@ import Component from 'vue-class-component'
 
 import {ADD_TWEAK, UPDATE_TWEAK, REMOVE_ALL_TWEAKS, REMOVE_TWEAK} from '../../vuex/actions'
 
-import TweakComponent from '../tweak/tweak.vue'
+import tweaksLibrary from '../tweak/library/index'
 
-@Component({
-  components: {
-    'tweak': TweakComponent
-  }
-})
+@Component()
 export default class extends Vue {
   addNewTweak (type) {
     this.$store.dispatch(ADD_TWEAK, {
@@ -30,10 +26,6 @@ export default class extends Vue {
     this.$store.dispatch(REMOVE_ALL_TWEAKS)
   }
 
-  saveHandler() {
-    console.log('list save handler');
-  }
-
   edit(index) {
     this.$router.push(`/edit/${index}`)
   }
@@ -46,5 +38,9 @@ export default class extends Vue {
 
   get tweaks () {
     return this.$store.state.tweaks
+  }
+
+  getTweakExports(tweak) {
+    return tweaksLibrary.get(tweak.type)
   }
 }

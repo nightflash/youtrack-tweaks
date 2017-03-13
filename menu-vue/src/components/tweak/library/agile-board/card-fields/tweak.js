@@ -8,7 +8,6 @@ export const type = 'agile-board/card-fields'
 export const name = 'Agile Board Card Fields'
 
 export const schema = {
-  single: Boolean,
   boardName: String,
   sprintName: String,
   sizeParams0: String,
@@ -24,13 +23,8 @@ export const schema = {
   template: require('./view.html')
 })
 export class View extends Vue {
-  name = name
-  type = type
-
 }
 
-@Component({
-  template: require('./edit.html')
-})
+@Component()
 export class Edit extends TweakEditMixin {
 }
