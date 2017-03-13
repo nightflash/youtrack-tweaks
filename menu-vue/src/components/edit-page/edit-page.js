@@ -19,20 +19,14 @@ export default class extends Vue {
     return this.tweak && tweaksLibrary.get(this.tweak.type)
   }
 
-  mounted () {
-    this.$watch('tweak', () => {
-      this.url = this.tweak && this.tweak.url
-    }, {immediate: true})
-  }
-
   changed (newConfig) {
     this.config = newConfig
   }
 
-  save(config, navigateAfterSave) {
+  save(url, config, navigateAfterSave) {
     this.$store.dispatch(UPDATE_TWEAK, {
       index: this.$store.state.tweaks.indexOf(this.tweak),
-      url: this.url,
+      url,
       config
     })
 

@@ -1,10 +1,10 @@
 <div v-if="tweakExports">
     <div>{{tweakExports.name}}</div>
-    <input v-model="url"/>
+    <input @input="event => (url = event.target.value)" :value="tweak.url"/>
 
     <component :is="tweakExports.Edit" :tweak="tweak" :schema="tweakExports.schema" :changed="changed"></component>
 
-    <button @click="save(config)">Save</button>
-    <button @click="save(config, true)">Save and go to list</button>
+    <button @click="save(url, config)">Save</button>
+    <button @click="save(url, config, true)">Save and go to list</button>
     <button @click="cancel()">Back</button>
 </div>
