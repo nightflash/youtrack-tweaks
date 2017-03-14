@@ -2,6 +2,8 @@
     <h1 class="active">List of tweaks</h1>
 
     <div v-for="(tweak, index) in tweaks">
+        <div>{{ getTweakExports(tweak).name }}</div>
+        <div>{{ tweak.url }}</div>
         <component :is="getTweakExports(tweak).View" :tweak="tweak" :schema="getTweakExports(tweak).schema"></component>
         <button @click="edit(index)">Edit</button>
         <button @click="remove(index)">Remove</button>

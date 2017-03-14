@@ -1,0 +1,5 @@
+<div>
+    <div v-for="fieldKey in schemaKeys">
+        <div v-if="config[fieldKey]">{{getLabel(fieldKey)}}: {{config[fieldKey]}}</div>
+    </div>
+</div>

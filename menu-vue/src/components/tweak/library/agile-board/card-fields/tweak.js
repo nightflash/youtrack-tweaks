@@ -1,7 +1,9 @@
-import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import TweakEditMixin from '../../../tweak-edit-mixin'
+import TweakEditMixin from '../../../mixins/tweak-edit-mixin'
+import TweakViewMixin from '../../../mixins/tweak-view-mixin'
+
+import * as i18n from './i18n'
 
 export const type = 'agile-board/card-fields'
 
@@ -16,15 +18,12 @@ export const schema = {
   sizeParams3: String
 }
 
-@Component({
-  props: {
-    tweak: Object
-  },
-  template: require('./view.html')
-})
-export class View extends Vue {
+@Component
+export class View extends TweakViewMixin {
+  i18n = i18n
 }
 
-@Component()
+@Component
 export class Edit extends TweakEditMixin {
+  i18n = i18n
 }
