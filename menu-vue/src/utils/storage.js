@@ -14,7 +14,7 @@ export default {
   set (key, value) {
     return new Promise(resolve => {
       if (window.chrome.storage && window.chrome.storage.sync) {
-        window.chrome.storage.sync.set(key, {
+        window.chrome.storage.sync.set({
           [key]: value
         }, () => resolve())
       } else {

@@ -2,4 +2,4 @@
 
 <script src="./app.js"></script>
 
-<style lang="scss" src="./app.scss" scoped></style>
+<style lang="scss" src="./app.scss"></style>

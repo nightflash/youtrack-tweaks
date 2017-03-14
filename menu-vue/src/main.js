@@ -17,3 +17,6 @@ new Vue({
   template: '<App/>',
   components: { App }
 })
+
+// needed for an abstract router
+router.replace('/')

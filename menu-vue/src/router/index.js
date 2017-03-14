@@ -7,6 +7,7 @@ import EditPage from '../components/edit-page/edit-page.vue'
 Vue.use(Router)
 
 export default new Router({
+  mode: 'abstract',
   routes: [
     {
       path: '/',

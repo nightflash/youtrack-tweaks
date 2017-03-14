@@ -3,6 +3,7 @@ let develop = false;
 
 chrome.management.getSelf(info => {
   if (info.installType === 'development') {
+    console.warn('DEVELOPMENT');
     develop = true;
   }
 });
