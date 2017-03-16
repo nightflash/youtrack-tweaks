@@ -10,7 +10,11 @@ export const type = 'agile-board/card-fields'
 export const name = 'Agile Board Card Fields'
 
 export const schema = {
-  boardName: String,
+  boardName: {
+    type: [String],
+    decoder: string => string.split(','),
+    encoder: arr => arr.join(',')
+  },
   sprintName: String,
   sizeParams0: String,
   sizeParams1: String,

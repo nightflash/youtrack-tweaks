@@ -1,0 +1,36 @@
+.component {
+  border: 1px solid #999;
+  white-space: normal;
+  text-align: left;
+}
+
+.tag {
+  display: inline-block;
+  border: 1px solid #999;
+  border-radius: 3px;
+  background-color: #ccc;
+  margin: 2px 8px;
+  white-space: nowrap;
+}
+
+.input-control {
+  display: inline-block;
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+
+  & .input {
+    outline: none;
+    border: none;
+
+    &_cursor {
+      width: 5px;
+    }
+  }
+}
+
+.placeholder {
+  position: absolute;
+  left: 0;
+  top: 0;
+}

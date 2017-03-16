@@ -1,5 +1,7 @@
 <div>
     <div v-for="fieldKey in schemaKeys">
-        <input type="text" v-model="config[fieldKey]" :placeholder="getLabel(fieldKey)"/>
+        <input v-if="info[fieldKey].type === 'string'" type="text" v-model="config[fieldKey]" :placeholder="getLabel(fieldKey)"/>
+
+        <tags-input v-if="info[fieldKey].type === 'array'" v-model="config[fieldKey]" :placeholder="getLabel(fieldKey)"></tags-input>
     </div>
 </div>

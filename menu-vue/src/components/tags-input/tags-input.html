@@ -1,0 +1,14 @@
+<div class="component" @click="$refs.input.focus()">
+    <div class="tag" :ref="getTagRef(index)" v-for="(tag, index) in value">
+        <span>{{tag}}</span>
+        <button @click="remove(index)">X</button>
+    </div>
+    <div class="input-control" ref="inputControl">
+        <input ref="input" :class="{input: true, 'input_cursor': cursorMode}" type="text"
+               v-model="inputValue" :placeholder="!cursorMode && placeholder"
+               @keydown.enter="add()" @keydown.esc="clear" @keydown.delete="removeAtCursor($event)"
+               @keydown.left="move(false)" @keydown.right="move(true)"
+               @keydown.up="jump(false)" @keydown.down="jump(true)">
+        <button v-show="actualValue" @click="add()">Add tag</button>
+    </div>
+</div>
