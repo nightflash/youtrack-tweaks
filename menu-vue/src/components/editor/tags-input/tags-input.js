@@ -44,7 +44,7 @@ export default class extends Vue {
   }
 
   get cursorMode () {
-    return !this.actualValue && this.position < this.tags.length;
+    return !this.actualValue && this.position < this.tags.length
   }
 
   add () {
@@ -54,7 +54,7 @@ export default class extends Vue {
     if (tag) {
       if (this.position === this.tags.length) {
         this.tags.push(tag)
-        this.position++;
+        this.position++
         this.updateInputPosition()
       } else {
         this.tags.splice(this.position, 0, tag)
@@ -75,11 +75,11 @@ export default class extends Vue {
     this.emitUpdate()
   }
 
-  removeAtCursor(event) {
+  removeAtCursor (event) {
     if (this.actualValue === '') {
       if (event.key === 'Backspace' && this.position > 0) {
         this.remove(this.position - 1)
-      } else if (event.key === 'Delete'  && this.position < this.tags.length) {
+      } else if (event.key === 'Delete' && this.position < this.tags.length) {
         this.remove(this.position)
       }
     }

@@ -19,3 +19,5 @@ export const en = {
     label: 'XL size fields'
   }
 }
+
+export default en

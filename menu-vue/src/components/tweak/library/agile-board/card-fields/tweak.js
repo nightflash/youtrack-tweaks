@@ -3,19 +3,25 @@ import Component from 'vue-class-component'
 import TweakEditMixin from '../../../mixins/tweak-edit-mixin'
 import TweakViewMixin from '../../../mixins/tweak-view-mixin'
 
+import TagsInput from '@/components/editor/tags-input/tags-input.vue'
+
 import * as i18n from './i18n'
 
 export const type = 'agile-board/card-fields'
 
 export const name = 'Agile Board Card Fields'
 
+const tagsEditor = {
+  component: TagsInput,
+  default: [],
+  options: {},
+  decoder: string => string.split(','),
+  encoder: arr => arr.join(',')
+}
+
 export const schema = {
-  boardName: {
-    type: [String],
-    decoder: string => string.split(','),
-    encoder: arr => arr.join(',')
-  },
-  sprintName: String,
+  boardName: tagsEditor,
+  sprintName: tagsEditor,
   sizeParams0: String,
   sizeParams1: String,
   sizeParams2: String,

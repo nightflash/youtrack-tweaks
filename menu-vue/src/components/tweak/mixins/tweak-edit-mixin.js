@@ -1,31 +1,20 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
-import TagsInput from '../../tags-input/tags-input.vue'
+import TagsInput from '../../editor/tags-input/tags-input.vue'
 
-function parseSchemaItem (schemaItem, defaultValue = null) {
-  const result = {
-    default: null,
-    type: null
-  }
-
+function parseSchemaItem (schemaItem) {
   if (schemaItem === String) {
-    result.default = defaultValue || ''
-    result.type = 'string'
-  } else if (schemaItem === Number) {
-    result.default = defaultValue || 0
-    result.type = 'number'
-  } else if (schemaItem === Array || schemaItem instanceof Array) {
-    result.default = defaultValue || []
-    result.type = 'array'
-  } else if (schemaItem === Object) {
-    result.default = defaultValue || {}
-    result.type = 'object'
+    return {
+      type: 'string',
+      default: ''
+    }
   } else if (schemaItem instanceof Object) {
-    return parseSchemaItem(schemaItem['type'], schemaItem['default'])
+    return {
+      type: 'custom',
+      ...schemaItem
+    }
   }
-
-  return result
 }
 
 function getDecoder (schemaItem) {
