@@ -6,6 +6,7 @@
     <div class="input-control" ref="inputControl">
         <input ref="input" :class="{input: true, 'input_cursor': cursorMode}" type="text"
                v-model="inputValue" :placeholder="!cursorMode && placeholder"
+               @focus.once="setInitialPosition()"
                @keydown.enter="add()" @keydown.esc="clear" @keydown.delete="removeAtCursor($event)"
                @keydown.left="move(false)" @keydown.right="move(true)"
                @keydown.up="jump(false)" @keydown.down="jump(true)">

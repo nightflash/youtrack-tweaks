@@ -23,7 +23,7 @@ export default class extends Vue {
     })
   }
 
-  mounted () {
+  beforeMount () {
     this.schemaKeys.forEach(key => {
       this.config[key] = this.tweak.config[key]
     })

@@ -1,38 +1,24 @@
-import Vue from 'vue'
 import Component from 'vue-class-component'
 
-@Component({
-  props: {
-    value: Array,
-    placeholder: {
-      type: String,
-      default: ''
-    }
-  }
-})
-export default class extends Vue {
-  tags = []
+import EditorMixin from '../editor-mixin'
+
+@Component()
+export default class extends EditorMixin {
   position = null
   inputValue = ''
 
-  mounted () {
-    this.tags = this.value.slice()
+  beforeMount () {
     this.setInitialPosition()
   }
 
-  updated () {
-    this.tags = this.value.slice()
+  beforeUpdate () {
     this.setInitialPosition()
   }
 
   setInitialPosition () {
-    if (this.position === null && this.tags.length || this.position > this.tags.length) {
-      this.position = this.tags.length
+    if (this.position === null && this.value.length || this.position > this.value.length) {
+      this.position = this.value.length
     }
-  }
-
-  emitUpdate () {
-    this.$emit('input', this.tags.slice())
   }
 
   getTagRef (index) {
@@ -44,7 +30,7 @@ export default class extends Vue {
   }
 
   get cursorMode () {
-    return !this.actualValue && this.position < this.tags.length
+    return !this.actualValue && this.position < this.value.length
   }
 
   add () {
@@ -52,12 +38,12 @@ export default class extends Vue {
     this.clear()
 
     if (tag) {
-      if (this.position === this.tags.length) {
-        this.tags.push(tag)
+      if (this.position === this.value.length) {
+        this.value.push(tag)
         this.position++
         this.updateInputPosition()
       } else {
-        this.tags.splice(this.position, 0, tag)
+        this.value.splice(this.position, 0, tag)
       }
 
       this.emitUpdate()
@@ -65,7 +51,7 @@ export default class extends Vue {
   }
 
   remove (index) {
-    this.tags.splice(index, 1)
+    this.value.splice(index, 1)
 
     if (index < this.position) {
       this.position--
@@ -79,7 +65,7 @@ export default class extends Vue {
     if (this.actualValue === '') {
       if (event.key === 'Backspace' && this.position > 0) {
         this.remove(this.position - 1)
-      } else if (event.key === 'Delete' && this.position < this.tags.length) {
+      } else if (event.key === 'Delete' && this.position < this.value.length) {
         this.remove(this.position)
       }
     }
@@ -92,7 +78,7 @@ export default class extends Vue {
   move (right) {
     if (this.actualValue === '') {
       if (right) {
-        if (this.position < this.tags.length) {
+        if (this.position < this.value.length) {
           this.position++
         }
       } else {
@@ -108,7 +94,7 @@ export default class extends Vue {
   jump (end) {
     if (this.actualValue === '') {
       if (end) {
-        this.position = this.tags.length
+        this.position = this.value.length
       } else {
         this.position = 0
       }
@@ -118,7 +104,7 @@ export default class extends Vue {
   }
 
   updateInputPosition () {
-    const before = this.position < this.tags.length ? this.$refs[this.getTagRef(this.position)][0] : null
+    const before = this.position < this.value.length ? this.$refs[this.getTagRef(this.position)][0] : null
 
     this.$el.insertBefore(this.$refs.inputControl, before)
     this.$refs.input.focus()

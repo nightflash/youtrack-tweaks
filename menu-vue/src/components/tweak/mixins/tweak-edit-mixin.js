@@ -55,7 +55,7 @@ export default class extends Vue {
     })
   }
 
-  mounted () {
+  beforeMount () {
     this.schemaKeys.forEach(key => {
       this.config[key] = getDecoder(this.schema[key])(this.tweak.config[key])
     })
