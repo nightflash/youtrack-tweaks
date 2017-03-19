@@ -6,7 +6,8 @@ import TweakViewMixin from '../../../mixins/tweak-view-mixin'
 import TagsInput from '@/components/editor/tags-input/tags-input.vue'
 import SortedList from '@/components/editor/sorted-list/sorted-list.vue'
 
-import Toolbar from './toolbar'
+import Toolbar from './toolbar.vue'
+import ItemView from './view.vue'
 
 import * as i18n from './i18n'
 
@@ -41,8 +42,8 @@ const fieldsEditor = {
   component: SortedList,
   default: [],
   options: {
-    addLabel: 'Add',
     toolbar: Toolbar,
+    view: ItemView,
     item: {
       label: '',
       conversion: 'no',

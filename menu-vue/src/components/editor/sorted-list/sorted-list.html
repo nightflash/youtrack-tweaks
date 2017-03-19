@@ -1,17 +1,14 @@
 <div class="component">
-    {{newItem}}
+    <div class="label">{{i18n.label}}</div>
+
     <div class="toolbar">
-        <input ref="input" class="input" type="text"
-               v-model="newItem.label" :placeholder="placeholder"
-               @keydown.enter="add()" @keydown.esc="clear">
-        <component v-if="options.toolbar" :is="options.toolbar" v-model="newItem"></component>
-        <button @click="add()">{{options.addLabel}}</button>
+        <component v-if="options.toolbar" :is="options.toolbar" :i18n="i18n" :add="add" :clear="clear" v-model="newItem"></component>
+        <button @click="add()">{{i18n.add}}</button>
     </div>
 
-    <ul class="list" v-sortable>
+    <ul class="list" v-sortable="true">
         <li class="item" :ref="getItemRef(index)" v-for="(item, index) in value" :key="index">
-            <span>{{item.label}}</span>
-            <component v-if="options.view" :is="options.view" :item="item"></component>
+            <component v-if="options.view" :is="options.view" :i18n="i18n" :item="item"></component>
             <button @click="remove(index)">X</button>
         </li>
     </ul>

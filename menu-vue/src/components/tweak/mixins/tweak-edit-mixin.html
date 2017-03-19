@@ -1,7 +1,7 @@
 <div>
     <div v-for="fieldKey in schemaKeys" :key="fieldKey">
         <component v-model="config[fieldKey]"
-                   :placeholder="getLabel(fieldKey)"
+                   :i18n="getI18n(fieldKey)"
                    :is="info[fieldKey].component"
                    :options="info[fieldKey].options">
         </component>

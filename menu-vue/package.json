@@ -12,6 +12,7 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs"
   },
   "dependencies": {
+    "bootstrap": "^3.3.7",
     "sortablejs": "^1.5.1",
     "vue": "^2.2.1",
     "vue-property-decorator": "^4.0.0",

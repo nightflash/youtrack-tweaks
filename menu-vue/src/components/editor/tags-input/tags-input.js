@@ -75,6 +75,10 @@ export default class extends EditorMixin {
     this.inputValue = ''
   }
 
+  down (e) {
+    console.log(e)
+  }
+
   move (right) {
     if (this.actualValue === '') {
       if (right) {

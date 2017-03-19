@@ -4,9 +4,9 @@ import Component from 'vue-class-component'
 @Component({
   props: {
     value: Array,
-    placeholder: {
-      type: String,
-      default: ''
+    i18n: {
+      type: Object,
+      default: {}
     },
     options: {
       type: Object,

@@ -75,7 +75,7 @@ export default class extends Vue {
     return this.config
   }
 
-  getLabel (key) {
-    return this.i18n && this.i18n.en[key].label
+  getI18n (key) {
+    return this.i18n && this.i18n.en[key]
   }
 }

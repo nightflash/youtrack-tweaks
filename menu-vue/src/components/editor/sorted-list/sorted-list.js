@@ -6,16 +6,18 @@ import Sortable from 'sortablejs'
 
 Vue.directive('sortable', {
   inserted: function (el, binding) {
-    new Sortable(el, binding.value || {})
+    if (binding.value) {
+      new Sortable(el, binding.value instanceof Object ? binding.value : {})
+    }
   }
 })
 
 @Component()
 export default class extends EditorMixin {
-  newItem = {label: '', ...(this.options.item || {})}
+  newItem = {...(this.options.item || {})}
 
   clear () {
-    this.newItem = {label: '', ...(this.options.item || {})}
+    this.newItem = {...(this.options.item || {})}
   }
 
   getItemRef (index) {
