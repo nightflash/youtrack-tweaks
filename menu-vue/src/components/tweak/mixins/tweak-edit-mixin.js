@@ -57,7 +57,9 @@ export default class extends Vue {
 
   beforeMount () {
     this.schemaKeys.forEach(key => {
-      this.config[key] = getDecoder(this.schema[key])(this.tweak.config[key])
+      if (this.tweak.config[key] !== undefined) {
+        this.config[key] = getDecoder(this.schema[key])(this.tweak.config[key])
+      }
     })
 
     this.$watch('config', () => {

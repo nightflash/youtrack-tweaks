@@ -3,7 +3,6 @@ import Component from 'vue-class-component'
 
 @Component({
   props: {
-    value: Array,
     i18n: {
       type: Object,
       default: {}
@@ -15,7 +14,4 @@ import Component from 'vue-class-component'
   }
 })
 export default class extends Vue {
-  emitUpdate () {
-    this.$emit('input', this.value)
-  }
 }

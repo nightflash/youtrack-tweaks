@@ -10,6 +10,11 @@ export const en = {
     placeholder: 'Sprint name',
     add: 'Add'
   },
+  singleMode: {
+    label: 'Configuration mode',
+    left: 'Single configuration',
+    right: 'For each card size'
+  },
   sizeParams0: {
     label: 'S size fields',
     placeholder: 'Custom field name',

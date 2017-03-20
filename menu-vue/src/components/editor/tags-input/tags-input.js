@@ -2,7 +2,11 @@ import Component from 'vue-class-component'
 
 import EditorMixin from '../editor-mixin'
 
-@Component()
+@Component({
+  props: {
+    value: Array
+  }
+})
 export default class extends EditorMixin {
   position = null
   inputValue = ''
@@ -46,7 +50,7 @@ export default class extends EditorMixin {
         this.value.splice(this.position, 0, tag)
       }
 
-      this.emitUpdate()
+      this.$emit('input', this.value)
     }
   }
 
@@ -58,7 +62,7 @@ export default class extends EditorMixin {
       this.updateInputPosition()
     }
 
-    this.emitUpdate()
+    this.$emit('input', this.value)
   }
 
   removeAtCursor (event) {

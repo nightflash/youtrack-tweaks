@@ -5,6 +5,7 @@ import TweakViewMixin from '../../../mixins/tweak-view-mixin'
 
 import TagsInput from '@/components/editor/tags-input/tags-input.vue'
 import SortedList from '@/components/editor/sorted-list/sorted-list.vue'
+import Toggle from '@/components/editor/toggle/toggle.vue'
 
 import Toolbar from './toolbar.vue'
 import ItemView from './view.vue'
@@ -55,9 +56,16 @@ const fieldsEditor = {
   encoder: fieldsEncoder
 }
 
+const toggleEditor = {
+  component: Toggle,
+  default: true,
+  options: {}
+}
+
 export const schema = {
   boardName: tagsEditor,
   sprintName: tagsEditor,
+  singleMode: toggleEditor,
   sizeParams0: fieldsEditor,
   sizeParams1: fieldsEditor,
   sizeParams2: fieldsEditor,
