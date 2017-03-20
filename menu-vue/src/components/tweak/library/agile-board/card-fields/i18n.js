@@ -26,6 +26,10 @@ export const en = {
   sizeParams3: {
     label: 'XL size fields',
     add: 'Add'
+  },
+  sizeParams: {
+    label: 'Custom fields',
+    add: 'Add'
   }
 }
 

@@ -48,7 +48,8 @@ const fieldsEditor = {
       label: '',
       conversion: 'no',
       ignoreColors: false
-    }
+    },
+    sortable: true
   },
   decoder: fieldsDecoder,
   encoder: fieldsEncoder

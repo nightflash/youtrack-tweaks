@@ -3,7 +3,7 @@
 
     <div class="tag" :ref="getTagRef(index)" v-for="(tag, index) in value">
         <span>{{tag}}</span>
-        <button @click="remove(index)">X</button>
+        <button class="btn btn-default btn-xs" @click="remove(index)">X</button>
     </div>
 
     <div class="input-control" ref="inputControl">
@@ -13,6 +13,6 @@
                @keydown.enter="add()" @keydown.esc="clear" @keydown.delete="removeAtCursor($event)"
                @keydown.37="move(false)" @keydown.39="move(true)"
                @keydown.up="jump(false)" @keydown.down="jump(true)">
-        <button v-show="actualValue" @click="add()">{{i18n.add}}</button>
+        <button class="btn btn-default btn-xs" v-show="actualValue" @click="add()">{{i18n.add}}</button>
     </div>
 </div>

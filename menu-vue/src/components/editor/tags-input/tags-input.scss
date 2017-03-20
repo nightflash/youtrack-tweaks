@@ -9,7 +9,7 @@
   border: 1px solid #999;
   border-radius: 3px;
   background-color: #ccc;
-  margin: 2px 8px;
+  margin: 2px;
   white-space: nowrap;
 }
 
@@ -17,7 +17,8 @@
   display: inline-block;
   white-space: nowrap;
   position: relative;
-  overflow: hidden;
+  vertical-align: bottom;
+  margin: 2px 0;
 
   & .input {
     outline: none;

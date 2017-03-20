@@ -3,13 +3,13 @@
 
     <div class="toolbar">
         <component v-if="options.toolbar" :is="options.toolbar" :i18n="i18n" :add="add" :clear="clear" v-model="newItem"></component>
-        <button @click="add()">{{i18n.add}}</button>
+        <button class="btn btn-default btn-xs" @click="add()">{{i18n.add}}</button>
     </div>
 
-    <ul class="list" v-sortable="true">
-        <li class="item" :ref="getItemRef(index)" v-for="(item, index) in value" :key="index">
+    <ul class="list" v-sortable="options.sortable">
+        <li class="item" :class="{'item_sortable': options.sortable}" :ref="getItemRef(index)" v-for="(item, index) in value" :key="index">
             <component v-if="options.view" :is="options.view" :i18n="i18n" :item="item"></component>
-            <button @click="remove(index)">X</button>
+            <button class="btn btn-default btn-xs" @click="remove(index)">X</button>
         </li>
     </ul>
 </div>

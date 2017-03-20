@@ -7,9 +7,6 @@ import App from './components/app/app'
 import router from './router'
 import store from './vuex/store'
 
-import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap/dist/css/bootstrap-theme.min.css'
-
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
