@@ -129,30 +129,27 @@ function tweak(name) {
     fieldsToShow = [];
     injects = ytTweaks.inject('$compile', '$timeout', '$rootScope');
 
-    const configs = ytTweaks.getConfigsForTweak(name);
+    const configs = ytTweaks.getConfigsForTweak(name).filter(config => {
+      return ytTweaks.inArray(config.config.sprintName, agileBoardController.sprint.name, true) &&
+          ytTweaks.inArray(config.config.boardName, agileBoardController.agile.name, true);
+    });
+
     if (!configs.length) {
       ytTweaks.log(name, 'no suitable config, sorry');
       return;
     }
 
+    configs.forEach(tweak => {
+      const config = tweak.config;
+      let fields = [];
+      if (config.singleMode) {
+        fields = config.sizeParams;
+      } else {
+        fields = config[`sizeParams${agileBoardController.cardDetailLevel}`];
+      }
 
-    const suitableConfigs = configs.filter(config => {
-      const sprintNames = ytTweaks.trimmedSplit(config.config.sprintName);
-      const boardNames = ytTweaks.trimmedSplit(config.config.boardName);
-
-      return ytTweaks.inArray(sprintNames, agileBoardController.sprint.name, true) &&
-        ytTweaks.inArray(boardNames, agileBoardController.agile.name, true);
-    });
-
-    //cardDetailLevel
-    const sizeParams = suitableConfigs.length ? suitableConfigs[0].config[`sizeParams${agileBoardController.cardDetailLevel}`] : '';
-    ytTweaks.trimmedSplit(sizeParams).forEach(f => {
-      const [fieldName, filedConversion = 'no', ignoreColors = false] = ytTweaks.trimmedSplit(f, ':');
-
-      fieldName && fieldsToShow.push({
-        name: fieldName,
-        conversion: filedConversion,
-        ignoreColors
+      fields.reverse().forEach(field => {
+        fieldsToShow.push(field);
       });
     });
 

@@ -1,0 +1,8 @@
+.component {
+  text-align: left;
+  margin-bottom: 12px;
+
+  & .label {
+    font-weight: 600;
+  }
+}

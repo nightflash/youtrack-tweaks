@@ -1,8 +1,4 @@
-.component {
-  border: 1px solid #999;
-  white-space: normal;
-  text-align: left;
-}
+@import '../editor-mixin/editor-mixin.scss';
 
 .list {
   margin: 0;
@@ -10,11 +6,19 @@
 
   & .item {
     list-style: none;
-    background-color: #ddd;
-    margin-bottom: 2px;
+    background-color: #fafafa;
+    border: 1px solid #999;
+    border-radius: 3px;
+    margin: 4px 0;
+    padding: 2px 8px;
+    line-height: 20px;
 
     &_sortable {
       cursor: move;
     }
+  }
+
+  & .list-control {
+    float: right;
   }
 }

@@ -30,11 +30,11 @@ const fieldsEditor = {
     toolbar: Toolbar,
     view: ItemView,
     item: {
-      fieldName: '',
+      name: '',
       conversion: 'no',
       ignoreColors: false
     },
-    check: item => item.fieldName.trim() !== '',
+    check: item => item.name.trim() !== '',
     sortable: true
   }
 }

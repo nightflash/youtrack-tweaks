@@ -1,8 +1,7 @@
 <template>
   <span>
-    <span>{{item.name}}</span>
-    <span>{{i18n.conversions[item.conversion]}}</span>
-    <span v-show="item.ignoreColors">{{i18n.ignoreColors}}</span>
+    <span>{{item.fieldName}}</span> =
+    <span>{{item.fieldValue}}</span>
   </span>
 </template>
 

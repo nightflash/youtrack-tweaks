@@ -1,13 +1,13 @@
 <template>
   <span>
     <input class="input" type="text"
-           v-model="value.fieldName" :placeholder="i18n.placeholder"
+           v-model="value.name" :placeholder="i18n.placeholder"
            @keydown.enter="add()" @keydown.esc="clear()">
 
     <select v-model="value.conversion">
-      <option :value="option" v-for="option in conversionOptions" :key="option">{{option}}</option>
+      <option :value="option" v-for="(label, option) in conversionOptions" :key="option">{{label}}</option>
     </select>
-    Ignore color<input type="checkbox" v-model="value.ignoreColors">
+    {{i18n.ignoreColors}}<input type="checkbox" v-model="value.ignoreColors">
   </span>
 </template>
 
@@ -24,6 +24,9 @@
     }
   })
   export default class extends Vue {
-    conversionOptions = ['no', 'letter']
+    conversionOptions = {
+      no: this.i18n.conversions.no,
+      letter: this.i18n.conversions.letter
+    }
   }
 </script>

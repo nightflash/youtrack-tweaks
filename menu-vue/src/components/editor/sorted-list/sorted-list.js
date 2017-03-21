@@ -1,18 +1,13 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import EditorMixin from '../editor-mixin'
+import EditorMixin from '../editor-mixin/editor-mixin'
 
-import Sortable from 'sortablejs'
-
-Vue.directive('sortable', {
-  inserted: function (el, binding) {
-    if (binding.value) {
-      new Sortable(el, binding.value instanceof Object ? binding.value : {})
-    }
-  }
-})
+import draggable from 'vuedraggable'
 
 @Component({
+  components: {
+    draggable
+  },
   props: {
     value: Array
   }
@@ -41,6 +36,10 @@ Vue.directive('sortable', {
 
   remove (index) {
     this.list.splice(index, 1)
+    this.$emit('input', this.list)
+  }
+
+  dragEnd () {
     this.$emit('input', this.list)
   }
 }

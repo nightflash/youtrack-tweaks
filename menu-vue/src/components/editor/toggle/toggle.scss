@@ -1,8 +1,4 @@
-.component {
-  border: 1px solid #999;
-  white-space: normal;
-  text-align: left;
-}
+@import '../editor-mixin/editor-mixin.scss';
 
 .active {
   color: red;

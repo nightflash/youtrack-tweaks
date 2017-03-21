@@ -8,6 +8,7 @@ function tweak(name, extensionId) {
   let agileBoardNode, agileBoardController, agileBoardEventSource;
 
   let tweakData;
+  let conditionsGroups = [];
 
   const storage = ytTweaks.storage('local');
   const storageKey = `ytTweaks-${name}-notified`;
@@ -51,28 +52,17 @@ function tweak(name, extensionId) {
   function shouldNotify(issue) {
     if (isNotified(issue.id)) return false;
 
-    const orCases = ytTweaks.trimmedSplit(tweakData.newIssueWatcher, ';');
-
-    return orCases.some(orExpression => {
-      const andCases = ytTweaks.trimmedSplit(orExpression, ',');
-
-      return andCases.every(andExpression => {
-        const [fieldName, testValue] = ytTweaks.trimmedSplit(andExpression, ':');
-
-        if (fieldName && testValue !== undefined) {
-          return isFieldEquals(issue, fieldName, testValue);
-        } else {
-          return false;
-        }
+    return conditionsGroups.some(config => {
+      return config.conditions.every(condition => {
+        return isFieldEquals(issue, condition.fieldName, condition.fieldValue) && config;
       });
     });
   }
 
-  function notify(issue, reason = '') {
+  function notify(issue, reason = 'New issue on the board', ttl = 0) {
     addNotified(issue.id);
 
     let closeTimeout;
-    const closeTTL = +tweakData.ttl || 0;
     const notification = new Notification(issue.summary, {
       requireInteraction: true,
       icon: `chrome-extension://${extensionId}/images/128.png`,
@@ -94,7 +84,7 @@ function tweak(name, extensionId) {
     };
 
     notification.onshow = () => {
-      if (closeTTL) {
+      if (ttl) {
         closeTimeout = window.setTimeout(() => notification.close(), closeTTL);
       }
     };
@@ -111,8 +101,11 @@ function tweak(name, extensionId) {
     const issue = data.issue;
     const cardNode = agileBoardNode.querySelector(`[data-issue-id="${data.issue.id}"]`);
 
-    if (!cardNode && shouldNotify(issue)) {
-      notify(issue, 'New issue on the board');
+    if (!cardNode) {
+      const successConfig = shouldNotify(issue);
+      if (successConfig) {
+        notify(issue, successConfig.message, successConfig.ttl);
+      }
     }
   }
 
@@ -145,30 +138,25 @@ function tweak(name, extensionId) {
 
   function runAction() {
     Notification.requestPermission();
-    tweakData = {};
+    conditionsGroups = [];
 
     injects = ytTweaks.inject('$compile', '$timeout', '$rootScope');
 
-    const configs = ytTweaks.getConfigsForTweak(name);
+    const configs = ytTweaks.getConfigsForTweak(name).filter(config => {
+      return ytTweaks.inArray(config.config.sprintName, agileBoardController.sprint.name, true) &&
+          ytTweaks.inArray(config.config.boardName, agileBoardController.agile.name, true);
+    });
+
     if (!configs.length) {
       ytTweaks.log(name, 'no suitable config, sorry');
       return;
     }
 
-
-    const suitableConfigs = configs.filter(config => {
-      const sprintNames = ytTweaks.trimmedSplit(config.config.sprintName);
-      const boardNames = ytTweaks.trimmedSplit(config.config.boardName);
-
-      return ytTweaks.inArray(sprintNames, agileBoardController.sprint.name, true) &&
-        ytTweaks.inArray(boardNames, agileBoardController.agile.name, true);
+    configs.forEach(config => {
+      conditionsGroups.push(config.config);
     });
 
-    if (suitableConfigs.length) {
-      tweakData = suitableConfigs.shift().config;
-    }
-
-    ytTweaks.log(name, 'watchers', tweakData.newIssueWatcher);
+    ytTweaks.log(name, 'watchers', conditionsGroups);
 
     attachToBoardEvents();
   }

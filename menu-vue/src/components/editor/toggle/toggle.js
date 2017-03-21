@@ -1,5 +1,5 @@
 import Component from 'vue-class-component'
-import EditorMixin from '../editor-mixin'
+import EditorMixin from '../editor-mixin/editor-mixin'
 
 @Component({
   props: {

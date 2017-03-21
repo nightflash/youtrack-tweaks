@@ -24,7 +24,7 @@ const ytTweaks = window.ytTweaks = {
   },
 
   getConfigsForTweak(name) {
-    return this.userTweaksConfiguration.filter(c => c.type === name);
+    return this.userTweaksConfiguration.filter(c => (c.type === name && !c.disabled));
   },
 
   inject(...args) {
