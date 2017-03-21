@@ -8,20 +8,19 @@ import EditorMixin from '../editor-mixin'
   }
 })
 export default class extends EditorMixin {
+  tags = []
+
   position = null
   inputValue = ''
 
   beforeMount () {
-    this.setInitialPosition()
-  }
-
-  beforeUpdate () {
+    this.tags = this.value.slice()
     this.setInitialPosition()
   }
 
   setInitialPosition () {
-    if (this.position === null && this.value.length || this.position > this.value.length) {
-      this.position = this.value.length
+    if (this.position === null && this.tags.length || this.position > this.tags.length) {
+      this.position = this.tags.length
     }
   }
 
@@ -34,7 +33,7 @@ export default class extends EditorMixin {
   }
 
   get cursorMode () {
-    return !this.actualValue && this.position < this.value.length
+    return !this.actualValue && this.position < this.tags.length
   }
 
   add () {
@@ -42,34 +41,34 @@ export default class extends EditorMixin {
     this.clear()
 
     if (tag) {
-      if (this.position === this.value.length) {
-        this.value.push(tag)
+      if (this.position === this.tags.length) {
+        this.tags.push(tag)
         this.position++
         this.updateInputPosition()
       } else {
-        this.value.splice(this.position, 0, tag)
+        this.tags.splice(this.position, 0, tag)
       }
 
-      this.$emit('input', this.value)
+      this.$emit('input', this.tags)
     }
   }
 
   remove (index) {
-    this.value.splice(index, 1)
+    this.tags.splice(index, 1)
 
     if (index < this.position) {
       this.position--
       this.updateInputPosition()
     }
 
-    this.$emit('input', this.value)
+    this.$emit('input', this.tags)
   }
 
   removeAtCursor (event) {
     if (this.actualValue === '') {
       if (event.key === 'Backspace' && this.position > 0) {
         this.remove(this.position - 1)
-      } else if (event.key === 'Delete' && this.position < this.value.length) {
+      } else if (event.key === 'Delete' && this.position < this.tags.length) {
         this.remove(this.position)
       }
     }
@@ -86,7 +85,7 @@ export default class extends EditorMixin {
   move (right) {
     if (this.actualValue === '') {
       if (right) {
-        if (this.position < this.value.length) {
+        if (this.position < this.tags.length) {
           this.position++
         }
       } else {
@@ -102,7 +101,7 @@ export default class extends EditorMixin {
   jump (end) {
     if (this.actualValue === '') {
       if (end) {
-        this.position = this.value.length
+        this.position = this.tags.length
       } else {
         this.position = 0
       }
@@ -112,7 +111,7 @@ export default class extends EditorMixin {
   }
 
   updateInputPosition () {
-    const before = this.position < this.value.length ? this.$refs[this.getTagRef(this.position)][0] : null
+    const before = this.position < this.tags.length ? this.$refs[this.getTagRef(this.position)][0] : null
 
     this.$el.insertBefore(this.$refs.inputControl, before)
     this.$refs.input.focus()

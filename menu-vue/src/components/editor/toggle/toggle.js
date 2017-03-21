@@ -13,10 +13,6 @@ export default class extends EditorMixin {
     this.toggleValue = this.value
   }
 
-  beforeUpdate () {
-    this.toggleValue = this.value
-  }
-
   get left () {
     return this.options.left !== undefined ? this.options.left : true
   }

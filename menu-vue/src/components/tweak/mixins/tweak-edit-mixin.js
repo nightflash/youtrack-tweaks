@@ -80,4 +80,13 @@ export default class extends Vue {
   getI18n (key) {
     return this.i18n && this.i18n.en[key]
   }
+
+  checkDependency (key) {
+    const dep = this.schema[key].depends
+    if (!dep) {
+      return true
+    } else {
+      return dep(this.config)
+    }
+  }
 }

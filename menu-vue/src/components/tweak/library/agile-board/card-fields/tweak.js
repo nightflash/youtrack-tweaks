@@ -16,44 +16,27 @@ export const type = 'agile-board/card-fields'
 
 export const name = 'Agile Board Card Fields'
 
-const simpleDecoder = (string = '') => string.split(',').filter(s => s)
-const simpleEncoder = (arr = []) => arr.join(',')
-
-const fieldsDecoder = (string = '') => string.split(',').filter(s => s).map(i => {
-  const itemData = i.split(';')
-  return {
-    label: itemData[0],
-    conversion: itemData.length > 1 ? itemData[1] : 'no',
-    ignoreColors: itemData.length > 2 ? !!itemData[2] : false
-  }
-})
-const fieldsEncoder = (arr = []) => arr.map(i => {
-  return `${i.label};${i.conversion}${i.ignoreColors ? ';yes' : ''}`
-}).join(',')
-
 const tagsEditor = {
   component: TagsInput,
   default: [],
-  options: {},
-  decoder: simpleDecoder,
-  encoder: simpleEncoder
+  options: {}
 }
 
 const fieldsEditor = {
   component: SortedList,
+  depends: config => !config.singleMode,
   default: [],
   options: {
     toolbar: Toolbar,
     view: ItemView,
     item: {
-      label: '',
+      fieldName: '',
       conversion: 'no',
       ignoreColors: false
     },
+    check: item => item.fieldName.trim() !== '',
     sortable: true
-  },
-  decoder: fieldsDecoder,
-  encoder: fieldsEncoder
+  }
 }
 
 const toggleEditor = {
@@ -69,7 +52,11 @@ export const schema = {
   sizeParams0: fieldsEditor,
   sizeParams1: fieldsEditor,
   sizeParams2: fieldsEditor,
-  sizeParams3: fieldsEditor
+  sizeParams3: fieldsEditor,
+  sizeParams: {
+    ...fieldsEditor,
+    depends: config => config.singleMode
+  }
 }
 
 @Component

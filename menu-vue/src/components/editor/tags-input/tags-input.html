@@ -1,7 +1,7 @@
 <div class="component" @click="$refs.input.focus()">
     <div class="label">{{i18n.label}}</div>
 
-    <div class="tag" :ref="getTagRef(index)" v-for="(tag, index) in value">
+    <div class="tag" :ref="getTagRef(index)" v-for="(tag, index) in tags">
         <span>{{tag}}</span>
         <button class="btn btn-default btn-xs" @click="remove(index)">X</button>
     </div>

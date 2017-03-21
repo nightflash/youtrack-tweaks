@@ -1,6 +1,6 @@
 <template>
   <span>
-    <span>{{item.label}}</span>
+    <span>{{item.fieldName}}</span>
     <span>
       {{item.conversion}} {{item.ignoreColors}}
     </span>

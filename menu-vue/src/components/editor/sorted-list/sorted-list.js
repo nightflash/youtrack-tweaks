@@ -17,26 +17,30 @@ Vue.directive('sortable', {
     value: Array
   }
 })export default class extends EditorMixin {
+  list = []
+
   newItem = {...(this.options.item || {})}
+
+  beforeMount () {
+    this.list = this.value.slice()
+  }
 
   clear () {
     this.newItem = {...(this.options.item || {})}
   }
 
-  getItemRef (index) {
-    return `item${index}`
-  }
-
   add () {
-    if (this.newItem.label.trim()) {
-      this.value.push(this.newItem)
-      this.$emit('input', this.value)
+    if (this.options.check && this.options.check(this.newItem)) {
+      this.list.push(this.newItem)
       this.clear()
+      this.$emit('input', this.list)
+    } else {
+      throw new Error('options.check should be a Function')
     }
   }
 
   remove (index) {
-    this.value.splice(index, 1)
-    this.$emit('input', this.value)
+    this.list.splice(index, 1)
+    this.$emit('input', this.list)
   }
 }

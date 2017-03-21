@@ -1,7 +1,7 @@
 <template>
   <span>
     <input class="input" type="text"
-           v-model="value.label" :placeholder="i18n.placeholder"
+           v-model="value.fieldName" :placeholder="i18n.placeholder"
            @keydown.enter="add()" @keydown.esc="clear()">
 
     <select v-model="value.conversion">
