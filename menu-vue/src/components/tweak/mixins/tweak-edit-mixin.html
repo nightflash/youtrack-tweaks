@@ -3,7 +3,7 @@
         <component v-model="config[fieldKey]"
                    v-if="checkDependency(fieldKey)"
                    :i18n="getI18n(fieldKey)"
-                   :is="info[fieldKey].component"
+                   :is="info[fieldKey].edit"
                    :options="info[fieldKey].options">
         </component>
     </div>

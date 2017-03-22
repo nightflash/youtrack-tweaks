@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import EditorMixin from '../editor-mixin/editor-mixin'
+import EditorMixin from '../editor-mixin/edit-mixin'
 
 import draggable from 'vuedraggable'
 

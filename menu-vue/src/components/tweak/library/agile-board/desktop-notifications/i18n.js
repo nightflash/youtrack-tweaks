@@ -10,6 +10,11 @@ export const en = {
     placeholder: 'Any sprint if empty',
     add: 'Add'
   },
+  comparingMode: {
+    label: 'Conditions comparing mode',
+    left: 'Soft',
+    right: 'Strict'
+  },
   conditions: {
     label: 'Notification conditions (interpreted as AND)',
     add: 'Add',

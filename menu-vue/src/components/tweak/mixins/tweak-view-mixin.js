@@ -1,35 +1,7 @@
-import Vue from 'vue'
+import TweakMixin from './tweak-mixin'
 import Component from 'vue-class-component'
 
 @Component({
-  template: require('./tweak-view-mixin.html'),
-  props: {
-    tweak: {
-      type: Object,
-      required: true
-    },
-    schema: Object
-  }
+  template: require('./tweak-view-mixin.html')
 })
-export default class extends Vue {
-  constructor () {
-    super()
-
-    this.config = {}
-    this.schemaKeys = Object.keys(this.schema)
-
-    this.schemaKeys.forEach(key => {
-      this.config[key] = ''
-    })
-  }
-
-  beforeMount () {
-    this.schemaKeys.forEach(key => {
-      this.config[key] = this.tweak.config[key]
-    })
-  }
-
-  getLabel (key) {
-    return this.i18n && this.i18n.en[key].label
-  }
-}
+export default class extends TweakMixin {}
