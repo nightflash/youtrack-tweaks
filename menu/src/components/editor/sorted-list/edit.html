@@ -1,0 +1,21 @@
+<div class="component">
+    <div class="label">{{i18n.label}}</div>
+
+    <div class="toolbar">
+        <component v-if="options.toolbar" :is="options.toolbar" :i18n="i18n" :add="add" :clear="clear" v-model="newItem"></component>
+        <button @click="add()">{{i18n.add}}</button>
+    </div>
+
+    <draggable v-if="options.sortable" v-model="list" class="list" @end="dragEnd()">
+        <li class="item item_sortable" v-for="(item, index) in list">
+            <component v-if="options.view" :is="options.view" :i18n="i18n" :item="item"></component>
+            <button class="list-control" @click="remove(index)">X</button>
+        </li>
+    </draggable>
+    <div v-else class="list">
+        <li class="item" v-for="(item, index) in list">
+            <component v-if="options.view" :is="options.view" :i18n="i18n" :item="item"></component>
+            <button class="list-control" @click="remove(index)">X</button>
+        </li>
+    </div>
+</div>

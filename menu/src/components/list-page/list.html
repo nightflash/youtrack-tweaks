@@ -1,0 +1,16 @@
+<div>
+    <div>
+        <select ref="addSelect" @change="addNewTweak()">
+            <option value="">Select tweak to add new one</option>
+            <option :value="option.type" v-for="option in addOptions">{{option.name}}</option>
+        </select>
+    </div>
+
+    <draggable v-model="tweaks" @end="dragEnd()">
+        <div v-for="(tweak, index) in tweaks" class="tweak"  @click="edit(index)">
+            <div><span class="title">{{ getTweakExports(tweak).name }}</span> <span v-show="tweak.url">({{ tweak.url }})</span></div>
+            <component :is="getTweakExports(tweak).View" :tweak="tweak" :schema="getTweakExports(tweak).schema"></component>
+            <button @click.stop="remove(index)">Remove</button>
+        </div>
+    </draggable>
+</div>
