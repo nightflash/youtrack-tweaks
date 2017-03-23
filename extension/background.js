@@ -184,7 +184,16 @@ chrome.runtime.onMessage.addListener((request, sender) => {
   }
 });
 
-chrome.storage.sync.get('tweaks', data => {
+chrome.storage.sync.get(['tweaks', 'version'], data => {
+  if (!data.version) {
+    console.log('old version detected, cleaning configuration')
+    data = {
+      tweaks: [],
+      version: 1
+    }
+    chrome.storage.sync.set(data);
+  }
+
   userTweaksConfiguration = data.tweaks || [];
   console.log('initial tweaks fetched', userTweaksConfiguration);
 });
