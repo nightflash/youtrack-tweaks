@@ -9,7 +9,6 @@ import ToggleEdit from '@/components/editor/toggle/edit.vue'
 
 import TagsInputView from '@/components/editor/tags-input/view.vue'
 import SortedListView from '@/components/editor/sorted-list/view.vue'
-import ToggleView from '@/components/editor/toggle/view.vue'
 
 import Toolbar from './toolbar.vue'
 import ItemView from './view.vue'
@@ -47,7 +46,6 @@ const fieldsEditor = {
 
 const toggleEditor = {
   edit: ToggleEdit,
-  view: ToggleView,
   default: true,
   options: {}
 }

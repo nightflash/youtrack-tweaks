@@ -1,29 +1,60 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import draggable from 'vuedraggable'
 
-import {ADD_TWEAK, UPDATE_TWEAK, REMOVE_ALL_TWEAKS, REMOVE_TWEAK} from '../../vuex/actions'
+import {ADD_TWEAK, SET_TWEAKS, REMOVE_TWEAK} from '../../vuex/actions'
 
 import tweaksLibrary from '../tweak/library/index'
 
-@Component()
+@Component({
+  components: {
+    draggable
+  }
+})
 export default class extends Vue {
-  addNewTweak (type) {
-    this.$store.dispatch(ADD_TWEAK, {
-      type: type
-    })
+  watch = null
+  tweaks = []
+
+  created () {
+    this.watch = this.$store.watch(() => this.$store.state.tweaks, newTweaks => {
+      this.tweaks = newTweaks.slice()
+    }, {immediate: true})
   }
 
-  updateTweak() {
-    this.$store.dispatch(UPDATE_TWEAK, {
-      index: 0,
-      tweak: {
-        name: 'updated'
+  destroyed () {
+    this.watch()
+  }
+
+  get addOptions() {
+    return Array.from(tweaksLibrary.entries()).map(entity => {
+      return {
+        type: entity[0],
+        name: entity[1].name
       }
     })
   }
 
-  removeAllTweaks() {
-    this.$store.dispatch(REMOVE_ALL_TWEAKS)
+  dragEnd () {
+    this.$store.dispatch(SET_TWEAKS, {
+      tweaks: this.tweaks
+    })
+  }
+
+  addNewTweak (type = this.$refs.addSelect.value) {
+    this.$refs.addSelect.value = ''
+
+    const tweakExports = tweaksLibrary.get(type)
+    const config = {}
+
+    Object.keys(tweakExports.schema).forEach(schemaKey => {
+      config[schemaKey] = tweakExports.schema[schemaKey].default
+    })
+
+    this.$store.dispatch(ADD_TWEAK, {
+      type: type,
+      disabled: false,
+      config
+    })
   }
 
   edit(index) {
@@ -34,10 +65,6 @@ export default class extends Vue {
     this.$store.dispatch(REMOVE_TWEAK, {
       index
     })
-  }
-
-  get tweaks () {
-    return this.$store.state.tweaks
   }
 
   getTweakExports(tweak) {

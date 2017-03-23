@@ -1,15 +1,16 @@
 <div>
-    <h1 class="active">List of tweaks</h1>
-
-    <div v-for="(tweak, index) in tweaks">
-        <div>{{ getTweakExports(tweak).name }}</div>
-        <div>{{ tweak.url }}</div>
-        <component :is="getTweakExports(tweak).View" :tweak="tweak" :schema="getTweakExports(tweak).schema"></component>
-        <button class="btn btn-xs btn-default" @click="edit(index)">Edit</button>
-        <button class="btn btn-xs btn-default" @click="remove(index)">Remove</button>
+    <div>
+        <select ref="addSelect" @change="addNewTweak()">
+            <option value="">Select tweak to add new one</option>
+            <option :value="option.type" v-for="option in addOptions">{{option.name}}</option>
+        </select>
     </div>
 
-    <button @click="addNewTweak('agile-board/card-fields')">Add new tweak A</button>
-
-    <button @click="addNewTweak('agile-board/desktop-notifications')">Add new tweak B</button>
+    <draggable v-model="tweaks" @end="dragEnd()">
+        <div v-for="(tweak, index) in tweaks" class="tweak"  @click="edit(index)">
+            <div><span class="title">{{ getTweakExports(tweak).name }}</span> <span v-show="tweak.url">({{ tweak.url }})</span></div>
+            <component :is="getTweakExports(tweak).View" :tweak="tweak" :schema="getTweakExports(tweak).schema"></component>
+            <button @click.stop="remove(index)">Remove</button>
+        </div>
+    </draggable>
 </div>

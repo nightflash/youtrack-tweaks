@@ -7,12 +7,17 @@ export const ADD_TWEAK = 'addTweak'
 export const UPDATE_TWEAK = 'updateTweak'
 export const REMOVE_TWEAK = 'removeTweak'
 export const REMOVE_ALL_TWEAKS = 'removeAllTweaks'
+export const SET_TWEAKS = 'setTweaks'
 
 export default {
   [RELOAD_TWEAKS] ({commit}) {
     return storage.get('tweaks').then((tweaks = []) => {
       commit(SET_TWEAKS_MUT, {tweaks, doNotSync: true})
     })
+  },
+
+  [SET_TWEAKS] ({commit}, {tweaks}) {
+    commit(SET_TWEAKS_MUT, {tweaks})
   },
 
   [ADD_TWEAK] ({commit}, {type, url = '', config = {}}) {

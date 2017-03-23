@@ -1,4 +1,4 @@
-<div>
+<div v-show="items.length">
     <div v-for="(item, index) in items">
         <component v-if="options.view" :is="options.view" :i18n="i18n" :item="item"></component>
     </div>

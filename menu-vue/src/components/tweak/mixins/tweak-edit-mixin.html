@@ -1,7 +1,7 @@
 <div>
     <div v-for="fieldKey in schemaKeys" :key="fieldKey">
         <component v-model="config[fieldKey]"
-                   v-if="checkDependency(fieldKey)"
+                   v-if="info[fieldKey].edit && checkDependency(fieldKey)"
                    :i18n="getI18n(fieldKey)"
                    :is="info[fieldKey].edit"
                    :options="info[fieldKey].options">

@@ -5,11 +5,9 @@ import TweakViewMixin from '../../../mixins/tweak-view-mixin'
 
 import TagsInputEdit from '@/components/editor/tags-input/edit.vue'
 import SortedListEdit from '@/components/editor/sorted-list/edit.vue'
-import ToggleEdit from '@/components/editor/toggle/edit.vue'
 
 import TagsInputView from '@/components/editor/tags-input/view.vue'
 import SortedListView from '@/components/editor/sorted-list/view.vue'
-import ToggleView from '@/components/editor/toggle/view.vue'
 
 import Toolbar from './toolbar.vue'
 import ItemView from './view.vue'
@@ -45,8 +43,6 @@ const conditionsEditor = {
 }
 
 const toggleEditor = {
-  edit: ToggleEdit,
-  view: ToggleView,
   default: true,
   options: {}
 }
