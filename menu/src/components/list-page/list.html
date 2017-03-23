@@ -13,4 +13,11 @@
             <button @click.stop="remove(index)">Remove</button>
         </div>
     </draggable>
+
+    <div v-show="!tweaks.length">
+        <p>You have no configured tweaks or your configuration was incompatible with new version of
+        this extension and unfortunately was removed. I am so sorry and will try to avoid
+        such things in future.</p>
+        <p>Use menu above and add some tweaks!</p>
+    </div>
 </div>
