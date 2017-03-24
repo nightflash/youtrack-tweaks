@@ -11,8 +11,17 @@
     <component :is="tweakExports.Edit" :tweak="tweak" :schema="tweakExports.schema" :changed="changed"></component>
 
     <div class="footer">
-        <button class="btn btn-xs btn-primary" @click="save(url, config)">Save</button>
-        <button class="btn btn-xs btn-default" @click="save(url, config, true)">Save and go to list</button>
-        <button class="btn btn-xs btn-default" @click="cancel()">Back</button>
+        <div class="footer__left">
+            <button @click.stop="remove(index)">Remove</button>
+        </div>
+
+        <div class="footer__center">
+            <button class="btn btn-xs btn-primary" @click="save(url, config)">Save config</button>
+            <button class="btn btn-xs btn-default" @click="save(url, config, true)">Save and go to list</button>
+        </div>
+
+        <div class="footer__right">
+            <button class="btn btn-xs btn-default" @click="cancel()">Back</button>
+        </div>
     </div>
 </div>
