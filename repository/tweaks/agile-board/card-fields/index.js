@@ -79,7 +79,7 @@ function tweak(name) {
             getValueClasses(value) {
               let classes = `yt-tweak-field-value-${conversionType}`;
               if (+value.color.id && useColors) {
-                classes += ` color-fields__background-${value.color.id} color-fields__field-${value.color.id}`;
+                classes += ` yt-tweak-field-value-colored color-fields__background-${value.color.id} color-fields__field-${value.color.id}`;
               }
               return classes;
             }
