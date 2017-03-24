@@ -50,13 +50,15 @@ export default class extends Vue {
       config[schemaKey] = tweakExports.schema[schemaKey].default
     })
 
+    const newIndex = this.tweaks.length
+
     this.$store.dispatch(ADD_TWEAK, {
       type: type,
       disabled: false,
       config
     })
 
-    this.edit(this.tweaks.length - 1)
+    this.edit(newIndex)
   }
 
   edit(index) {
