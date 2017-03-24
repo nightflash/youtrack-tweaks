@@ -7,6 +7,9 @@ ssh root@youtrack-tweaks.com "cd /var/www/youtrack-tweaks/ && git pull && cd rep
 Repository only:
 ssh root@youtrack-tweaks.com "cd /var/www/youtrack-tweaks/ && git pull && cd repository/ && npm run build"
 
+Menu only:
+ssh root@youtrack-tweaks.com "cd /var/www/youtrack-tweaks/ && git pull && cd menu/ && npm run build"
+
 
 SSL:
 https://certbot.eff.org/#ubuntuxenial-nginx
