@@ -56,8 +56,8 @@ function tweak(name) {
     const scope = injects.$rootScope.$new();
     scope.ytAgileCardCtrl = cardCtrl;
 
-    scope.ytTweakFields = (enumeratedIssueFields = []) => {
-      return enumeratedIssueFields
+    scope.ytTweakFields = (issueFields = []) => {
+      return issueFields
         .filter(f => allowedFieldNames.indexOf(f.projectCustomField.field.name) !== -1)
         .map(f => {
           const index = allowedFieldNames.indexOf(f.projectCustomField.field.name);
@@ -95,7 +95,7 @@ function tweak(name) {
 
     const compiledElement = injects.$compile(`
         <span class="${tweakClass}">
-          <span class="yt-tweak-field" ng-repeat="field in ytTweakFields(ytAgileCardCtrl.enumeratedFieldValues) track by field.id">
+          <span class="yt-tweak-field" ng-repeat="field in ytTweakFields(ytAgileCardCtrl.issue.fields) track by field.id">
             <span ng-repeat="value in field.ytTweakData.values track by value.id" title="{{value.name}}"
               class="{{field.ytTweakData.getValueClasses(value)}}">{{field.ytTweakData.getValueName(value.name)}}</span>
           </span>
