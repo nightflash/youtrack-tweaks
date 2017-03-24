@@ -154,6 +154,18 @@ function checkAndInject(details) {
   return chain;
 }
 
+function getYoutrackTabsByQuery(query = {title: '*YouTrack*'}) {
+  return new Promise(resolve => {
+    chrome.tabs.query(query, function(tabs) {
+      resolve(tabs);
+    });
+  });
+}
+
+function reloadTab(tab) {
+  return chrome.tabs.reload(tab.id);
+}
+
 chrome.webNavigation.onBeforeNavigate.addListener(details => {
   youtrackTabs.delete(details.id);
 });
@@ -199,6 +211,10 @@ chrome.storage.sync.get(['tweaks', 'version'], data => {
 });
 
 reloadRepositoryConfiguration().then(() => {
+  getYoutrackTabsByQuery().then(tabs => {
+    tabs.forEach(reloadTab);
+  });
+
   window.setInterval(() => {
     reloadRepositoryConfiguration().then(shouldUpdate => {
       console.log('check for new version: ', shouldUpdate);
