@@ -16,11 +16,10 @@ function tweak(name) {
     const revertOnBoardSelect = ytTweaks.mockMethod(agileBoardController, 'onBoardSelect', run);
     const revertOnSprintSelect = ytTweaks.mockMethod(agileBoardController, 'onSprintSelect', run);
     const revertOnChangeCardDetailLevel = ytTweaks.mockMethod(agileBoardController, 'onChangeCardDetailLevel', run);
-    const revertLoadMoreCards = ytTweaks.mockMethod(agileBoardController, 'toggleSwimlane', promise => {
-      promise.then(tweakNewCards);
-    });
+    const revertLoadMoreCards = ytTweaks.mockMethod(agileBoardController, 'toggleSwimlane', promise => promise.then(tweakNewCards));
+    const revertCollapseBoardColumn = ytTweaks.mockMethod(agileBoardController, 'collapseBoardColumn', () => injects.$timeout(tweakNewCards));
 
-    stopFns.push(revertOnBoardSelect, revertOnSprintSelect, revertOnChangeCardDetailLevel, revertLoadMoreCards);
+    stopFns.push(revertOnBoardSelect, revertOnSprintSelect, revertOnChangeCardDetailLevel, revertLoadMoreCards, revertCollapseBoardColumn);
 
     const onSprintCellUpdate = event => {
       const data = JSON.parse(event.data);
