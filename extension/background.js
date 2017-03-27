@@ -219,10 +219,12 @@ function readSavedConfiguration() {
 function setDefaultTweaks() {
   return asyncLoad('default.json?' + repositoryTweaksConfig.version).
   then(content => {
+    const tweaks = JSON.parse(content);
     storage.set({
       welcome: true,
-      tweaks: JSON.parse(content)
-    })
+      tweaks
+    });
+    userTweaksConfiguration = tweaks;
   });
 }
 
