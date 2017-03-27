@@ -1,5 +1,6 @@
 <div class="component">
     <div class="label">{{i18n.label}}</div>
-    <input class="input" v-if="!options.multiline" type="text" @input="inputHandler" :value="value">
-    <textarea class="input" v-if="options.multiline" @input="inputHandler" :value="value"></textarea>
+    <input class="input" v-if="!options.multiline" :type="type" @input="inputHandler" :value="value" :placeholder="i18n.placeholder">
+    <textarea class="input" v-if="options.multiline" @input="inputHandler" :value="value" :placeholder="i18n.placeholder"></textarea>
+    <div class="description" v-show="i18n.description">{{i18n.description}}</div>
 </div>

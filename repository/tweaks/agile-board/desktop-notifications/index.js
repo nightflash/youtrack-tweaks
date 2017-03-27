@@ -51,22 +51,28 @@ function tweak(name, extensionId) {
 
   function shouldNotify(issue) {
     if (isNotified(issue.id)) return false;
+    let _config;
 
-    return conditionsGroups.some(config => {
+    const checkResult = conditionsGroups.some(config => {
+      _config = config;
       return config.conditions.every(condition => {
-        return isFieldEquals(issue, condition.fieldName, condition.fieldValue) && config;
+        return isFieldEquals(issue, condition.fieldName, condition.fieldValue);
       });
     });
+
+    return checkResult ? _config : false;
   }
 
-  function notify(issue, reason = 'New issue on the board', ttl = 0) {
+  const defaultIcon = `chrome-extension://${extensionId}/images/128.png`;
+
+  function notify(issue, body, ttl, icon) {
     addNotified(issue.id);
 
     let closeTimeout;
     const notification = new Notification(issue.summary, {
       requireInteraction: true,
-      icon: `chrome-extension://${extensionId}/images/128.png`,
-      body: reason
+      icon: icon || defaultIcon,
+      body: body || 'New issue on the board'
     });
     notification.onclick = () => {
       notification.close();
@@ -84,8 +90,8 @@ function tweak(name, extensionId) {
     };
 
     notification.onshow = () => {
-      if (ttl) {
-        closeTimeout = window.setTimeout(() => notification.close(), closeTTL);
+      if (+ttl > 0) {
+        closeTimeout = window.setTimeout(() => notification.close(), ttl);
       }
     };
 
@@ -104,7 +110,7 @@ function tweak(name, extensionId) {
     if (!cardNode) {
       const successConfig = shouldNotify(issue);
       if (successConfig) {
-        notify(issue, successConfig.message, successConfig.ttl);
+        notify(issue, successConfig.message, successConfig.ttl, successConfig.icon);
       }
     }
   }

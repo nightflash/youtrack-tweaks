@@ -7,6 +7,10 @@ import EditorMixin from '../editor-mixin/edit-mixin'
   }
 })
 export default class extends EditorMixin {
+  get type () {
+    return this.options.type ? this.options.type : 'text'
+  }
+
   inputHandler (event) {
     this.$emit('input', event.target.value)
   }

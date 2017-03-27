@@ -64,6 +64,20 @@ export const schema = {
     default: name
   },
   url: textEditor,
+  message: textEditor,
+  ttl: {
+    ...textEditor,
+    default: '',
+    options: {
+      type: 'number'
+    }
+  },
+  icon: {
+    ...textEditor,
+    options: {
+      multiline: true
+    }
+  },
   boardName: tagsEditor,
   sprintName: tagsEditor,
   comparingMode: toggleEditor,

@@ -16,6 +16,18 @@ export const en = {
     placeholder: 'Any sprint if empty',
     add: 'Add'
   },
+  message: {
+    label: 'Additional message',
+    description: 'Displayed on the notifications below issue title'
+  },
+  ttl: {
+    label: 'Notification TTL (ms)',
+    description: 'Empty for infinite notifications'
+  },
+  icon: {
+    label: 'Custom icon',
+    description: 'Should starts from data:...'
+  },
   comparingMode: {
     label: 'Conditions comparing mode',
     left: 'Soft',
