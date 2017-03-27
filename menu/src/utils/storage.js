@@ -1,5 +1,5 @@
-function getStorage() {
-  return window.browser ? window.chrome.storage.local : window.chrome.storage.sync;
+function getStorage () {
+  return window.browser ? window.chrome.storage.local : window.chrome.storage.sync
 }
 
 export default {
