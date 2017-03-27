@@ -20,25 +20,23 @@ export default {
     commit(SET_TWEAKS_MUT, {tweaks})
   },
 
-  [ADD_TWEAK] ({commit}, {type, url = '', config = {}}) {
+  [ADD_TWEAK] ({commit}, {type, config = {}}) {
     commit(ADD_TWEAK_MUT, {
       tweak: {
         id: +new Date(),
         type,
-        url,
         config
       }
     })
   },
 
-  [UPDATE_TWEAK] ({commit, state}, {index, url = '', config = {}}) {
+  [UPDATE_TWEAK] ({commit, state}, {index, config = {}}) {
     const tweak = state.tweaks[index]
 
     commit(UPDATE_TWEAK_MUT, {index,
       tweak: {
         id: tweak.id,
         type: tweak.type,
-        url: url,
         config
       }
     })

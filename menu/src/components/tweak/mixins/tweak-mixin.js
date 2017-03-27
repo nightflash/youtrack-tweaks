@@ -29,6 +29,9 @@ function getEncoder (schemaItem) {
       type: Object,
       required: true
     },
+    expertView: {
+      type: Boolean
+    },
     schema: Object,
     changed: Function
   }

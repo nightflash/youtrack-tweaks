@@ -1,6 +1,6 @@
 <div>
     <div v-for="fieldKey in schemaKeys">
-        <component v-if="info[fieldKey].view && checkDependency(fieldKey)"
+        <component v-if="info[fieldKey].view && checkDependency(fieldKey) && fieldKey !== 'title'"
                    :value="config[fieldKey]"
                    :i18n="getI18n(fieldKey)"
                    :is="info[fieldKey].view"

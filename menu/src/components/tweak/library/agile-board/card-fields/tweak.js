@@ -4,11 +4,15 @@ import TweakEditMixin from '../../../mixins/tweak-edit-mixin'
 import TweakViewMixin from '../../../mixins/tweak-view-mixin'
 
 import TagsInputEdit from '@/components/editor/tags-input/edit.vue'
+import TagsInputView from '@/components/editor/tags-input/view.vue'
+
 import SortedListEdit from '@/components/editor/sorted-list/edit.vue'
+import SortedListView from '@/components/editor/sorted-list/view.vue'
+
 import ToggleEdit from '@/components/editor/toggle/edit.vue'
 
-import TagsInputView from '@/components/editor/tags-input/view.vue'
-import SortedListView from '@/components/editor/sorted-list/view.vue'
+import TextEdit from '@/components/editor/text/edit.vue'
+import TextView from '@/components/editor/text/view.vue'
 
 import Toolbar from './toolbar.vue'
 import ItemView from './view.vue'
@@ -17,7 +21,7 @@ import * as i18n from './i18n'
 
 export const type = 'agile-board/card-fields'
 
-export const name = 'Agile Board Card Fields'
+export const name = 'Agile board card fields'
 
 const tagsEditor = {
   edit: TagsInputEdit,
@@ -27,6 +31,7 @@ const tagsEditor = {
 }
 
 const fieldsEditor = {
+  simple: true,
   edit: SortedListEdit,
   view: SortedListView,
   depends: config => !config.singleMode,
@@ -50,7 +55,19 @@ const toggleEditor = {
   options: {}
 }
 
+const textEditor = {
+  edit: TextEdit,
+  view: TextView,
+  default: '',
+  options: {}
+}
+
 export const schema = {
+  title: {
+    ...textEditor,
+    default: name
+  },
+  url: textEditor,
   boardName: tagsEditor,
   sprintName: tagsEditor,
   singleMode: toggleEditor,

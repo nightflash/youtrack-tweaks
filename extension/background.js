@@ -69,7 +69,10 @@ function forAllTabs(action) {
   });
 }
 
-const configFilter = (config, details) => (config.url === '' || details.url.indexOf(config.url) !== -1);
+const configFilter = (config, details) => {
+  const url = config.config && config.config.url || '';
+  return (url === '' || details.url.indexOf(url) !== -1);
+};
 
 function sendSafeStop(details) {
   console.log('sending stop', details.url);
@@ -196,29 +199,47 @@ chrome.runtime.onMessage.addListener((request, sender) => {
   }
 });
 
-chrome.storage.sync.get(['tweaks', 'version'], data => {
-  if (!data.version) {
-    console.log('old version detected, cleaning configuration')
-    data = {
-      tweaks: [],
-      version: 1
-    }
-    chrome.storage.sync.set(data);
-  }
+const storage = window.browser ? chrome.storage.local : chrome.storage.sync; // fix for firefox
 
-  userTweaksConfiguration = data.tweaks || [];
-  console.log('initial tweaks fetched', userTweaksConfiguration);
-});
+function readSavedConfiguration() {
+  return new Promise(resolve => {
+    storage.get(['tweaks', 'version'], data => {
+      userTweaksConfiguration = data.tweaks || [];
+      console.log('initial tweaks fetched', JSON.stringify(userTweaksConfiguration));
 
-reloadRepositoryConfiguration().then(() => {
-  getYoutrackTabsByQuery().then(tabs => {
-    tabs.forEach(reloadTab);
+      if (!data.welcome && userTweaksConfiguration.length === 0) {
+        resolve(setDefaultTweaks());
+      } else {
+        resolve();
+      }
+    });
   });
+}
 
+function setDefaultTweaks() {
+  return asyncLoad('default.json?' + repositoryTweaksConfig.version).
+  then(content => {
+    storage.set({
+      welcome: true,
+      tweaks: JSON.parse(content)
+    })
+  });
+}
+
+function scheduleCheck() {
   window.setInterval(() => {
     reloadRepositoryConfiguration().then(shouldUpdate => {
       console.log('check for new version: ', shouldUpdate);
       shouldUpdate && forAllTabs(checkAndInject);
     });
   }, 60 * 30 * 1000);
+}
+
+reloadRepositoryConfiguration().then(() => {
+  return readSavedConfiguration()
+    .then(getYoutrackTabsByQuery)
+    .then(tabs => {
+      tabs.forEach(reloadTab);
+    })
+    .then(scheduleCheck);
 });

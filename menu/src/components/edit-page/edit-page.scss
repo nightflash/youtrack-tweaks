@@ -25,4 +25,13 @@
 .title {
   font-size: 16px;
   text-align: center;
+  margin-bottom: 10px;
+}
+
+.view-mode {
+  position: absolute;
+  cursor: pointer;
+  border-bottom: 1px dashed #555;
+  line-height: 14px;
+  top: 8px;
 }

@@ -1,0 +1,52 @@
+[
+  {
+    "config": {
+      "boardName": [],
+      "comparingMode": true,
+      "conditions": [
+        {
+          "fieldName": "Type",
+          "fieldValue": "Bug",
+          "mode": "contains"
+        }
+      ],
+      "sprintName": [],
+      "title": "Default notifications tweak",
+      "url": ""
+    },
+    "id": 1490620313538,
+    "type": "agile-board/desktop-notifications"
+  },
+  {
+    "config": {
+      "boardName": [],
+      "singleMode": true,
+      "sizeParams": [
+        {
+          "conversion": "no",
+          "ignoreColors": false,
+          "name": "Type"
+        },
+        {
+          "conversion": "letter",
+          "ignoreColors": false,
+          "name": "Subsystem"
+        },
+        {
+          "conversion": "letter",
+          "ignoreColors": false,
+          "name": "Subsystems"
+        }
+      ],
+      "sizeParams0": [],
+      "sizeParams1": [],
+      "sizeParams2": [],
+      "sizeParams3": [],
+      "sprintName": [],
+      "title": "Default cards tweak",
+      "url": ""
+    },
+    "id": 1490620532361,
+    "type": "agile-board/card-fields"
+  }
+]

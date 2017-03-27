@@ -9,6 +9,7 @@ import {UPDATE_TWEAK, REMOVE_TWEAK} from '../../vuex/actions'
 export default class extends Vue {
   url = ''
   config = {}
+  expertView = false
 
   get tweak() {
     const index = this.$route.params.index
@@ -27,10 +28,9 @@ export default class extends Vue {
     this.config = newConfig
   }
 
-  save(url, config, navigateAfterSave) {
+  save(config, navigateAfterSave) {
     this.$store.dispatch(UPDATE_TWEAK, {
       index: this.$store.state.tweaks.indexOf(this.tweak),
-      url,
       config
     })
 
@@ -51,4 +51,11 @@ export default class extends Vue {
     this.cancel()
   }
 
+  get simpleView () {
+    return !this.expertView
+  }
+
+  toggleViewMode () {
+    this.expertView = !this.expertView
+  }
 }
