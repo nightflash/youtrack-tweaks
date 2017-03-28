@@ -29,7 +29,7 @@ function asyncLoad(path) {
   });
 }
 
-function injectTagWithContent(details, content, isJS = true, fnArgs = []) {
+function injectTagWithContent(tab, content, isJS = true, fnArgs = []) {
   const newLineReplacement = '!nl!';
   let escapedContent = content.trim()
       .replace(new RegExp("'", 'g'), "\\'") // escape single quotes
@@ -53,39 +53,40 @@ function injectTagWithContent(details, content, isJS = true, fnArgs = []) {
     })(); 
   `;
 
-  chrome.tabs.executeScript(details.id, {code});
+  chrome.tabs.executeScript(tab.id, {code});
 }
 
-function loadAndInject(details, path, ...args) {
+function loadAndInject(tab, path, ...args) {
   return asyncLoad(path).then(content => {
-    injectTagWithContent(details, content, path.indexOf('.js') !== -1, args);
+    injectTagWithContent(tab, content, path.indexOf('.js') !== -1, args);
   });
 }
 
 function forAllTabs(action) {
   youtrackTabs.forEach((tabData, tabId) => {
     console.log('updating tab', tabId);
-    action(tabData.details);
+    action(tabData.tab);
   });
 }
 
-const configFilter = (config, details) => {
+const configFilter = (config, tab) => {
+  console.log('config filter', tab.id)
   const url = config.config && config.config.url || '';
-  return (url === '' || details.url.indexOf(url) !== -1);
+  return (url === '' || tab.url.indexOf(url) !== -1);
 };
 
-function sendSafeStop(details) {
-  console.log('sending stop', details.url);
-  injectTagWithContent(details, `
+function sendSafeStop(tab) {
+  console.log('sending stop', tab.url);
+  injectTagWithContent(tab, `
     window.ytTweaks && window.ytTweaks.stopTweaks();
   `);
   return Promise.resolve();
 }
 
-function sendConfiguration(details) {
-  const filteredConfigs = userTweaksConfiguration.filter(config => configFilter(config, details));
-  console.log('sending configuration', details.url, filteredConfigs);
-  injectTagWithContent(details, `
+function sendConfiguration(tab) {
+  const filteredConfigs = userTweaksConfiguration.filter(config => configFilter(config, tab));
+  console.log('sending configuration', tab.url, filteredConfigs);
+  injectTagWithContent(tab, `
     window.ytTweaks.configure(${JSON.stringify(filteredConfigs)});
   `);
   return Promise.resolve();
@@ -119,19 +120,19 @@ function getTweaksFromJSON(json, path = '') {
   }
 }
 
-function checkAndInject(details) {
-  console.log(details);
+function checkAndInject(tab) {
+  console.log('checkAndInject', tab);
 
   const version = develop ? Math.random() : repositoryTweaksConfig.version;
-  const tabData = youtrackTabs.get(details.id);
+  const tabData = youtrackTabs.get(tab.id);
 
-  const matchedConfigs = userTweaksConfiguration.slice().filter(config => configFilter(config, details)).map(c => c.type);
+  const matchedConfigs = userTweaksConfiguration.slice().filter(config => configFilter(config, tab)).map(c => c.type);
 
-  let chain = sendSafeStop(details);
+  let chain = sendSafeStop(tab);
 
   if (matchedConfigs.length) {
     if (!tabData.coreInjected || tabData.coreInjected !== version) {
-      chain = chain.then(() => loadAndInject(details, `index.js?v=${version}`));
+      chain = chain.then(() => loadAndInject(tab, `index.js?v=${version}`));
       tabData.coreInjected = version;
     }
 
@@ -142,8 +143,8 @@ function checkAndInject(details) {
       repositoryTweaksConfig.tweaks.forEach(tweak => {
         const existingVersion = tabData.injected.get(tweak.name);
         if ((!existingVersion || existingVersion !== version) && matchedConfigs.indexOf(tweak.name) !== -1) {
-          tweak.config.js && promises.push(loadAndInject(details, `${tweak.name}/index.js?v=${version}`, tweak.name, chrome.runtime.id));
-          tweak.config.css && promises.push(loadAndInject(details, `${tweak.name}/index.css?v=${version}`));
+          tweak.config.js && promises.push(loadAndInject(tab, `${tweak.name}/index.js?v=${version}`, tweak.name, chrome.runtime.id));
+          tweak.config.css && promises.push(loadAndInject(tab, `${tweak.name}/index.css?v=${version}`));
 
           tabData.injected.set(tweak.name, version);
         }
@@ -151,7 +152,7 @@ function checkAndInject(details) {
 
       return Promise.all(promises);
     }).
-    then(() => sendConfiguration(details));
+    then(() => sendConfiguration(tab));
   }
 
   return chain;
@@ -170,7 +171,16 @@ function reloadTab(tab) {
 }
 
 chrome.webNavigation.onBeforeNavigate.addListener(details => {
-  youtrackTabs.delete(details.id);
+  youtrackTabs.delete(details.tabId);
+});
+
+chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
+  const youtrackTab = youtrackTabs.get(details.tabId);
+  if (youtrackTab) {
+    setTimeout(() => {
+      checkAndInject(youtrackTab.tab);
+    }, 200);
+  }
 });
 
 chrome.tabs.onRemoved.addListener(tabId => {
@@ -181,16 +191,14 @@ chrome.runtime.onMessage.addListener((request, sender) => {
   console.log('New messsage', request, sender);
 
   if (request.probe) {
-    console.log('Successful probe');
+    const tab = sender.tab;
 
-    const details = sender.tab;
-
-    youtrackTabs.set(details.id, {
-      details: details,
+    youtrackTabs.set(tab.id, {
+      tab: tab,
       injected: new Map(),
       coreInjected: false
     });
-    checkAndInject(details);
+    checkAndInject(tab);
   } else if (request.tweaks) {
     console.log('Recieve new tweaks config');
 
