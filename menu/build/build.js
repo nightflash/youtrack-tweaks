@@ -13,6 +13,12 @@ var webpackConfig = require('./webpack.prod.conf')
 var spinner = ora('building for production...')
 spinner.start()
 
+var watchMode = (process.argv.indexOf('--watch') !== -1)
+
+if (watchMode) {
+  webpackConfig.watch = true
+}
+
 rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
   if (err) throw err
   webpack(webpackConfig, function (err, stats) {
@@ -31,5 +37,7 @@ rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
       '  Tip: built files are meant to be served over an HTTP server.\n' +
       '  Opening index.html over file:// won\'t work.\n'
     ))
+
+    watchMode && console.log(chalk.red('  ====> Watch mode enabled\n'))
   })
 })
