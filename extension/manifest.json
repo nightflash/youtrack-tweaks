@@ -18,7 +18,6 @@
     "default_popup": "popup.html"
   },
   "permissions": [ "webNavigation", "*://*/*", "storage", "tabs"],
-  "content_security_policy": "script-src 'self' 'unsafe-eval' https://extension.youtrack-tweaks.com http://localhost:4200; object-src 'self'",
   "content_scripts": [{
     "js": ["content_script.js"],
     "matches": ["*://*/*"]

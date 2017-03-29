@@ -1,7 +1,7 @@
 import Component from 'vue-class-component'
 
-import TweakEditMixin from '../../../mixins/tweak-edit-mixin'
-import TweakViewMixin from '../../../mixins/tweak-view-mixin'
+import TweakEditMixin from '../../../mixins/tweak-edit-mixin.vue'
+import TweakViewMixin from '../../../mixins/tweak-view-mixin.vue'
 
 import TagsInputEdit from '@/components/editor/tags-input/edit.vue'
 import TagsInputView from '@/components/editor/tags-input/view.vue'
