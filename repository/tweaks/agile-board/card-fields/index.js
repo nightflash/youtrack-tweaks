@@ -147,7 +147,7 @@ function tweak(name) {
         fields = config[`sizeParams${agileBoardController.cardDetailLevel}`];
       }
 
-      fields.reverse().forEach(field => {
+      fields.slice().reverse().forEach(field => {
         fieldsToShow.push(field);
       });
     });
