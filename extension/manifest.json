@@ -24,6 +24,7 @@
     "matches": ["*://*/*"]
   }],
   "web_accessible_resources": [
-    "images/*.png"
+    "images/*.png",
+    "repository/*"
   ]
 }

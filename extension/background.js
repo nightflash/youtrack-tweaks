@@ -1,12 +1,4 @@
 console.log('YouTrack tweaks');
-let develop = false;
-
-chrome.management.getSelf(info => {
-  if (info.installType === 'development') {
-    console.warn('DEVELOPMENT');
-    develop = true;
-  }
-});
 
 const youtrackTabs = new Map();
 
@@ -19,7 +11,7 @@ let userTweaksConfiguration = [];
 
 function asyncLoad(path) {
   return new Promise(function(resolve, reject) {
-    const serverUrl = develop ? 'http://localhost:8083/' : 'https://extension.youtrack-tweaks.com/repository/';
+    const serverUrl = `chrome-extension://${chrome.runtime.id}/repository/`;
 
     const xhr = new XMLHttpRequest();
     xhr.open('GET', serverUrl + path, true);
@@ -123,7 +115,7 @@ function getTweaksFromJSON(json, path = '') {
 function checkAndInject(tab) {
   console.log('checkAndInject', tab);
 
-  const version = develop ? Math.random() : repositoryTweaksConfig.version;
+  const version = repositoryTweaksConfig.version;
   const tabData = youtrackTabs.get(tab.id);
 
   const matchedConfigs = userTweaksConfiguration.slice().filter(config => configFilter(config, tab)).map(c => c.type);
@@ -131,7 +123,7 @@ function checkAndInject(tab) {
   let chain = sendSafeStop(tab);
 
   if (matchedConfigs.length) {
-    if (!tabData.coreInjected || tabData.coreInjected !== version) {
+    if (!tabData.coreInjected) {
       chain = chain.then(() => loadAndInject(tab, `index.js?v=${version}`));
       tabData.coreInjected = version;
     }
@@ -141,8 +133,8 @@ function checkAndInject(tab) {
       const promises = [];
 
       repositoryTweaksConfig.tweaks.forEach(tweak => {
-        const existingVersion = tabData.injected.get(tweak.name);
-        if ((!existingVersion || existingVersion !== version) && matchedConfigs.indexOf(tweak.name) !== -1) {
+        const tweakInjected = tabData.injected.get(tweak.name);
+        if (!tweakInjected && matchedConfigs.indexOf(tweak.name) !== -1) {
           tweak.config.js && promises.push(loadAndInject(tab, `${tweak.name}/index.js?v=${version}`, tweak.name, chrome.runtime.id));
           tweak.config.css && promises.push(loadAndInject(tab, `${tweak.name}/index.css?v=${version}`));
 
@@ -250,6 +242,5 @@ reloadRepositoryConfiguration().then(() => {
     .then(getYoutrackTabsByQuery)
     .then(tabs => {
       tabs.forEach(reloadTab);
-    })
-    .then(scheduleCheck);
+    });
 });
