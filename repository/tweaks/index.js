@@ -5,8 +5,11 @@ const ytTweaks = window.ytTweaks = {
   baseClass: 'yt-tweaks',
   baseAttribute: 'yt-tweaks',
 
+  initialized: false,
   registeredTweaks: new Map(),
   running: false,
+
+  mainWaitCancel: () => {},
 
   configure(config) {
     this.log('recieve configuration', config, this.registeredTweaks.size);
@@ -14,7 +17,7 @@ const ytTweaks = window.ytTweaks = {
 
     this.registeredTweaks.forEach(tweak => {
       const hasConfigs = this.getConfigsForTweak(tweak.name).length;
-      console.log('check', tweak.name, hasConfigs);
+      this.log('check', tweak.name, hasConfigs);
       if (!hasConfigs) {
         this.registeredTweaks.delete(tweak.name);
       }
@@ -49,6 +52,8 @@ const ytTweaks = window.ytTweaks = {
   },
 
   stopTweaks() {
+    this.mainWaitCancel();
+
     this.registeredTweaks.forEach(tweak => {
       if (tweak.stop) {
         this.log('stopping tweak', tweak.name);
@@ -85,6 +90,8 @@ const ytTweaks = window.ytTweaks = {
         errorFn && errorFn();
       }
     }, 500);
+
+    return () => window.clearInterval(interval);
   },
 
   waitForAngularAndRun() {
@@ -94,9 +101,14 @@ const ytTweaks = window.ytTweaks = {
     }
     this.running = true;
 
-    this.wait(() => window.angular, angular => {
+    this.mainWaitCancel = this.wait(() => window.angular, angular => {
       this.injector = angular.element(document.body).injector();
       if (this.injector) {
+        if (!this.initialized) {
+          this.init();
+          this.initialized = true;
+        }
+
         this.runTweaks();
       } else {
         ytTweaks.error('injector unreachable')
@@ -132,5 +144,18 @@ const ytTweaks = window.ytTweaks = {
       get: itemKey => JSON.parse(window[`${type}Storage`].getItem(itemKey)),
       removeItem: itemKey => window[`${type}Storage`].removeItem(itemKey)
     };
+  },
+
+  init() {
+    const rerun = () => {
+      ytTweaks.stopTweaks();
+      ytTweaks.runTweaks();
+    };
+
+    // process browser back/forward buttons
+    window.addEventListener('popstate', rerun);
+
+    // process angular routes
+    this.inject('$rootScope').$on('$routeChangeSuccess', rerun);
   }
 };

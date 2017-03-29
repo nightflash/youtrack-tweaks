@@ -166,15 +166,6 @@ chrome.webNavigation.onBeforeNavigate.addListener(details => {
   youtrackTabs.delete(details.tabId);
 });
 
-chrome.webNavigation.onHistoryStateUpdated.addListener(details => {
-  const youtrackTab = youtrackTabs.get(details.tabId);
-  if (youtrackTab) {
-    setTimeout(() => {
-      checkAndInject(youtrackTab.tab);
-    }, 200);
-  }
-});
-
 chrome.tabs.onRemoved.addListener(tabId => {
   youtrackTabs.delete(tabId);
 });
