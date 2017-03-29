@@ -3,6 +3,7 @@ const path = require('path');
 const uglify = require('uglify-js');
 
 const outputPath = __dirname + '/dist';
+const mout = require('mout');
 
 console.log('output path', outputPath);
 
@@ -51,6 +52,7 @@ function applyTweaks(target, source) {
 }
 
 function rebuild() {
+  console.log('Rebuilding...');
   const tweaksMap = {};
 
   if (fs.existsSync(outputPath)) {
@@ -71,3 +73,13 @@ function rebuild() {
 }
 
 rebuild();
+
+if (process.argv.indexOf('--watch') !== -1) {
+  console.log('Watch mode enabled');
+
+  const debouncedRebuild = mout.function.debounce(rebuild, 250);
+
+  fs.watch(__dirname + '/tweaks', {
+    recursive: true
+  }, debouncedRebuild)
+}
