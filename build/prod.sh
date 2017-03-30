@@ -11,6 +11,7 @@ ARCHIVE="extension.zip"
 
 echo "Cleaning dist..."
 rm -rf $DIST
+rm -rf $ARCHIVE
 mkdir $DIST
 
 if (( $# == 0 ))
