@@ -48,6 +48,9 @@ echo "New version: $NEW_VERSION, updating manifest..."
 sed -ie "s/0.0.0.0/$NEW_VERSION/g" $DIST/manifest.json
 # end of updating version
 
+echo "Removing hidden files..."
+find $DIST -type f -name ".*" -delete
+
 echo "Creating archive..."
 cd $DIST
 zip -r ../$ARCHIVE ./*
