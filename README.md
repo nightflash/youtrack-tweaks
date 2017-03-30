@@ -1,18 +1,11 @@
-Chrome Webstore
+Chrome Webstore:
 https://chrome.google.com/webstore/developer/dashboard?hl=ru
 
-Update production:
-ssh root@youtrack-tweaks.com "cd /var/www/youtrack-tweaks/ && git pull && cd repository/ && npm run build && cd ../menu && npm i && npm run build"
-
-Repository only:
-ssh root@youtrack-tweaks.com "cd /var/www/youtrack-tweaks/ && git pull && cd repository/ && npm run build"
-
-Menu only:
-ssh root@youtrack-tweaks.com "cd /var/www/youtrack-tweaks/ && git pull && cd menu/ && npm run build"
+Firefox Store:
 
 
-SSL:
-https://certbot.eff.org/#ubuntuxenial-nginx
+Production build (will generate extension.zip in root directory):
+./build/prod.sh
 
-Renew:
-letsencrypt renew
+Development (will run watched menu and repository build for ./extension directory):
+./build/dev.sh
