@@ -31,22 +31,37 @@ echo "Copying files..."
 cp -R -L ${EXTENSION}/* $DIST
 
 # Update extension version in manifest
-CURRENT_VERSION=`wget https://chrome.google.com/webstore/detail/youtrack-tweaks/ialcocpchgkbmpmoipmoheklimalbcia -O - |
+RELEASED_VERSION=`wget https://chrome.google.com/webstore/detail/youtrack-tweaks/ialcocpchgkbmpmoipmoheklimalbcia -O - |
   grep -E -o '([0-9]+?\.[0-9]+?\.[0-9]+?\.[0-9]+?)' |
   tail -1`
 
-echo "Current version in google store: ${CURRENT_VERSION}"
+echo "Store version: ${RELEASED_VERSION}"
 
-LAST_DIGIT=`echo $CURRENT_VERSION | cut -d '.' -f4`
-NEW_DIGIT=`expr $LAST_DIGIT + 1`
+MANIFEST_VERSION=`cat $DIST/manifest.json | grep -E -o '([0-9]+?\.[0-9]+?\.[0-9]+?\.[0-9]+?)'`
 
-echo "Increment last digit: $LAST_DIGIT => $NEW_DIGIT"
+echo "Manifest version: ${MANIFEST_VERSION}"
 
-NEW_VERSION=`echo $CURRENT_VERSION | sed -e "s/$LAST_DIGIT\$/$NEW_DIGIT/g"`
+RELEASED_MAJOR=`echo $RELEASED_VERSION | grep -E -o '([0-9]+?\.[0-9]+?\.[0-9]+?)'`
+CURRENT_MAJOR=`echo $MANIFEST_VERSION | grep -E -o '([0-9]+?\.[0-9]+?\.[0-9]+?)'`
 
-echo "New version: $NEW_VERSION, updating manifest..."
+echo "Released ${RELEASED_MAJOR} vs manifest ${CURRENT_MAJOR}"
 
-sed -ie "s/0.0.0.0/$NEW_VERSION/g" $DIST/manifest.json
+if [ $RELEASED_MAJOR == $CURRENT_MAJOR ];
+then
+
+  LAST_DIGIT=`echo $RELEASED_VERSION | cut -d '.' -f4`
+  NEW_BUILD_NUMBER=`expr $LAST_DIGIT + 1`
+
+  echo "Increment last digit: $LAST_DIGIT => $NEW_BUILD_NUMBER"
+
+  NEW_VERSION=`echo $RELEASED_VERSION | sed -E "s/([0-9]*).([0-9]*).([0-9]*).([0-9]*)/\1.\2.\3.$NEW_BUILD_NUMBER/g"`
+
+  echo "New version: $NEW_VERSION, updating manifest..."
+
+  sed -i '' -E "s/[0-9]*\.[0-9]\.*[0-9]*\.[0-9]*/$NEW_VERSION/g" $DIST/manifest.json
+else
+  echo "Keep version: $MANIFEST_VERSION"
+fi
 # end of updating version
 
 echo "Removing hidden files..."
