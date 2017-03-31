@@ -162,11 +162,21 @@ function reloadTab(tab) {
   return chrome.tabs.reload(tab.id);
 }
 
-chrome.webNavigation.onBeforeNavigate.addListener(details => {
-  youtrackTabs.delete(details.tabId);
+chrome.webNavigation.onCommitted.addListener(details => {
+  const id = details.tabId;
+  const savedTab = youtrackTabs.get(id);
+
+  if (savedTab) {
+    chrome.tabs.get(id, tab => {
+      if (savedTab.tab.url !== tab.url) {
+        youtrackTabs.delete(details.tabId);
+      }
+    });
+  }
 });
 
 chrome.tabs.onRemoved.addListener(tabId => {
+  console.log('on remove');
   youtrackTabs.delete(tabId);
 });
 
@@ -217,15 +227,6 @@ function setDefaultTweaks() {
     });
     userTweaksConfiguration = tweaks;
   });
-}
-
-function scheduleCheck() {
-  window.setInterval(() => {
-    reloadRepositoryConfiguration().then(shouldUpdate => {
-      console.log('check for new version: ', shouldUpdate);
-      shouldUpdate && forAllTabs(checkAndInject);
-    });
-  }, 60 * 30 * 1000);
 }
 
 reloadRepositoryConfiguration().then(() => {
