@@ -1,11 +1,16 @@
 const fieldsEn = {
   conversions: {
-    no: 'Keep field name',
-    letter: 'Show only first letter'
+    no: 'Show full name',
+    letter: 'Show first letter only'
   },
-  ignoreColors: 'Ignore colors',
+  color: {
+    inherit: 'Use field colors',
+    ignore: 'Ignore color settings',
+    auto: 'Auto-generated colors'
+  },
   placeholder: 'Field name',
-  add: 'Add'
+  add: 'Add',
+  update: 'Update'
 }
 
 export const en = {

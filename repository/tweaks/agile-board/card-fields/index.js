@@ -40,6 +40,11 @@ function tweak(name) {
     letter: name => name.substr(0, 1)
   };
 
+  const hash = s => s.split('').reduce((a, b) => {
+    a = ((a << 5) - a) + b.charCodeAt(0);
+    return a & a
+  }, 0);
+
   function processCardNode(cardNode) {
     if (cardNode.hasAttribute(tweakAttribute)) {
       return;
@@ -61,7 +66,7 @@ function tweak(name) {
         .map(f => {
           const index = allowedFieldNames.indexOf(f.projectCustomField.field.name);
           const conversionType = fieldsToShow[index].conversion;
-          const useColors = !fieldsToShow[index].ignoreColors;
+          const color = fieldsToShow[index].color || {};
 
           let values = f.value;
           if (!Array.isArray(values)) {
@@ -77,10 +82,19 @@ function tweak(name) {
             conversionType,
             getValueName: conversions[conversionType],
             getValueClasses(value) {
+              let colorId = +value.color.id;
               let classes = `yt-tweak-field-value-${conversionType}`;
-              if (+value.color.id && useColors) {
-                classes += ` yt-tweak-field-value-colored color-fields__background-${value.color.id} color-fields__field-${value.color.id}`;
+
+              if (color.mode === 'ignore') {
+                colorId = null;
+              } else if (color.mode === 'auto' && !colorId) {
+                colorId = hash(value.name) % color.generator;
               }
+
+              if (colorId) {
+                classes += ` yt-tweak-field-value-colored color-fields__background-${colorId} color-fields__field-${colorId}`;
+              }
+
               return classes;
             }
           };

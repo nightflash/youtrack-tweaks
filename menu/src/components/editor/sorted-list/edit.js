@@ -15,6 +15,11 @@ import draggable from 'vuedraggable'
   list = []
 
   newItem = {...(this.options.item || {})}
+  editIndex = null
+
+  get editMode () {
+    return this.editIndex !== null
+  }
 
   beforeMount () {
     this.list = this.value.slice()
@@ -22,11 +27,16 @@ import draggable from 'vuedraggable'
 
   clear () {
     this.newItem = {...(this.options.item || {})}
+    this.editIndex = null
   }
 
-  add () {
+  update () {
     if (this.options.check && this.options.check(this.newItem)) {
-      this.list.push(this.newItem)
+      if (this.editMode) {
+        this.list[this.editIndex] = { ...this.newItem }
+      } else {
+        this.list.push(this.newItem)
+      }
       this.clear()
       this.$emit('input', this.list)
     } else {
@@ -37,6 +47,11 @@ import draggable from 'vuedraggable'
   remove (index) {
     this.list.splice(index, 1)
     this.$emit('input', this.list)
+  }
+
+  edit (index) {
+    this.editIndex = index
+    this.newItem = { ...this.list[index] }
   }
 
   dragEnd () {

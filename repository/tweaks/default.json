@@ -24,17 +24,26 @@
       "sizeParams": [
         {
           "conversion": "no",
-          "ignoreColors": false,
+          "color": {
+            "mode": "inherit",
+            "generator": 32
+          },
           "name": "Type"
         },
         {
           "conversion": "letter",
-          "ignoreColors": false,
+          "color": {
+            "mode": "inherit",
+            "generator": 32
+          },
           "name": "Subsystem"
         },
         {
           "conversion": "letter",
-          "ignoreColors": false,
+          "color": {
+            "mode": "inherit",
+            "generator": 32
+          },
           "name": "Subsystems"
         }
       ],

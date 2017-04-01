@@ -2,7 +2,7 @@
   <span>
     <span>{{item.name}}</span>
     <span>{{i18n.conversions[item.conversion]}}</span>
-    <span v-show="item.ignoreColors">{{i18n.ignoreColors}}</span>
+    <span>{{i18n.color[item.color.mode]}}</span>
   </span>
 </template>
 

@@ -2,12 +2,17 @@
   <span>
     <input class="input" type="text"
            v-model="value.name" :placeholder="i18n.placeholder"
-           @keydown.enter="add()" @keydown.esc="clear()">
+           @keydown.enter="add()" @keydown.esc.prevent="clear()">
 
     <select v-model="value.conversion">
       <option :value="option" v-for="(label, option) in conversionOptions" :key="option">{{label}}</option>
     </select>
-    {{i18n.ignoreColors}}<input type="checkbox" v-model="value.ignoreColors">
+
+    <select v-model="value.color.mode">
+      <option :value="option" v-for="(label, option) in colorOptions" :key="option">{{label}}</option>
+    </select>
+
+    <input type="number" v-show="value.color.mode === 'auto'" v-model="value.color.generator" min="10" max="32" size="2">
   </span>
 </template>
 
@@ -27,6 +32,12 @@
     conversionOptions = {
       no: this.i18n.conversions.no,
       letter: this.i18n.conversions.letter
+    }
+
+    colorOptions = {
+      inherit: this.i18n.color.inherit,
+      ignore: this.i18n.color.ignore,
+      auto: this.i18n.color.auto
     }
   }
 </script>

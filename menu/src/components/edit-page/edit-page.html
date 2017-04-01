@@ -9,16 +9,16 @@
 
     <div class="footer">
         <div class="footer__left">
-            <button @click.stop="remove(index)">Remove</button>
+            <button @click.stop="remove(index)">Remove tweak</button>
         </div>
 
         <div class="footer__center">
-            <button class="btn btn-xs btn-primary" @click="save(config)">Save config</button>
-            <button class="btn btn-xs btn-default" @click="save(config, true)">Save and go to list</button>
+            <button class="btn btn-xs btn-primary" @click="save(config)">Apply config</button>
+            <button class="btn btn-xs btn-default" @click="save(config, true)">Apply and go back</button>
         </div>
 
         <div class="footer__right">
-            <button class="btn btn-xs btn-default" @click="cancel()">Back</button>
+            <button class="btn btn-xs btn-default" @click="cancel()">Cancel</button>
         </div>
     </div>
 </div>

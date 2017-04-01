@@ -42,7 +42,10 @@ const fieldsEditor = {
     item: {
       name: '',
       conversion: 'no',
-      ignoreColors: false
+      color: {
+        mode: 'inherit',
+        generator: 32
+      }
     },
     check: item => item.name.trim() !== '',
     sortable: true
