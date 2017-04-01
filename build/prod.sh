@@ -32,17 +32,17 @@ cp -R -L ${EXTENSION}/* $DIST
 
 # Update extension version in manifest
 RELEASED_VERSION=`wget https://chrome.google.com/webstore/detail/youtrack-tweaks/ialcocpchgkbmpmoipmoheklimalbcia -O - |
-  grep -E -o '([0-9]+?\.[0-9]+?\.[0-9]+?\.[0-9]+?)' |
+  grep -E -o '([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)' |
   tail -1`
 
 echo "Store version: ${RELEASED_VERSION}"
 
-MANIFEST_VERSION=`cat $DIST/manifest.json | grep -E -o '([0-9]+?\.[0-9]+?\.[0-9]+?\.[0-9]+?)'`
+MANIFEST_VERSION=`cat $DIST/manifest.json | grep -E -o '([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)'`
 
 echo "Manifest version: ${MANIFEST_VERSION}"
 
-RELEASED_MAJOR=`echo $RELEASED_VERSION | grep -E -o '([0-9]+?\.[0-9]+?\.[0-9]+?)'`
-CURRENT_MAJOR=`echo $MANIFEST_VERSION | grep -E -o '([0-9]+?\.[0-9]+?\.[0-9]+?)'`
+RELEASED_MAJOR=`echo $RELEASED_VERSION | grep -E -o '([0-9]+\.[0-9]+\.[0-9]+)'`
+CURRENT_MAJOR=`echo $MANIFEST_VERSION | grep -E -o '([0-9]+\.[0-9]+\.[0-9]+)'`
 
 echo "Released ${RELEASED_MAJOR} vs manifest ${CURRENT_MAJOR}"
 
