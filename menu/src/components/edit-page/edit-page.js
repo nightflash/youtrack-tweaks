@@ -20,23 +20,15 @@ export default class extends Vue {
     return this.tweak && tweaksLibrary.get(this.tweak.type)
   }
 
-  get index () {
-    return this.$route.params.index
-  }
-
   changed (newConfig) {
     this.config = newConfig
   }
 
-  save(config, navigateAfterSave) {
+  save(config) {
     this.$store.dispatch(UPDATE_TWEAK, {
       index: this.$store.state.tweaks.indexOf(this.tweak),
       config
     })
-
-    if (navigateAfterSave) {
-      this.$router.push('/')
-    }
   }
 
   cancel() {
@@ -45,7 +37,7 @@ export default class extends Vue {
 
   remove(index) {
     this.$store.dispatch(REMOVE_TWEAK, {
-      index
+      index: this.$route.params.index
     })
 
     this.cancel()
