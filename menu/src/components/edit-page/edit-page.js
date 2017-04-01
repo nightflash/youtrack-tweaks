@@ -11,9 +11,12 @@ export default class extends Vue {
   config = {}
   expertView = false
 
+  get index() {
+    return this.$route.params.index
+  }
+
   get tweak() {
-    const index = this.$route.params.index
-    return this.$store.state.tweaks[index]
+    return this.$store.state.tweaks[this.index]
   }
 
   get tweakExports() {
@@ -26,7 +29,7 @@ export default class extends Vue {
 
   save(config) {
     this.$store.dispatch(UPDATE_TWEAK, {
-      index: this.$store.state.tweaks.indexOf(this.tweak),
+      index: this.index,
       config
     })
   }
@@ -37,7 +40,7 @@ export default class extends Vue {
 
   remove(index) {
     this.$store.dispatch(REMOVE_TWEAK, {
-      index: this.$route.params.index
+      index: this.index
     })
 
     this.cancel()
