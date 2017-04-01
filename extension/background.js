@@ -202,11 +202,43 @@ chrome.runtime.onMessage.addListener((request, sender) => {
 
 const storage = window.browser ? chrome.storage.local : chrome.storage.sync; // fix for firefox
 
+const migrationCondition = t => {
+  return t.type === "agile-board/card-fields" &&
+    t.config.sizeParams.some(f => f.ignoreColors !== undefined);
+}
+
+function migrate() {
+  console.log('migration');
+  userTweaksConfiguration = userTweaksConfiguration.map(t => {
+    if (migrationCondition(t)) {
+      t.config.sizeParams = t.config.sizeParams.map(f => {
+        if (f.ignoreColors !== undefined) {
+          f.color = {
+            mode: t.ignoreColors ? 'ignore' : 'inherit',
+            generator: 32
+          };
+          delete f['ignoreColors'];
+        }
+
+        return f;
+      })
+    }
+
+    return t;
+  });
+
+  storage.set({
+    tweaks: userTweaksConfiguration
+  });
+}
+
 function readSavedConfiguration() {
   return new Promise(resolve => {
     storage.get(['tweaks', 'version'], data => {
       userTweaksConfiguration = data.tweaks || [];
-      console.log('initial tweaks fetched', JSON.stringify(userTweaksConfiguration));
+      console.log('initial tweaks fetched', userTweaksConfiguration.some(migrationCondition), JSON.stringify(userTweaksConfiguration));
+
+      userTweaksConfiguration.some(migrationCondition) && migrate();
 
       if (!data.welcome && userTweaksConfiguration.length === 0) {
         resolve(setDefaultTweaks());
