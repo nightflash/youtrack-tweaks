@@ -60,57 +60,80 @@ function tweak(name) {
     const scope = injects.$rootScope.$new();
     scope.ytAgileCardCtrl = cardCtrl;
 
-    scope.ytTweakFields = (issueFields = []) => {
-      return issueFields
-        .filter(f => allowedFieldNames.indexOf(f.projectCustomField.field.name) !== -1)
-        .map(f => {
-          const index = allowedFieldNames.indexOf(f.projectCustomField.field.name);
-          const conversionType = fieldsToShow[index].conversion;
-          const color = fieldsToShow[index].color || {};
+    const fields = [];
+
+    scope.$watch(() => cardCtrl.issue.fields, () => {
+      scope.fields = [];
+
+      const availableFields = cardCtrl.issue.fields.slice();
+      availableFields.push({
+        id: 'project',
+        projectCustomField: {
+          field: {
+            name: 'Project'
+          }
+        },
+        value: {
+          name: cardCtrl.issueProject.name,
+          id: 'pname'
+        }
+      });
+
+      availableFields.forEach(f => {
+        const index = allowedFieldNames.indexOf(f.projectCustomField.field.name);
+
+        if (index !== -1) {
+          const name = f.projectCustomField.field.name;
+          const config = fieldsToShow[index];
+          const color = config.color || {};
+          const conversionType = config.conversion;
 
           let values = f.value;
           if (!Array.isArray(values)) {
             values = [values];
           }
 
-          values = values.filter(v => v);
+          values = values.filter(v => v).map(value => {
+            let colorId = value.color && +value.color.id;
+            let classes = `yt-tweak-field-value-${conversionType}`;
 
-          f.ytTweakData = {
-            index,
-            name: f.projectCustomField.field.name,
-            values,
-            conversionType,
-            getValueName: conversions[conversionType],
-            getValueClasses(value) {
-              let colorId = +value.color.id;
-              let classes = `yt-tweak-field-value-${conversionType}`;
-
-              if (color.mode === 'ignore') {
-                colorId = null;
-              } else if (color.mode === 'auto' && !colorId) {
-                colorId = hash(value.name) % color.generator;
-              }
-
-              if (colorId) {
-                classes += ` yt-tweak-field-value-colored color-fields__background-${colorId} color-fields__field-${colorId}`;
-              }
-
-              return classes;
+            if (color.mode === 'ignore') {
+              colorId = null;
+            } else if (color.mode === 'auto' && !colorId) {
+              colorId = Math.abs(hash(value.name) % color.generator);
             }
-          };
 
-          return f;
-        })
-        .sort((a, b) => (a.ytTweakData.index > b.ytTweakData.index));
-    };
+            if (colorId) {
+              classes += ` yt-tweak-field-value-colored color-fields__background-${colorId} color-fields__field-${colorId}`;
+            }
+
+            return {
+              id: value.id,
+              name: value.name,
+              convertedName: conversions[conversionType](value.name),
+              classes
+            };
+          });
+
+          scope.fields.push({
+            id: f.id,
+            index,
+            name,
+            values
+          });
+        }
+      });
+
+      scope.fields = scope.fields.sort((a, b) => (a.index > b.index));
+    });
 
     stopFns.push(() => scope.$destroy());
 
     const compiledElement = injects.$compile(`
         <span class="${tweakClass}">
-          <span class="yt-tweak-field" ng-repeat="field in ytTweakFields(ytAgileCardCtrl.issue.fields) track by field.id">
-            <span ng-repeat="value in field.ytTweakData.values track by value.id" title="{{value.name}}"
-              class="{{field.ytTweakData.getValueClasses(value)}}">{{field.ytTweakData.getValueName(value.name)}}</span>
+          <span class="yt-tweak-field" ng-repeat="field in fields track by field.id">
+            <span ng-repeat="value in field.values track by value.id" title="{{value.name}}"
+              class="{{value.classes}}">{{value.convertedName}}</span>
           </span>
         </span>
       `)(scope);
