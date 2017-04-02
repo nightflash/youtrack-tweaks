@@ -16,12 +16,12 @@
     text-align: center;
 }
 
-.yt-tweak-field-value-letter:first-child {
+.yt-tweak-field-value-letter:first-child, .yt-tweak-field-value-no.yt-tweak-field-value-colored:first-child {
     border-top-left-radius: 3px;
     border-bottom-left-radius: 3px;
 }
 
-.yt-tweak-field-value-letter:last-child {
+.yt-tweak-field-value-letter:last-child, .yt-tweak-field-value-no.yt-tweak-field-value-colored:last-child {
     border-top-right-radius: 3px;
     border-bottom-right-radius: 3px;
 }
