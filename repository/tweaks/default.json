@@ -26,7 +26,8 @@
           "conversion": "no",
           "color": {
             "mode": "inherit",
-            "generator": 32
+            "generator": 32,
+            "opacity": 1
           },
           "name": "Type"
         },
@@ -34,7 +35,8 @@
           "conversion": "letter",
           "color": {
             "mode": "inherit",
-            "generator": 32
+            "generator": 32,
+            "opacity": 1
           },
           "name": "Subsystem"
         },
@@ -42,7 +44,8 @@
           "conversion": "letter",
           "color": {
             "mode": "inherit",
-            "generator": 32
+            "generator": 32,
+            "opacity": 1
           },
           "name": "Subsystems"
         }
