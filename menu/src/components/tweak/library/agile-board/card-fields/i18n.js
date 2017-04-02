@@ -6,7 +6,9 @@ const fieldsEn = {
   color: {
     inherit: 'Use field colors',
     ignore: 'Ignore color settings',
-    auto: 'Auto-generated colors'
+    auto: 'Auto-generated colors',
+    generator: 'Tune color scheme changing this value from 10 to 32',
+    opacity: 'Opacity of the filed. Use it to blur less important data'
   },
   placeholder: 'Field name',
   add: 'Add',

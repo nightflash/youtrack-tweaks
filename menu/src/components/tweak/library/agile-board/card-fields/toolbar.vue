@@ -12,7 +12,9 @@
       <option :value="option" v-for="(label, option) in colorOptions" :key="option">{{label}}</option>
     </select>
 
-    <input type="number" v-show="value.color.mode === 'auto'" v-model="value.color.generator" min="10" max="32" size="2">
+    <input :title="i18n.color.opacity" type="number" v-model="value.color.opacity" step="0.1" min="0.1" max="1" size="2"/>
+
+    <input :title="i18n.color.generator" type="number" v-show="value.color.mode === 'auto'" v-model="value.color.generator" min="10" max="32" size="2">
   </span>
 </template>
 

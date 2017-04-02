@@ -87,6 +87,7 @@ function tweak(name) {
           const config = fieldsToShow[index];
           const color = config.color || {};
           const conversionType = config.conversion;
+          const opacity = color.opacity || 1;
 
           let values = f.value;
           if (!Array.isArray(values)) {
@@ -117,6 +118,7 @@ function tweak(name) {
 
           scope.fields.push({
             id: f.id,
+            opacity,
             index,
             name,
             values
@@ -131,7 +133,7 @@ function tweak(name) {
 
     const compiledElement = injects.$compile(`
         <span class="${tweakClass}">
-          <span class="yt-tweak-field" ng-repeat="field in fields track by field.id">
+          <span class="yt-tweak-field" ng-repeat="field in fields track by field.id" style="opacity: {{field.opacity}}">
             <span ng-repeat="value in field.values track by value.id" title="{{value.name}}"
               class="{{value.classes}}">{{value.convertedName}}</span>
           </span>

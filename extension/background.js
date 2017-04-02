@@ -204,7 +204,8 @@ const storage = window.browser ? chrome.storage.local : chrome.storage.sync; // 
 
 const migrationCondition = t => {
   return t.type === "agile-board/card-fields" &&
-    t.config.sizeParams.some(f => f.ignoreColors !== undefined);
+    (t.config.sizeParams.some(f => f.ignoreColors !== undefined) ||
+    t.config.sizeParams.some(f => f.color && !f.color.opacity));
 }
 
 function migrate() {
@@ -218,6 +219,10 @@ function migrate() {
             generator: 32
           };
           delete f['ignoreColors'];
+        }
+
+        if (f.color && !f.color.opacity) {
+          f.color.opacity = 1;
         }
 
         return f;

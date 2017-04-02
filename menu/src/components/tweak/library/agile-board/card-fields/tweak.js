@@ -44,6 +44,7 @@ const fieldsEditor = {
       conversion: 'no',
       color: {
         mode: 'inherit',
+        opacity: 1,
         generator: 32
       }
     },
