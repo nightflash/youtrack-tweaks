@@ -13,13 +13,16 @@ function tweak(name) {
   let injects = {};
 
   function attachToBoardEvents() {
-    const revertOnBoardSelect = ytTweaks.mockMethod(agileBoardController, 'onBoardSelect', run);
-    const revertOnSprintSelect = ytTweaks.mockMethod(agileBoardController, 'onSprintSelect', run);
-    const revertOnChangeCardDetailLevel = ytTweaks.mockMethod(agileBoardController, 'onChangeCardDetailLevel', run);
-    const revertLoadMoreCards = ytTweaks.mockMethod(agileBoardController, 'toggleSwimlane', promise => promise.then(tweakNewCards));
-    const revertCollapseBoardColumn = ytTweaks.mockMethod(agileBoardController, 'collapseBoardColumn', () => injects.$timeout(tweakNewCards));
+    const onBoardSelect = ytTweaks.mockMethod(agileBoardController, 'onBoardSelect', run);
+    const onSprintSelect = ytTweaks.mockMethod(agileBoardController, 'onSprintSelect', run);
+    const onChangeCardDetailLevel = ytTweaks.mockMethod(agileBoardController, 'onChangeCardDetailLevel', run);
+    const loadMoreCards = ytTweaks.mockMethod(agileBoardController, 'toggleSwimlane', promise => promise.then(tweakNewCards));
+    const collapseBoardColumn = ytTweaks.mockMethod(agileBoardController, 'collapseBoardColumn', () => injects.$timeout(tweakNewCards));
 
-    stopFns.push(revertOnBoardSelect, revertOnSprintSelect, revertOnChangeCardDetailLevel, revertLoadMoreCards, revertCollapseBoardColumn);
+    agileBoardController.boardSearchQueryModel.on('apply', run);
+    const offOnApply = () => agileBoardController.boardSearchQueryModel.off('apply', run);
+
+    stopFns.push(onBoardSelect, onSprintSelect, onChangeCardDetailLevel, loadMoreCards, collapseBoardColumn, offOnApply);
 
     const onSprintCellUpdate = event => {
       const data = JSON.parse(event.data);
@@ -134,7 +137,7 @@ function tweak(name) {
     const compiledElement = injects.$compile(`
         <span class="${tweakClass}">
           <span class="yt-tweak-field" ng-repeat="field in fields track by field.id" style="opacity: {{field.opacity}}">
-            <span ng-repeat="value in field.values track by value.id" title="{{value.name}}"
+            <span ng-repeat="value in field.values track by value.id" title="{{field.name}}: {{value.name}}"
               class="{{value.classes}}">{{value.convertedName}}</span>
           </span>
         </span>
