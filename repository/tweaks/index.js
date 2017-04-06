@@ -57,14 +57,34 @@ const ytTweaks = window.ytTweaks = {
   },
 
   mockMethod(object, propertyName, mockFn) {
-    const original = object[propertyName];
-    object[propertyName] = (...args) => {
-      const originalResult = original(...args);
-      mockFn(originalResult, ...args);
-      return originalResult;
-    };
+    if (!object[propertyName].ytTweaks) {
+      const original = object[propertyName];
 
-    return () => object[propertyName] = original;
+      object[propertyName] = function (...args) {
+        const originalResult = original(...args);
+        object[propertyName].ytTweaks.fns.forEach(f => {
+          f(originalResult, ...args);
+        });
+        return originalResult;
+      };
+
+      object[propertyName].ytTweaks = {
+        original,
+        fns: []
+      };
+    }
+
+    object[propertyName].ytTweaks.fns.push(mockFn);
+
+    return () => {
+      const fns = object[propertyName].ytTweaks.fns;
+      const index = fns.indexOf(mockFn);
+      fns.splice(index, 1);
+
+      if (fns.length === 0) {
+        object[propertyName] = object[propertyName].ytTweaks.original;
+      }
+    }
   },
 
   waitNum: 0,
