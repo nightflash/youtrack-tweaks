@@ -3,6 +3,9 @@
     "config": {
       "boardName": [],
       "comparingMode": true,
+      "ttl": "",
+      "message": "%boardName%/%sprintName% by %reporterName%",
+      "icon": "",
       "conditions": [
         {
           "fieldName": "Type",

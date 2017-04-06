@@ -13,15 +13,15 @@
     <draggable v-if="options.sortable" v-model="list" class="list" @end="dragEnd()">
         <li class="item item_sortable" v-for="(item, index) in list">
             <component v-if="options.view" :is="options.view" :i18n="i18n" :item="item"></component>
-            <button class="list-control" @click="remove(index)">X</button>
-            <button class="list-control" @click="edit(index)">E</button>
+            <button class="list-control" @click="remove(index)">Delete</button>
+            <button class="list-control" @click="edit(index)">Edit</button>
         </li>
     </draggable>
     <div v-else class="list">
         <li class="item" v-for="(item, index) in list">
             <component v-if="options.view" :is="options.view" :i18n="i18n" :item="item"></component>
-            <button class="list-control" @click="remove(index)">X</button>
-            <button class="list-control" @click="edit(index)">E</button>
+            <button class="list-control" @click="remove(index)">Delete</button>
+            <button class="list-control" @click="edit(index)">Edit</button>
         </li>
     </div>
 </div>

@@ -18,7 +18,7 @@ export const en = {
   },
   message: {
     label: 'Additional message',
-    description: 'Displayed on the notifications below issue title'
+    description: 'Displayed on the notifications below issue summary. You can use these placeholders: %boardName% %sprintName% %projectName% %reporterName%'
   },
   ttl: {
     label: 'Notification TTL (ms)',
@@ -26,7 +26,7 @@ export const en = {
   },
   icon: {
     label: 'Custom icon',
-    description: 'Should starts from data:...'
+    description: 'http://any.url'
   },
   comparingMode: {
     label: 'Conditions comparing mode',

@@ -74,9 +74,7 @@ export const schema = {
   },
   icon: {
     ...textEditor,
-    options: {
-      multiline: true
-    }
+    options: {}
   },
   boardName: tagsEditor,
   sprintName: tagsEditor,

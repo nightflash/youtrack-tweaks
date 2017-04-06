@@ -65,14 +65,22 @@ function tweak(name, extensionId) {
 
   const defaultIcon = `chrome-extension://${extensionId}/images/128.png`;
 
-  function notify(issue, body, ttl, icon) {
+  function notify(issue, message, ttl, icon) {
     addNotified(issue.id);
+    console.log(issue);
 
     let closeTimeout;
+
+    const body = (message || 'New issue on the board')
+        .replace('%sprintName%', agileBoardController.sprint.name)
+        .replace('%boardName%', agileBoardController.agile.name)
+        .replace('%projectName%', issue.project.name)
+        .replace('%reporterName%', issue.reporter.login);
+
     const notification = new Notification(issue.summary, {
       requireInteraction: true,
       icon: icon || defaultIcon,
-      body: body || 'New issue on the board'
+      body
     });
     notification.onclick = () => {
       notification.close();
