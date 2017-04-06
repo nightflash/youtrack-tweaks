@@ -15,13 +15,6 @@ const ytTweaks = window.ytTweaks = {
     this.log('recieve configuration', config, this.registeredTweaks.size);
     this.userTweaksConfiguration = config;
 
-    this.registeredTweaks.forEach(tweak => {
-      const hasConfigs = this.getConfigsForTweak(tweak.name).length;
-      this.log('check', tweak.name, hasConfigs);
-      if (!hasConfigs) {
-        this.registeredTweaks.delete(tweak.name);
-      }
-    });
 
     this.waitForAngularAndRun();
   },
