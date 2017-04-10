@@ -78,7 +78,7 @@ function tweak(name) {
           }
         },
         value: {
-          name: cardCtrl.issueProject.name,
+          name: cardCtrl.issue.project.name,
           id: 'pname'
         }
       });
