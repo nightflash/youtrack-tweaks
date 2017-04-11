@@ -118,7 +118,7 @@ function tweak(name) {
 
             if (color.mode === 'ignore') {
               colorId = null;
-            } else if (color.mode === 'auto' && !colorId) {
+            } else if (color.mode === 'auto') {
               colorId = Math.abs(hash(valueName) % color.generator);
             }
 
