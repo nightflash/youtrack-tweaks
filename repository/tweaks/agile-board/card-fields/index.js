@@ -87,11 +87,23 @@ function tweak(name) {
         const index = allowedFieldNames.indexOf(f.projectCustomField.field.name);
 
         if (index !== -1) {
-          const name = f.projectCustomField.field.name;
+          const field = f.projectCustomField.field;
+          const name = field.name;
+          const valueType = field.fieldType && field.fieldType.valueType;
           const config = fieldsToShow[index];
           const color = config.color || {};
           const conversionType = config.conversion;
           const opacity = color.opacity || 1;
+
+          let valueConverter;
+          switch (valueType) {
+            default:
+              valueConverter = v => v;
+              break;
+            case 'date':
+              valueConverter = v => injects.$filter('date')(v, 'MMM d');
+              break;
+          }
 
           let values = f.value;
           if (!Array.isArray(values)) {
@@ -102,10 +114,12 @@ function tweak(name) {
             let colorId = value.color && +value.color.id;
             let classes = `yt-tweak-field-value-${conversionType}`;
 
+            let valueName = valueConverter(value.name || value);
+
             if (color.mode === 'ignore') {
               colorId = null;
             } else if (color.mode === 'auto' && !colorId) {
-              colorId = Math.abs(hash(value.name) % color.generator);
+              colorId = Math.abs(hash(valueName) % color.generator);
             }
 
             if (colorId) {
@@ -114,8 +128,8 @@ function tweak(name) {
 
             return {
               id: value.id,
-              name: value.name,
-              convertedName: conversions[conversionType](value.name),
+              name: valueName,
+              convertedName: conversions[conversionType](valueName),
               classes
             };
           });
@@ -169,7 +183,7 @@ function tweak(name) {
 
   function runAction() {
     fieldsToShow = [];
-    injects = ytTweaks.inject('$compile', '$timeout', '$rootScope');
+    injects = ytTweaks.inject('$compile', '$timeout', '$rootScope', '$filter');
 
     const configs = ytTweaks.getConfigsForTweak(name).filter(config => {
       return ytTweaks.inArray(config.config.sprintName, agileBoardController.sprint.name, true) &&
