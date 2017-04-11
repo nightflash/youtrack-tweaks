@@ -1,6 +1,5 @@
 function tweak(name, extensionId) {
   const ytTweaks = window.ytTweaks;
-  let running = false;
 
   const agileBoardSelector = '[data-test="agileBoard"]';
 
@@ -178,12 +177,10 @@ function tweak(name, extensionId) {
   function stop() {
     stopFns.forEach(fn => fn());
     stopFns = [];
-    running = false;
   }
 
   function run() {
     stop();
-    running = true;
     ytTweaks.wait(runWait, runAction, null, `wait run() ${name}`);
   }
 

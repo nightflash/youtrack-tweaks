@@ -5,6 +5,8 @@
     </div>
     <div class="title">{{tweakExports.name}}</div>
 
+    <div class="description" v-show="tweakExports.editDescription">{{tweakExports.editDescription}}</div>
+
     <component :is="tweakExports.Edit" :tweak="tweak" :schema="tweakExports.schema" :changed="changed" :expert-view="!simpleView"></component>
 
     <div class="footer">
