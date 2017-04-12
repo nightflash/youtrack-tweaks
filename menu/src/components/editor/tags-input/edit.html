@@ -15,4 +15,6 @@
                @keydown.up="jump(false)" @keydown.down="jump(true)">
         <button class="btn btn-default btn-xs" v-show="actualValue" @click="add()">{{i18n.add}}</button>
     </div>
+
+    <div class="description" v-show="i18n.description">{{i18n.description}}</div>
 </div>

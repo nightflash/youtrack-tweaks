@@ -31,15 +31,20 @@ function tweak(name, extensionId) {
     return current.indexOf(issueId) !== -1;
   }
 
+  function getValue(value) {
+    return value.name || value.fullName || value.login || value.presentation || value;
+  }
+
   function isValueEqual(field, testValue) {
     let fieldValues;
-    if (!Array.isArray(field.value)) {
-      fieldValues = [field.value];
+    const value = getValue(field.value);
+    if (!Array.isArray(value)) {
+      fieldValues = [value];
     } else {
-      fieldValues = field.value;
+      fieldValues = value;
     }
 
-    return fieldValues.some(val => val.name === testValue)
+    return fieldValues.some(val => val === testValue)
   }
 
   function isFieldEquals(issue, fieldName, testValue) {

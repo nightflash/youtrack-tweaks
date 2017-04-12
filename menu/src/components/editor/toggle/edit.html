@@ -3,4 +3,6 @@
 
     <button :class="{active: toggleValue === left}" @click="set(left)">{{i18n.left}}</button>
     <button :class="{active: toggleValue === right}" @click="set(right)">{{i18n.right}}</button>
+
+    <div class="description" v-show="i18n.description">{{i18n.description}}</div>
 </div>

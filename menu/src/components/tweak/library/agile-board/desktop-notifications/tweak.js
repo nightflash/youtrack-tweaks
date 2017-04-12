@@ -3,9 +3,6 @@ import Component from 'vue-class-component'
 import TweakEditMixin from '../../../mixins/tweak-edit-mixin.vue'
 import TweakViewMixin from '../../../mixins/tweak-view-mixin.vue'
 
-import TagsInputEdit from '@/components/editor/tags-input/edit.vue'
-import TagsInputView from '@/components/editor/tags-input/view.vue'
-
 import SortedListEdit from '@/components/editor/sorted-list/edit.vue'
 import SortedListView from '@/components/editor/sorted-list/view.vue'
 
@@ -15,18 +12,13 @@ import TextView from '@/components/editor/text/view.vue'
 import Toolbar from './toolbar.vue'
 import ItemView from './view.vue'
 
+import genericScheme from '../generic/schema'
+
 import * as i18n from './i18n'
 
 export const type = 'agile-board/desktop-notifications'
 
 export const name = 'Agile board desktop notifications'
-
-const tagsEditor = {
-  edit: TagsInputEdit,
-  view: TagsInputView,
-  default: [],
-  options: {}
-}
 
 const conditionsEditor = {
   simple: true,
@@ -59,11 +51,7 @@ const textEditor = {
 }
 
 export const schema = {
-  title: {
-    ...textEditor,
-    default: name
-  },
-  url: textEditor,
+  ...genericScheme(name),
   message: textEditor,
   ttl: {
     ...textEditor,
@@ -76,8 +64,6 @@ export const schema = {
     ...textEditor,
     options: {}
   },
-  boardName: tagsEditor,
-  sprintName: tagsEditor,
   comparingMode: toggleEditor,
   conditions: conditionsEditor
 }

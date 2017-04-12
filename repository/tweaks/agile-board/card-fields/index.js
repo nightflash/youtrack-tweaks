@@ -114,7 +114,7 @@ function tweak(name) {
             let colorId = value.color && +value.color.id;
             let classes = `yt-tweak-field-value-${conversionType}`;
 
-            let valueName = valueConverter(value.name || value);
+            let valueName = valueConverter(value.name || value.fullName || value.login || value.presentation || value);
 
             if (color.mode === 'ignore') {
               colorId = null;

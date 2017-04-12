@@ -1,7 +1,7 @@
 function tweak(name, extensionId) {
   const ytTweaks = window.ytTweaks;
 
-  const css = `
+  const darculaCss = `
     .global_agile-board .app__container {
       background-color: #394c55;
     }
@@ -65,10 +65,6 @@ function tweak(name, extensionId) {
     
     .yt-agile-table__row_orphan_white {
       background-color: #394c55;
-    }
-    
-    yt-agile-bottom-toolbar {
-      display:none;
     }
     
     .yt-agile-board.yt-page {
@@ -148,12 +144,6 @@ function tweak(name, extensionId) {
         color: white;
     }
     
-    /*
-    .yt-sticky-panel__container.yt-sticky-panel__container_pinned.yt-agile-table__row-container__head_sticky, 
-    .yt-sticky-panel__container.yt-sticky-panel__container_pinned.yt-agile-board__toolbar_sticky {
-      visibility: hidden;
-    }*/
-    
     .global .yt-issue-comment__text, .global .yt-issue-key-value-list__column_key, .global .command-dialog-container.command-dialog-container {
       color: #444;
     }
@@ -203,12 +193,23 @@ function tweak(name, extensionId) {
     }
   `;
 
+  const hideHeaderCss = `
+    .yt-sticky-panel__container.yt-sticky-panel__container_pinned.yt-agile-table__row-container__head_sticky, 
+    .yt-sticky-panel__container.yt-sticky-panel__container_pinned.yt-agile-board__toolbar_sticky {
+      visibility: hidden;
+  `;
+
+  const hideFooterCss = `
+    yt-agile-bottom-toolbar {
+      display:none;
+    }
+  `;
+
   const agileBoardSelector = '[data-test="agileBoard"]';
 
   let injects;
   let agileBoardNode, agileBoardController, agileBoardEventSource;
 
-  let activeConfigs = [];
   let stopFns = [];
 
   function injectCSS(content) {
@@ -237,8 +238,6 @@ function tweak(name, extensionId) {
   }
 
   function runAction() {
-    activeConfigs = [];
-
     injects = ytTweaks.inject('$compile', '$timeout', '$rootScope');
 
     const configs = ytTweaks.getConfigsForTweak(name).filter(config => {
@@ -251,11 +250,21 @@ function tweak(name, extensionId) {
       return;
     }
 
+    let options = {
+      darculaMode: null,
+      stickyHeader: null,
+      stickyFooter: null
+    };
+
     configs.forEach(config => {
-      activeConfigs.push(config.config);
+      options.darculaMode |= config.config.darculaMode;
+      options.stickyHeader |= config.config.stickyHeader;
+      options.stickyFooter |= config.config.stickyFooter;
     });
 
-    stopFns.push(injectCSS(css));
+    options.darculaMode && stopFns.push(injectCSS(darculaCss));
+    !options.stickyHeader && stopFns.push(injectCSS(hideHeaderCss));
+    !options.stickyFooter && stopFns.push(injectCSS(hideFooterCss));
 
     attachToBoardEvents();
   }

@@ -3,32 +3,21 @@ import Component from 'vue-class-component'
 import TweakEditMixin from '../../../mixins/tweak-edit-mixin.vue'
 import TweakViewMixin from '../../../mixins/tweak-view-mixin.vue'
 
-import TagsInputEdit from '@/components/editor/tags-input/edit.vue'
-import TagsInputView from '@/components/editor/tags-input/view.vue'
-
 import SortedListEdit from '@/components/editor/sorted-list/edit.vue'
 import SortedListView from '@/components/editor/sorted-list/view.vue'
 
 import ToggleEdit from '@/components/editor/toggle/edit.vue'
 
-import TextEdit from '@/components/editor/text/edit.vue'
-import TextView from '@/components/editor/text/view.vue'
-
 import Toolbar from './toolbar.vue'
 import ItemView from './view.vue'
+
+import genericScheme from '../generic/schema'
 
 import * as i18n from './i18n'
 
 export const type = 'agile-board/card-fields'
 
 export const name = 'Agile board card fields'
-
-const tagsEditor = {
-  edit: TagsInputEdit,
-  view: TagsInputView,
-  default: [],
-  options: {}
-}
 
 const fieldsEditor = {
   simple: true,
@@ -59,21 +48,8 @@ const toggleEditor = {
   options: {}
 }
 
-const textEditor = {
-  edit: TextEdit,
-  view: TextView,
-  default: '',
-  options: {}
-}
-
 export const schema = {
-  title: {
-    ...textEditor,
-    default: name
-  },
-  url: textEditor,
-  boardName: tagsEditor,
-  sprintName: tagsEditor,
+  ...genericScheme(name),
   singleMode: toggleEditor,
   sizeParams0: fieldsEditor,
   sizeParams1: fieldsEditor,
