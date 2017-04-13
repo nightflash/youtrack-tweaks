@@ -1,12 +1,8 @@
 function tweak(name, extensionId) {
   const ytTweaks = window.ytTweaks;
 
-  const agileBoardSelector = '[data-test="agileBoard"]';
+  let agileBoardNode, agileBoardController, agileBoardEventSource, configs;
 
-  let injects;
-  let agileBoardNode, agileBoardController, agileBoardEventSource;
-
-  let tweakData;
   let conditionsGroups = [];
 
   const storage = ytTweaks.storage('local');
@@ -144,31 +140,14 @@ function tweak(name, extensionId) {
     stopFns.push(revertOnBoardSelect, revertOnSprintSelect, revertSprintCellUpdate, revertOnBeforeUnload);
   }
 
-  function runWait() {
-    agileBoardNode = document.querySelector(agileBoardSelector);
-    if (agileBoardNode) {
-      agileBoardController = angular.element(agileBoardNode).controller();
-      agileBoardEventSource = ytTweaks.inject('agileBoardLiveUpdater').getEventSource();
-      agileBoardEventSource = agileBoardEventSource && agileBoardEventSource._nativeEventSource;
-      return agileBoardEventSource && agileBoardController && !agileBoardController.loading;
-    }
-  }
+  function ready(data) {
+    agileBoardNode = data.agileBoardNode;
+    agileBoardController = data.agileBoardController;
+    agileBoardEventSource = data.agileBoardEventSource;
+    configs = data.configs;
 
-  function runAction() {
     Notification.requestPermission();
     conditionsGroups = [];
-
-    injects = ytTweaks.inject('$compile', '$timeout', '$rootScope');
-
-    const configs = ytTweaks.getConfigsForTweak(name).filter(config => {
-      return ytTweaks.inArray(config.config.sprintName, agileBoardController.sprint.name, true) &&
-          ytTweaks.inArray(config.config.boardName, agileBoardController.agile.name, true);
-    });
-
-    if (!configs.length) {
-      ytTweaks.log(name, 'no suitable config, sorry');
-      return;
-    }
 
     configs.forEach(config => {
       conditionsGroups.push(config.config);
@@ -186,7 +165,7 @@ function tweak(name, extensionId) {
 
   function run() {
     stop();
-    ytTweaks.wait(runWait, runAction, null, `wait run() ${name}`);
+    ytTweaks.agileWait(name, ready);
   }
 
   ytTweaks.registerTweak({

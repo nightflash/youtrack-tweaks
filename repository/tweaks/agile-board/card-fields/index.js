@@ -4,11 +4,9 @@ function tweak(name) {
   const tweakClass = `${ytTweaks.baseClass}-${name.replace('/', '-')}`;
   const tweakAttribute = `${ytTweaks.baseAttribute}-${name.replace('/', '-')}`;
 
-  const agileBoardSelector = '[data-test="agileBoard"]';
-
   let stopFns = [];
 
-  let agileBoardNode, agileBoardController, agileBoardEventSource;
+  let agileBoardNode, agileBoardController, agileBoardEventSource, configs;
   let fieldsToShow;
   let injects = {};
 
@@ -171,29 +169,14 @@ function tweak(name) {
     node.removeAttribute(tweakAttribute);
   }
 
-  function runWait() {
-    agileBoardNode = document.querySelector(agileBoardSelector);
-    if (agileBoardNode) {
-      agileBoardController = angular.element(agileBoardNode).controller();
-      agileBoardEventSource = ytTweaks.inject('agileBoardLiveUpdater').getEventSource();
-      agileBoardEventSource = agileBoardEventSource && agileBoardEventSource._nativeEventSource;
-      return agileBoardEventSource && agileBoardController && !agileBoardController.loading;
-    }
-  }
+  function ready(data) {
+    agileBoardNode = data.agileBoardNode;
+    agileBoardController = data.agileBoardController;
+    agileBoardEventSource = data.agileBoardEventSource;
+    configs = data.configs;
 
-  function runAction() {
     fieldsToShow = [];
     injects = ytTweaks.inject('$compile', '$timeout', '$rootScope', '$filter');
-
-    const configs = ytTweaks.getConfigsForTweak(name).filter(config => {
-      return ytTweaks.inArray(config.config.sprintName, agileBoardController.sprint.name, true) &&
-          ytTweaks.inArray(config.config.boardName, agileBoardController.agile.name, true);
-    });
-
-    if (!configs.length) {
-      ytTweaks.log(name, 'no suitable config, sorry');
-      return;
-    }
 
     configs.forEach(tweak => {
       const config = tweak.config;
@@ -223,7 +206,7 @@ function tweak(name) {
 
   function run() {
     stop();
-    ytTweaks.wait(runWait, runAction, null, `wait run() ${name}`);
+    ytTweaks.agileWait(name, ready);
   }
 
   ytTweaks.registerTweak({

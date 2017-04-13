@@ -1,6 +1,6 @@
 const fs = require('fs-extra');
 const path = require('path');
-const uglify = require('uglify-js');
+const uglify = require('uglify-js-harmony');
 
 const outputPath = __dirname + '/dist';
 const mout = require('mout');
@@ -22,8 +22,8 @@ function walkDir(dir, rootPointer, currentPointer = rootPointer) {
         if (currentPointer !== rootPointer) {
           currentPointer.js = true;
         }
-        const result = uglify.minify([fullname]).code;
-        fs.outputFileSync(path.join(__dirname, distPath), result);
+        const minified = uglify.minify([fullname], {mangle: false}).code;
+        fs.outputFileSync(path.join(__dirname, distPath), minified);
       } else {
         currentPointer.css = true;
         fs.copySync(fullname, path.join(__dirname, distPath));

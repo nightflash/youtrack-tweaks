@@ -1,6 +1,13 @@
 function tweak(name, extensionId) {
   const ytTweaks = window.ytTweaks;
 
+  const fixesCss = `   
+    .global_agile-board .app__footer.app__footer {
+      margin-top: 0px;
+      margin-bottom: 0px;
+    }
+  `;
+
   const darculaCss = `
     .global_agile-board .app__container {
       background-color: #394c55;
@@ -33,11 +40,11 @@ function tweak(name, extensionId) {
     }
     
     .global .yt-agile-board {
-      color: #fff;
+      color: #e9e9e9;
     }
     
     .ring-island, .yt-agile-card {
-      color: #fff;
+      color: #e9e9e9;
       background-color: #232e34;
       border: none;
     }
@@ -47,7 +54,7 @@ function tweak(name, extensionId) {
     }
     
     .global .yt-agile-table__row-title__summary, .global .yt-agile-table__row__cell, .yt-agile-card__summary, .yt-drag-agile-card__summary {
-      color: #fff;
+      color: #e9e9e9;
     }
     
     .global .yt-dark-grey-text {
@@ -166,13 +173,7 @@ function tweak(name, extensionId) {
       text-decoration: underline;
     }
     
-    /* Footer */
-   
-    .global_agile-board .app__footer.app__footer {
-      margin-top: 0px;
-      margin-bottom: 0px;
-    }
-    
+    /* Footer */    
     .global_agile-board .yt-footer {
       background-color: #232e34;
     }
@@ -191,6 +192,12 @@ function tweak(name, extensionId) {
     .yt-swimlane-column__collapsed-cards-holder:after, .yt-agile-table__row_orphan_white .yt-swimlane-column__collapsed-cards-holder:after {
       box-shadow: none;
     }
+    
+    /* Estimation */
+    .yt-agile-table__row__estimation {
+      background-color: #232E34;
+      color: #ddd;
+    }
   `;
 
   const hideHeaderCss = `
@@ -205,10 +212,7 @@ function tweak(name, extensionId) {
     }
   `;
 
-  const agileBoardSelector = '[data-test="agileBoard"]';
-
-  let injects;
-  let agileBoardNode, agileBoardController, agileBoardEventSource;
+  let agileBoardController, configs;
 
   let stopFns = [];
 
@@ -227,28 +231,9 @@ function tweak(name, extensionId) {
     stopFns.push(revertOnBoardSelect, revertOnSprintSelect);
   }
 
-  function runWait() {
-    agileBoardNode = document.querySelector(agileBoardSelector);
-    if (agileBoardNode) {
-      agileBoardController = angular.element(agileBoardNode).controller();
-      agileBoardEventSource = ytTweaks.inject('agileBoardLiveUpdater').getEventSource();
-      agileBoardEventSource = agileBoardEventSource && agileBoardEventSource._nativeEventSource;
-      return agileBoardEventSource && agileBoardController && !agileBoardController.loading;
-    }
-  }
-
-  function runAction() {
-    injects = ytTweaks.inject('$compile', '$timeout', '$rootScope');
-
-    const configs = ytTweaks.getConfigsForTweak(name).filter(config => {
-      return ytTweaks.inArray(config.config.sprintName, agileBoardController.sprint.name, true) &&
-          ytTweaks.inArray(config.config.boardName, agileBoardController.agile.name, true);
-    });
-
-    if (!configs.length) {
-      ytTweaks.log(name, 'no suitable config, sorry');
-      return;
-    }
+  function ready(data) {
+    agileBoardController = data.agileBoardController;
+    configs = data.configs;
 
     let options = {
       darculaMode: null,
@@ -261,6 +246,8 @@ function tweak(name, extensionId) {
       options.stickyHeader |= config.config.stickyHeader;
       options.stickyFooter |= config.config.stickyFooter;
     });
+
+    stopFns.push(injectCSS(fixesCss));
 
     options.darculaMode && stopFns.push(injectCSS(darculaCss));
     !options.stickyHeader && stopFns.push(injectCSS(hideHeaderCss));
@@ -276,7 +263,7 @@ function tweak(name, extensionId) {
 
   function run() {
     stop();
-    ytTweaks.wait(runWait, runAction, null, `wait run() ${name}`);
+    ytTweaks.agileWait(name, ready);
   }
 
   ytTweaks.registerTweak({
