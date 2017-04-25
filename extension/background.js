@@ -158,33 +158,16 @@ function getYoutrackTabsByQuery(query = {title: '*YouTrack*'}) {
   });
 }
 
-function reloadTab(tab) {
-  return chrome.tabs.reload(tab.id);
-}
-
-chrome.webNavigation.onCommitted.addListener(details => {
-  const id = details.tabId;
-  const savedTab = youtrackTabs.get(id);
-
-  if (savedTab) {
-    chrome.tabs.get(id, tab => {
-      if (savedTab.tab.url !== tab.url) {
-        youtrackTabs.delete(details.tabId);
-      }
-    });
-  }
-});
-
 chrome.tabs.onRemoved.addListener(tabId => {
-  console.log('on remove');
+  console.log('tab delete: onRemove', tabId);
   youtrackTabs.delete(tabId);
 });
 
 chrome.runtime.onMessage.addListener((request, sender) => {
-  console.log('New messsage', request, sender);
+  const tab = sender.tab;
 
   if (request.probe) {
-    const tab = sender.tab;
+    console.log('set tab', tab.id, tab.url);
 
     youtrackTabs.set(tab.id, {
       tab: tab,
@@ -192,8 +175,12 @@ chrome.runtime.onMessage.addListener((request, sender) => {
       coreInjected: false
     });
     checkAndInject(tab);
+  } else if (!request.probe) {
+    console.log('tab delete: bad probe', tab.id);
+
+    youtrackTabs.delete(tab.id);
   } else if (request.tweaks) {
-    console.log('Recieve new tweaks config');
+    console.log('new config');
 
     userTweaksConfiguration = request.tweaks;
     forAllTabs(checkAndInject);
@@ -202,48 +189,11 @@ chrome.runtime.onMessage.addListener((request, sender) => {
 
 const storage = window.browser ? chrome.storage.local : chrome.storage.sync; // fix for firefox
 
-const migrationCondition = t => {
-  return t.type === "agile-board/card-fields" &&
-    (t.config.sizeParams.some(f => f.ignoreColors !== undefined) ||
-    t.config.sizeParams.some(f => f.color && !f.color.opacity));
-}
-
-function migrate() {
-  console.log('migration');
-  userTweaksConfiguration = userTweaksConfiguration.map(t => {
-    if (migrationCondition(t)) {
-      t.config.sizeParams = t.config.sizeParams.map(f => {
-        if (f.ignoreColors !== undefined) {
-          f.color = {
-            mode: t.ignoreColors ? 'ignore' : 'inherit',
-            generator: 32
-          };
-          delete f['ignoreColors'];
-        }
-
-        if (f.color && !f.color.opacity) {
-          f.color.opacity = 1;
-        }
-
-        return f;
-      })
-    }
-
-    return t;
-  });
-
-  storage.set({
-    tweaks: userTweaksConfiguration
-  });
-}
-
 function readSavedConfiguration() {
   return new Promise(resolve => {
     storage.get(['tweaks', 'version'], data => {
       userTweaksConfiguration = data.tweaks || [];
-      console.log('initial tweaks fetched', userTweaksConfiguration.some(migrationCondition), JSON.stringify(userTweaksConfiguration));
-
-      userTweaksConfiguration.some(migrationCondition) && migrate();
+      console.log('initial tweaks fetched', JSON.stringify(userTweaksConfiguration));
 
       if (!data.welcome && userTweaksConfiguration.length === 0) {
         resolve(setDefaultTweaks());
@@ -270,6 +220,6 @@ reloadRepositoryConfiguration().then(() => {
   return readSavedConfiguration()
     .then(getYoutrackTabsByQuery)
     .then(tabs => {
-      tabs.forEach(reloadTab);
+      tabs.forEach(tab => chrome.tabs.reload(tab.id));
     });
 });
