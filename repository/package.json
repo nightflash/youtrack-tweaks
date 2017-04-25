@@ -5,7 +5,8 @@
   "main": "compile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node compile.js"
+    "build": "node compile.js",
+    "dev": "node compile.js --watch"
   },
   "author": "",
   "license": "ISC",

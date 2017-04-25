@@ -70,6 +70,7 @@ function rebuild() {
   applyTweaks(options, tweaksMap);
 
   fs.outputFileSync(path.join(outputPath, 'options.json'), JSON.stringify(options));
+  console.log('done!');
 }
 
 rebuild();

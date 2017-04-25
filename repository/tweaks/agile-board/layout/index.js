@@ -10,33 +10,38 @@ function tweak(name, extensionId) {
 
   const darculaCss = `
     .global_agile-board .app__container {
-      background-color: #394c55;
+      background-color: #2b2b2b;
+    }
+    
+    .yt-bottom-toolbar {
+      background-color: #2b2b2b;
+      border-top: 1px solid black;
     }
   
     .yt-agile-table__row__cell {
-      border-color: #232e34;
-      border-right: 1px solid #232e34;
-      border-left: 1px solid #232e34;
+      border-color: #2b2b2b;
+      border-right: 1px solid #2b2b2b;
+      border-left: 1px solid #2b2b2b;
     }
     
     .yt-agile-table .yt-agile-table__row {
-      border-bottom: 1px solid #232e34;
+      border-bottom: 1px solid #2b2b2b;
     }
     
     .yt-sticky-panel__container_pinned .yt-agile-table__row__cell_head:last-child {
-      border: 1px solid #232e34;  
+      border: 1px solid #2b2b2b;  
     }
     
     .yt-agile-table {
-      background-color: #394c55;
+      background-color: #3c3f41;
     }
     
     .yt-agile-board__toolbar__slider-wrapper, .yt-sticky-panel__container_pinned .yt-agile-board__toolbar__slider-wrapper {
-      background: #394c55;
+      background: #3c3f41;
     }
     
     .yt-agile-table__row-container__head_sticky {
-      background-color: #394c55;
+      background-color: #3c3f41;
     }
     
     .global .yt-agile-board {
@@ -44,99 +49,95 @@ function tweak(name, extensionId) {
     }
     
     .ring-island, .yt-agile-card {
-      color: #e9e9e9;
-      background-color: #232e34;
+      background-color: #313335;
       border: none;
     }
     
     .yt-agile-card.yt-agile-card_selected {
-      background-color: #355559;
+      background-color: #2b2b2b;
     }
     
     .global .yt-agile-table__row-title__summary, .global .yt-agile-table__row__cell, .yt-agile-card__summary, .yt-drag-agile-card__summary {
-      color: #e9e9e9;
+      color: #a9b7c6;
     }
     
-    .global .yt-dark-grey-text {
-      color: #25b7ff;
+    .global .yt-dark-grey-text, .yt-agile-board__grey-link, .yt-page__block .ring-link {
+      color: #3f92b0;
     }
     
-    .yt-agile-board__grey-link {
-      color: #25b7ff;
+    .global .yt-dark-grey-text:hover {
+      color: #49a8cb;
     }
     
     .global .yt-agile-table__row__estimation.yt-dark-grey-text {
       color:#888;
-      background-color: #232e34;
+      background-color: #2b2b2b;
     }
     
     .yt-agile-table__row_orphan_white {
-      background-color: #394c55;
+      background-color: #3c3f41;
     }
     
     .yt-agile-board.yt-page {
-      background-color: #394c55;
+      background-color: #3c3f41;
       padding-top: 3px;
-      border-bottom: 3px solid #232e34;
+      border-bottom: 3px solid #2b2b2b;
     }
     
     .yt-sticky-panel__container {
-      background-color: #394c55;
+      background-color: #3c3f41;
     }
     
     .yt-agile-board__toolbar__sprint {
       background-image: none;
-      background-color: #232e34;
-      color: #fff;
+      background-color: #2b2b2b;
+      color: #a9b7c6;
       box-shadow:none;
     }
     
     .yt-page__block .ring-input, 
     .yt-page__block .ring-input-size_l {
-      background-color: #232e34;
-      color: #fff;
+      background-color: #2b2b2b;
+      color: #a9b7c6;
       border: none;
       box-shadow:none;
     }
     
     .yt-page__block .ring-tag {
-        background-color: #394c55;
+        background-color: #3c3f41;
         border:none;
     }
     
     .yt-page__block .yt-search-panel__input .ring-icon_gray {
-      background-color: #232e34;
-      color: #fff;
+      background-color: #2b2b2b;
+      color: #a9b7c6;
     }
     
+    .ring-button:not([disabled]):not(.ring-button_loader)[data-test="createActionsHeaderDropdown"],
     .yt-page__block .ring-button:not([disabled]):not(.ring-button_loader),
     .yt-page__block .ring-button.ring-button_active:not([disabled]):not(.ring-button_loader) {
-      background-color: #232e34;
+      background-color: #3c3f41;
       background-image: none;
-      color:#fff;
+      color:#a9b7c6;
     }
     .yt-page__block .ring-button.ring-button_blue,
     .yt-page__block .ring-button.ring-button_blue:hover {
-      background-color: #232e34;
+      background-color: #2b2b2b;
       background-image: none;
       background: none;
       box-shadow:none;
     }
     
     .yt-page__block .yt-column-settings .ring-table__header {
-        background-color: #394c55;
+        background-color: #3c3f41;
     }
     
     .yt-page__block .ring-table__column {
-      background-color: #394c55;
-    }
-    
-    .yt-page__block .ring-link {
-      color: #25b7ff;
+      background-color: #3c3f41;
     }
     
     .yt-page__block .ring-tabs__btn {
-      color:#fff;
+      color:#a9b7c6;
     }
     
     .yt-agile-table__row {
@@ -148,7 +149,7 @@ function tweak(name, extensionId) {
     }
     
     .yt-page__block  .ring-query-assist__letter, .global.background__gradient.global_agile-board {
-        color: white;
+        color: #a9b7c6;
     }
     
     .global .yt-issue-comment__text, .global .yt-issue-key-value-list__column_key, .global .command-dialog-container.command-dialog-container {
@@ -156,17 +157,17 @@ function tweak(name, extensionId) {
     }
     
     .yt-agile-board__toolbar__time-left, .yt-agile-board__toolbar__time-left .yt-icon {
-      color: #ddd;
+      color: #a9b7c6;
     }
     
     /* Header */
     
     .yt-header {
-      background-color: #232E34;
+      background-color: #2b2b2b;
     }
     
     .yt-header .ring-link {
-      color: #ddd !important;
+      color: #a9b7c6 !important;
     }
     
     .yt-header .ring-header__menu-item_active {
@@ -175,15 +176,15 @@ function tweak(name, extensionId) {
     
     /* Footer */    
     .global_agile-board .yt-footer {
-      background-color: #232e34;
+      background-color: #2b2b2b;
     }
     
     .global_agile-board .yt-footer .ring-footer {
-      color: #ddd;
+      color: #a9b7c6;
     }
     
     .global_agile-board .yt-footer .ring-footer a {
-      color: #ddd;
+      color: #a9b7c6;
       text-decoration: underline;
     }
     
@@ -195,8 +196,22 @@ function tweak(name, extensionId) {
     
     /* Estimation */
     .yt-agile-table__row__estimation {
-      background-color: #232E34;
-      color: #ddd;
+      background-color: #2b2b2b;
+      color: #a9b7c6;
+    }
+    
+    /* Selects */
+    .ring-select-popup {
+      background-color: #3c3f41;
+    }
+    
+    .ring-list__item_action, .ring-select__button, .ring-select__message {
+      color: #a9b7c6;
+    }
+    
+    .ring-select-popup  .ring-input_filter-popup {
+      background-color: #2b2b2b;
+      color: #a9b7c6;
     }
   `;
 
