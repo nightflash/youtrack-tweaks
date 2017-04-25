@@ -8,11 +8,11 @@ REPOSITORY="${DIR}/../repository"
 EXTENSION="${DIR}/../extension"
 
 cd $MENU
-npm run build -- --watch &
+npm run dev &
 menuWatchPid=$!
 
 cd $REPOSITORY
-npm run build -- --watch &
+npm run dev &
 repoWatchPid=$!
 
 echo "Repo pid = ${repoWatchPid}"

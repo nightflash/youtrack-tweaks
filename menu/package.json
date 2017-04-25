@@ -5,9 +5,9 @@
   "author": "Maxim Erekhinskiy <maxim.erehinskiy@jetbrains.com>",
   "private": true,
   "scripts": {
-    "dev": "node build/dev-server.js",
-    "dev-dist": "http-server dist -p 4200",
+    "dev-vue": "node build/dev-server.js",
     "build": "node build/build.js",
+    "dev": "node build/build.js -- --watch",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "test": "npm run unit",
     "lint": "eslint --ext .js,.vue src test/unit/specs"
