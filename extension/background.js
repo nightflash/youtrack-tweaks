@@ -166,19 +166,21 @@ chrome.tabs.onRemoved.addListener(tabId => {
 chrome.runtime.onMessage.addListener((request, sender) => {
   const tab = sender.tab;
 
-  if (request.probe) {
-    console.log('set tab', tab.id, tab.url);
+  if (request.probe !== undefined) {
+    if (request.probe) {
+      console.log('set tab', tab.id, tab.url);
 
-    youtrackTabs.set(tab.id, {
-      tab: tab,
-      injected: new Map(),
-      coreInjected: false
-    });
-    checkAndInject(tab);
-  } else if (!request.probe) {
-    console.log('tab delete: bad probe', tab.id);
+      youtrackTabs.set(tab.id, {
+        tab: tab,
+        injected: new Map(),
+        coreInjected: false
+      });
+      checkAndInject(tab);
+    } else {
+      console.log('tab delete: bad probe', tab.id);
 
-    youtrackTabs.delete(tab.id);
+      youtrackTabs.delete(tab.id);
+    }
   } else if (request.tweaks) {
     console.log('new config');
 
