@@ -2,7 +2,7 @@
   "name": "repository",
   "version": "1.0.0",
   "description": "",
-  "main": "compile.js",
+  "main": "coimpile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node compile.js",

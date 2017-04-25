@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>YouTrack Tweaks</title>
+    <link rel="chrome-webstore-item"
+          href="https://chrome.google.com/webstore/detail/youtrack-tweaks/ialcocpchgkbmpmoipmoheklimalbcia">
+    <script>
+
+      function install() {
+        chrome.webstore.install()
+      }
+
+      if (chrome.app.isInstalled) {
+        document.getElementById('install-button').disabled = 'true';
+      }
+    </script>
+    <style>
+        .install-button {
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+    <button class="install-button" onclick="install()" id="install-button">Add YouTrack Tweaks to Chrome</button>
+</body>
+</html>
