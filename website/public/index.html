@@ -6,22 +6,12 @@
     <meta name="google-site-verification" content="2s9sitcZMMyP3PmmotC_MmUz5TieT9_jpTT-w0oGH5Y" />
     <link rel="chrome-webstore-item"
           href="https://chrome.google.com/webstore/detail/youtrack-tweaks/ialcocpchgkbmpmoipmoheklimalbcia">
-    <script>
-
-      function install() {
-        chrome.webstore.install('https://chrome.google.com/webstore/detail/youtrack-tweaks/ialcocpchgkbmpmoipmoheklimalbcia')
-      }
-
-      if (chrome.app.isInstalled) {
-        document.getElementById('install-button').disabled = 'true';
-      }
-    </script>
     <style>
         body {
             background-color: #000;
         }
 
-        .logo-block {
+        .install-block {
             font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
             font-size: 40px;
             color: white;
@@ -29,6 +19,14 @@
             text-align: center;
             cursor: pointer;
         }
+
+        .install-block.installed { cursor: default; }
+
+        .install-block .logo-text.not-installed { display: block; }
+        .install-block .logo-text.installed { display: none; }
+
+        .install-block.installed .logo-text.not-installed { display: none; }
+        .install-block.installed .logo-text.installed { display: block; }
 
         .logo-text {
             margin-bottom: 16px;
@@ -56,9 +54,10 @@
     </style>
 </head>
 <body>
-    <div class="logo-block">
-        <div class="logo-text">Install YouTrack Tweaks</div>
-        <img onclick="install()" src="logo.png">
+    <div class="install-block" onclick="install()">
+        <div class="logo-text not-installed">Click to install YouTrack Tweaks</div>
+        <div class="logo-text installed">Already installed</div>
+        <img src="logo.png">
     </div>
 
     <div class="footer">
@@ -74,5 +73,21 @@
             <img src="youtrack.svg">
         </a>
     </div>
+
+    <script>
+      let installed = chrome.app.isInstalled;
+      const extensionUrl = 'https://chrome.google.com/webstore/detail/youtrack-tweaks/ialcocpchgkbmpmoipmoheklimalbcia';
+
+      const setIntalled = () => {
+        document.querySelector('.install-block').classList.add('installed');
+        installed = true;
+      };
+
+      window.install = () => {
+        !installed && chrome.webstore.install(extensionUrl, setIntalled)
+      };
+
+      installed && setIntalled();
+    </script>
 </body>
 </html>
