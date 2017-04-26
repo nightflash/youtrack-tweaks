@@ -90,15 +90,22 @@
 
     <script>
       let installed = chrome.app.isInstalled;
-      const extensionUrl = 'https://chrome.google.com/webstore/detail/ialcocpchgkbmpmoipmoheklimalbcia';
 
       const setIntalled = () => {
         document.querySelector('.install-block').classList.add('installed');
         installed = true;
       };
 
+      const errorCb = error => {
+        console.error(error);
+      };
+
       window.install = () => {
-        !installed && chrome.webstore.install(extensionUrl, setIntalled)
+        console.log('intalled: ', installed);
+        !installed && chrome.webstore.install(
+            document.head.querySelector('link[rel="chrome-webstore-item"]').href,
+            setIntalled, errorCb
+        );
       };
 
       installed && setIntalled();
