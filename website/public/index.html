@@ -119,7 +119,7 @@
       window.install = () => {
         if (!installed) {
           chrome.webstore.install(
-              extensionUrl, () => setInstalled(true), errorCb
+              extensionUrl, () => {}, errorCb
           );
         }
       };
