@@ -16,6 +16,11 @@ export const en = {
     label: 'Sticky footer',
     left: 'Visible',
     right: 'Hidden'
+  },
+  oneLineSwimlane: {
+    label: 'One line swimlane title',
+    left: 'Enabled',
+    right: 'Disabled'
   }
 }
 

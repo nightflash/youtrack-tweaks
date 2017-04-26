@@ -26,6 +26,7 @@ export const schema = {
   ...genericScheme(name),
   darculaMode: toggleEditor,
   stickyHeader: toggleEditor,
+  oneLineSwimlane: toggleEditor,
   stickyFooter: {
     ...toggleEditor,
     default: false
