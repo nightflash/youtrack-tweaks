@@ -67,7 +67,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="install-block" onclick="install()">
+        <div class="install-block" onclick="install('')">
             <div class="logo-text not-installed">Click to install YouTrack Tweaks</div>
             <div class="logo-text installed">Already installed</div>
             <img src="logo.png">
@@ -90,7 +90,7 @@
 
     <script>
       let installed = chrome.app.isInstalled;
-      const extensionUrl = 'https://chrome.google.com/webstore/detail/youtrack-tweaks/ialcocpchgkbmpmoipmoheklimalbcia';
+      const extensionUrl = 'https://chrome.google.com/webstore/detail/ialcocpchgkbmpmoipmoheklimalbcia';
 
       const setIntalled = () => {
         document.querySelector('.install-block').classList.add('installed');
