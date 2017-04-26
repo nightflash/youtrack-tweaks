@@ -7,17 +7,29 @@
     <link rel="chrome-webstore-item"
           href="https://chrome.google.com/webstore/detail/youtrack-tweaks/ialcocpchgkbmpmoipmoheklimalbcia">
     <style>
-        body {
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
             background-color: #000;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            height: 100%;
         }
 
         .install-block {
             font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
             font-size: 40px;
             color: white;
-            margin-top: calc(50% - 128px);
             text-align: center;
             cursor: pointer;
+
+            flex: none;
         }
 
         .install-block.installed { cursor: default; }
@@ -54,10 +66,12 @@
     </style>
 </head>
 <body>
-    <div class="install-block" onclick="install()">
-        <div class="logo-text not-installed">Click to install YouTrack Tweaks</div>
-        <div class="logo-text installed">Already installed</div>
-        <img src="logo.png">
+    <div class="container">
+        <div class="install-block" onclick="install()">
+            <div class="logo-text not-installed">Click to install YouTrack Tweaks</div>
+            <div class="logo-text installed">Already installed</div>
+            <img src="logo.png">
+        </div>
     </div>
 
     <div class="footer">
