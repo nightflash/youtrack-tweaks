@@ -2,17 +2,9 @@ server {
     listen 80;
     listen [::]:80;
 
-    gzip on;
-
     server_name youtrack-tweaks.com;
 
-    autoindex on;
-    root /var/www/public/youtrack-tweaks/landing;
-    index index.html;
-
-    location / {
-            try_files $uri $uri/ =404;
-    }
+    return 301 https://$server_name$request_uri;
 }
 
 server {
