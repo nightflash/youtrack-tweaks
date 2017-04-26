@@ -97,7 +97,6 @@
 
       const setInstalled = state => {
         installed = state;
-        console.log('check installed', installed);
         const node = document.querySelector('.install-block');
 
         if (installed) {
@@ -109,7 +108,7 @@
 
       setInterval(() => {
         chrome.runtime.sendMessage(extensionId, {ping: true}, response => {
-          setInstalled(response && response.success);
+          setInstalled(response && response.pong);
         });
       }, 250);
 
