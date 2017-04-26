@@ -22,6 +22,11 @@
     "js": ["content_script.js"],
     "matches": ["*://*/*"]
   }],
+  "externally_connectable" : {
+    "matches" : [
+      "*://*.youtrack-tweaks.com/*"
+    ]
+  },
   "web_accessible_resources": [
     "images/*.png"
   ]

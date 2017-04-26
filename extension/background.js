@@ -189,6 +189,12 @@ chrome.runtime.onMessage.addListener((request, sender) => {
   }
 });
 
+chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
+  if (request.ping) {
+    sendResponse({pong: true});
+  }
+});
+
 const storage = window.browser ? chrome.storage.local : chrome.storage.sync; // fix for firefox
 
 function readSavedConfiguration() {

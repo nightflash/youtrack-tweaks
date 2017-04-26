@@ -32,7 +32,7 @@
             flex: none;
         }
 
-        .install-block.installed { cursor: default; }
+        .install-block.installed { cursor: default; opacity: 0.7 }
 
         .install-block .logo-text.not-installed { display: block; }
         .install-block .logo-text.installed { display: none; }
@@ -89,26 +89,43 @@
     </div>
 
     <script>
-      let installed = chrome.app.isInstalled;
+      const extensionUrl = document.head.querySelector('link[rel="chrome-webstore-item"]').href;
+      const extensionId = extensionUrl.split('detail/')[1];
+      console.log(extensionId);
 
-      const setIntalled = () => {
-        document.querySelector('.install-block').classList.add('installed');
-        installed = true;
+      let installed = false;
+
+      const setInstalled = state => {
+        installed = state;
+        console.log('check installed', installed);
+        const node = document.querySelector('.install-block');
+
+        if (installed) {
+          node.classList.add('installed');
+        } else {
+          node.classList.remove('installed');
+        }
       };
+
+      setInterval(() => {
+        chrome.runtime.sendMessage(extensionId, {ping: true}, response => {
+          setInstalled(response && response.success);
+        });
+      }, 250);
 
       const errorCb = error => {
         console.error(error);
       };
 
       window.install = () => {
-        console.log('intalled: ', installed);
-        !installed && chrome.webstore.install(
-            document.head.querySelector('link[rel="chrome-webstore-item"]').href,
-            setIntalled, errorCb
-        );
+        if (!installed) {
+          chrome.webstore.install(
+              extensionUrl, () => setInstalled(true), errorCb
+          );
+        }
       };
 
-      installed && setIntalled();
+      setInstalled();
     </script>
 </body>
 </html>
