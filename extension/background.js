@@ -2,11 +2,7 @@ console.log('YouTrack tweaks');
 
 const youtrackTabs = new Map();
 
-const repositoryTweaksConfig = {
-  version: -1,
-  tweaks: []
-};
-
+let repositoryTweaksConfig = [];
 let userTweaksConfiguration = [];
 
 function asyncLoad(path) {
@@ -84,19 +80,6 @@ function sendConfiguration(tab) {
   return Promise.resolve();
 }
 
-function reloadRepositoryConfiguration() {
-  return asyncLoad('options.json?' + +Math.random()).
-  then(content => {
-    const json = JSON.parse(content);
-    const currentVersion = repositoryTweaksConfig.version;
-    repositoryTweaksConfig.tweaks = getTweaksFromJSON(json);
-    repositoryTweaksConfig.version = json.version;
-
-    console.log('Latest repository version', repositoryTweaksConfig.version, repositoryTweaksConfig.tweaks);
-    return repositoryTweaksConfig.version !== currentVersion;
-  });
-}
-
 function getTweaksFromJSON(json, path = '') {
   if (json.tweaks) {
     let result = [];
@@ -125,7 +108,7 @@ function checkAndInject(tab) {
       return loadAndInject(tab, `index.js`);
     }
   }).then(() => {
-    return Promise.all(repositoryTweaksConfig.tweaks.map(tweak => {
+    return Promise.all(repositoryTweaksConfig.map(tweak => {
       const filePromises = [];
       const tweakInjected = tabData.injected.get(tweak.name);
 
@@ -204,7 +187,7 @@ function readSavedConfiguration() {
 }
 
 function setDefaultTweaks() {
-  return asyncLoad('default.json?' + repositoryTweaksConfig.version).
+  return asyncLoad('default.json').
   then(content => {
     const tweaks = JSON.parse(content);
     storage.set({
@@ -215,7 +198,9 @@ function setDefaultTweaks() {
   });
 }
 
-reloadRepositoryConfiguration().then(() => {
+asyncLoad('options.json').then(content => {
+  repositoryTweaksConfig = getTweaksFromJSON(JSON.parse(content));
+}).then(() => {
   return readSavedConfiguration()
     .then(getYoutrackTabsByQuery)
     .then(tabs => {
