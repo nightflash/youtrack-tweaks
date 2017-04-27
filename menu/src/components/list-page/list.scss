@@ -7,6 +7,7 @@ h1, h2 {
 }
 
 .tweak {
+  position: relative;
   cursor: pointer;
   margin: 8px 0;
   padding: 4px;
@@ -20,5 +21,20 @@ h1, h2 {
 
   &:hover {
     background: linear-gradient(to top, #e7e7e7, #fefefe);
+  }
+
+  & .toggle {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    color: green;
+  }
+
+  &.disabled {
+    opacity: 0.6;
+
+    & .toggle {
+      color: darkred;
+    }
   }
 }

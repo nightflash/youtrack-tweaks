@@ -7,8 +7,15 @@
     </div>
 
     <draggable v-model="tweaks" @end="dragEnd()">
-        <div v-for="(tweak, index) in tweaks" class="tweak"  @click="edit(index)">
-            <div><span class="title">{{ tweak.config.title || getTweakExports(tweak).name }}</span> <span v-show="tweak.url">({{ tweak.url }})</span></div>
+        <div v-for="(tweak, index) in tweaks" class="tweak" :class="{'disabled': tweak.disabled}"  @click="edit(index)">
+            <div>
+                <span class="title">{{ tweak.config.title || getTweakExports(tweak).name }}</span> <span v-show="tweak.url">({{ tweak.url }})</span>
+
+                <span class="toggle" @click.stop="toggleTweak(index)">
+                    <span v-show="tweak.disabled">disabled</span>
+                    <span v-show="!tweak.disabled">enabled</span>
+                </span>
+            </div>
             <component :is="getTweakExports(tweak).View" :tweak="tweak" :schema="getTweakExports(tweak).schema"></component>
         </div>
     </draggable>

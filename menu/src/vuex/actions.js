@@ -1,11 +1,12 @@
 import storage from '@/utils/storage'
 
-import {SET_TWEAKS_MUT, ADD_TWEAK_MUT, UPDATE_TWEAK_MUT, REMOVE_TWEAK_MUT, REMOVE_ALL_TWEAKS_MUT} from './mutations'
+import {SET_TWEAKS_MUT, ADD_TWEAK_MUT, UPDATE_TWEAK_MUT, REMOVE_TWEAK_MUT, TOGGLE_TWEAK_MUT, REMOVE_ALL_TWEAKS_MUT} from './mutations'
 
 export const RELOAD_TWEAKS = 'reloadTweaks'
 export const ADD_TWEAK = 'addTweak'
 export const UPDATE_TWEAK = 'updateTweak'
 export const REMOVE_TWEAK = 'removeTweak'
+export const TOGGLE_TWEAK = 'toggleEnabled'
 export const REMOVE_ALL_TWEAKS = 'removeAllTweaks'
 export const SET_TWEAKS = 'setTweaks'
 
@@ -44,6 +45,10 @@ export default {
 
   [REMOVE_TWEAK] ({commit}, {index}) {
     commit(REMOVE_TWEAK_MUT, {index})
+  },
+
+  [TOGGLE_TWEAK] ({commit}, {index}) {
+    commit(TOGGLE_TWEAK_MUT, {index})
   },
 
   [REMOVE_ALL_TWEAKS] ({commit}) {

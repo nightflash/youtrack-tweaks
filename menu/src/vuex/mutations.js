@@ -4,6 +4,7 @@ export const SET_TWEAKS_MUT = 'setTweaks'
 export const ADD_TWEAK_MUT = 'addTweak'
 export const UPDATE_TWEAK_MUT = 'updateTweak'
 export const REMOVE_TWEAK_MUT = 'removeTweak'
+export const TOGGLE_TWEAK_MUT = 'toggleTweak'
 export const REMOVE_ALL_TWEAKS_MUT = 'removeAllTweaks'
 
 export default {
@@ -21,6 +22,10 @@ export default {
 
   [REMOVE_TWEAK_MUT] (state, {index}) {
     state.tweaks.splice(index, 1)
+  },
+
+  [TOGGLE_TWEAK_MUT] (state, {index}) {
+    Vue.set(state.tweaks[index], 'disabled', !state.tweaks[index]['disabled'])
   },
 
   [REMOVE_ALL_TWEAKS_MUT] (state) {

@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import draggable from 'vuedraggable'
 
-import {ADD_TWEAK, SET_TWEAKS} from '../../vuex/actions'
+import {ADD_TWEAK, SET_TWEAKS, TOGGLE_TWEAK} from '../../vuex/actions'
 
 import tweaksLibrary from '../tweak/library/index'
 
@@ -37,6 +37,12 @@ export default class extends Vue {
   dragEnd () {
     this.$store.dispatch(SET_TWEAKS, {
       tweaks: this.tweaks
+    })
+  }
+
+  toggleTweak (index) {
+    this.$store.dispatch(TOGGLE_TWEAK, {
+      index
     })
   }
 
