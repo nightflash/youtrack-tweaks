@@ -198,7 +198,10 @@ function tweak(name) {
     tweakNewCards();
   }
 
+  let agileWaitCancel = () => {};
+
   function stop() {
+    agileWaitCancel();
     stopFns.forEach(fn => fn());
     stopFns = [];
     document.querySelectorAll(`[${tweakAttribute}]`).forEach(revertCardNode);
@@ -206,7 +209,7 @@ function tweak(name) {
 
   function run() {
     stop();
-    ytTweaks.agileWait(name, ready);
+    agileWaitCancel = ytTweaks.agileWait(name, ready);
   }
 
   ytTweaks.registerTweak({

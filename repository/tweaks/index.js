@@ -40,20 +40,13 @@ const ytTweaks = window.ytTweaks = {
   runTweaks() {
     this.registeredTweaks.forEach(tweak => {
       this.log('running tweak', tweak.name);
-      tweak.run();
-    });
-  },
 
-  stopTweaks() {
-    this.mainWaitCancel();
-
-    this.registeredTweaks.forEach(tweak => {
-      if (tweak.stop) {
-        this.log('stopping tweak', tweak.name);
-        tweak.stop();
+      const currentConfigs = JSON.stringify(this.getConfigsForTweak(tweak.name));
+      if (tweak.lastConfig !== currentConfigs) {
+        tweak.lastConfig = currentConfigs;
+        tweak.run();
       }
     });
-    this.running = false;
   },
 
   mockMethod(object, propertyName, mockFn) {
@@ -108,12 +101,7 @@ const ytTweaks = window.ytTweaks = {
   },
 
   waitForAngularAndRun() {
-    if (this.running) {
-      ytTweaks.error('already running');
-      return;
-    }
-    this.running = true;
-
+    this.mainWaitCancel();
     this.mainWaitCancel = this.wait(() => window.angular, angular => {
       this.injector = angular.element(document.body).injector();
       if (this.injector) {
@@ -160,16 +148,11 @@ const ytTweaks = window.ytTweaks = {
   },
 
   init() {
-    const rerun = () => {
-      ytTweaks.stopTweaks();
-      ytTweaks.runTweaks();
-    };
-
     // process browser back/forward buttons
-    window.addEventListener('popstate', rerun);
+    window.addEventListener('popstate', this.runTweaks);
 
     // process angular routes
-    this.inject('$rootScope').$on('$routeChangeSuccess', rerun);
+    this.inject('$rootScope').$on('$routeChangeSuccess', this.runTweaks);
   },
 
   agileWait(tweakName, successCb, errorCb) {

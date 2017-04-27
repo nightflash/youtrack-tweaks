@@ -325,14 +325,17 @@ function tweak(name, extensionId) {
     attachToBoardEvents();
   }
 
+  let agileWaitCancel = () => {};
+
   function stop() {
+    agileWaitCancel();
     stopFns.forEach(fn => fn());
     stopFns = [];
   }
 
   function run() {
     stop();
-    ytTweaks.agileWait(name, ready);
+    agileWaitCancel = ytTweaks.agileWait(name, ready);
   }
 
   ytTweaks.registerTweak({

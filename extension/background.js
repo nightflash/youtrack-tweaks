@@ -115,39 +115,30 @@ function getTweaksFromJSON(json, path = '') {
 function checkAndInject(tab) {
   console.log('checkAndInject', tab);
 
-  const version = repositoryTweaksConfig.version;
   const tabData = youtrackTabs.get(tab.id);
 
   const matchedConfigs = userTweaksConfiguration.slice().filter(config => configFilter(config, tab)).map(c => c.type);
 
-  let chain = sendSafeStop(tab);
-
-  if (matchedConfigs.length) {
+  return Promise.resolve().then(() => {
     if (!tabData.coreInjected) {
-      chain = chain.then(() => loadAndInject(tab, `index.js?v=${version}`));
-      tabData.coreInjected = version;
+      tabData.coreInjected = true;
+      return loadAndInject(tab, `index.js`);
     }
+  }).then(() => {
+    return Promise.all(repositoryTweaksConfig.tweaks.map(tweak => {
+      const filePromises = [];
+      const tweakInjected = tabData.injected.get(tweak.name);
 
-    chain = chain.
-    then(() => {
-      const promises = [];
+      if (!tweakInjected && matchedConfigs.indexOf(tweak.name) !== -1) {
+        tweak.config.js && filePromises.push(loadAndInject(tab, `${tweak.name}/index.js`, tweak.name, chrome.runtime.id));
+        tweak.config.css && filePromises.push(loadAndInject(tab, `${tweak.name}/index.css`));
 
-      repositoryTweaksConfig.tweaks.forEach(tweak => {
-        const tweakInjected = tabData.injected.get(tweak.name);
-        if (!tweakInjected && matchedConfigs.indexOf(tweak.name) !== -1) {
-          tweak.config.js && promises.push(loadAndInject(tab, `${tweak.name}/index.js?v=${version}`, tweak.name, chrome.runtime.id));
-          tweak.config.css && promises.push(loadAndInject(tab, `${tweak.name}/index.css?v=${version}`));
+        tabData.injected.set(tweak.name, true);
+      }
 
-          tabData.injected.set(tweak.name, version);
-        }
-      });
-
-      return Promise.all(promises);
-    }).
-    then(() => sendConfiguration(tab));
-  }
-
-  return chain;
+      return Promise.all(filePromises);
+    }));
+  }).then(() => sendConfiguration(tab));
 }
 
 function getYoutrackTabsByQuery(query = {title: '*YouTrack*'}) {
