@@ -132,12 +132,10 @@ function tweak(name, extensionId) {
     agileBoardEventSource.addEventListener('sprintCellUpdate', cellUpdateHandler);
     window.addEventListener('beforeunload', closeAllNotifications);
 
-    const revertOnBoardSelect = ytTweaks.mockMethod(agileBoardController, 'onBoardSelect', run);
-    const revertOnSprintSelect = ytTweaks.mockMethod(agileBoardController, 'onSprintSelect', run);
-    const revertSprintCellUpdate = () => agileBoardEventSource.removeEventListener('sprintCellUpdate', cellUpdateHandler);
-    const revertOnBeforeUnload = () => window.removeEventListener('beforeunload', closeAllNotifications);
-
-    stopFns.push(revertOnBoardSelect, revertOnSprintSelect, revertSprintCellUpdate, revertOnBeforeUnload);
+    stopFns.push(
+        () => agileBoardEventSource.removeEventListener('sprintCellUpdate', cellUpdateHandler),
+        () => window.removeEventListener('beforeunload', closeAllNotifications)
+    );
   }
 
   function ready(data) {

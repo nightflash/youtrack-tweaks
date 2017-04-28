@@ -11,7 +11,7 @@ const ytTweaks = window.ytTweaks = {
 
   mainWaitCancel: () => {},
 
-  configure(config) {
+  configure(config = []) {
     this.log('recieve configuration', config, this.registeredTweaks.size);
     this.userTweaksConfiguration = config;
 
@@ -37,12 +37,14 @@ const ytTweaks = window.ytTweaks = {
     this.registeredTweaks.set(tweak.name, tweak);
   },
 
-  runTweaks() {
+  runTweaks(forceRerun) {
+    console.log('runTweaks', forceRerun);
+
     this.registeredTweaks.forEach(tweak => {
       this.log('running tweak', tweak.name);
 
       const currentConfigs = JSON.stringify(this.getConfigsForTweak(tweak.name));
-      if (tweak.lastConfig !== currentConfigs) {
+      if (forceRerun || tweak.lastConfig !== currentConfigs) {
         tweak.lastConfig = currentConfigs;
         tweak.run();
       }
@@ -149,10 +151,10 @@ const ytTweaks = window.ytTweaks = {
 
   init() {
     // process browser back/forward buttons
-    window.addEventListener('popstate', this.runTweaks);
+    window.addEventListener('popstate', () => this.runTweaks(true));
 
     // process angular routes
-    this.inject('$rootScope').$on('$routeChangeSuccess', this.runTweaks);
+    this.inject('$rootScope').$on('$routeChangeSuccess', () => this.runTweaks(true));
   },
 
   agileWait(tweakName, successCb, errorCb) {

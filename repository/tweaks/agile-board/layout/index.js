@@ -294,11 +294,9 @@ function tweak(name, extensionId) {
   }
 
   function attachToBoardEvents() {
-    const revertOnBoardSelect = ytTweaks.mockMethod(agileBoardController, 'onBoardSelect', run);
-    const revertOnSprintSelect = ytTweaks.mockMethod(agileBoardController, 'onSprintSelect', run);
-    const loadMoreSwimlanes = ytTweaks.mockMethod(agileBoardController, 'loadMoreSwimlanes', promise => promise.then(() => $timeout(onLineSwimlane)));
-
-    stopFns.push(revertOnBoardSelect, revertOnSprintSelect, loadMoreSwimlanes);
+    stopFns.push(
+        ytTweaks.mockMethod(agileBoardController, 'loadMoreSwimlanes', promise => promise.then(() => $timeout(onLineSwimlane)))
+    );
   }
 
   function ready(data) {

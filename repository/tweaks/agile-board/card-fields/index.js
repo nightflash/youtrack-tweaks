@@ -11,8 +11,6 @@ function tweak(name) {
   let injects = {};
 
   function attachToBoardEvents() {
-    const onBoardSelect = ytTweaks.mockMethod(agileBoardController, 'onBoardSelect', run);
-    const onSprintSelect = ytTweaks.mockMethod(agileBoardController, 'onSprintSelect', run);
     const onChangeCardDetailLevel = ytTweaks.mockMethod(agileBoardController, 'onChangeCardDetailLevel', run);
     const toggleSwimlane = ytTweaks.mockMethod(agileBoardController, 'toggleSwimlane', promise => promise.then(tweakNewCards));
     const loadMoreSwimlanes = ytTweaks.mockMethod(agileBoardController, 'loadMoreSwimlanes', promise => promise.then(() => injects.$timeout(tweakNewCards, 10)));
@@ -21,7 +19,7 @@ function tweak(name) {
     agileBoardController.boardSearchQueryModel.on('apply', run);
     const offOnApply = () => agileBoardController.boardSearchQueryModel.off('apply', run);
 
-    stopFns.push(onBoardSelect, onSprintSelect, onChangeCardDetailLevel, toggleSwimlane, loadMoreSwimlanes, collapseBoardColumn, offOnApply);
+    stopFns.push(onChangeCardDetailLevel, toggleSwimlane, loadMoreSwimlanes, collapseBoardColumn, offOnApply);
 
     const onSprintCellUpdate = event => {
       const data = JSON.parse(event.data);
