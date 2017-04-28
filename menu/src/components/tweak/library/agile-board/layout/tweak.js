@@ -9,7 +9,7 @@ import * as i18n from './i18n'
 
 export const type = 'agile-board/layout'
 
-export const name = 'Agile board layout (Darcula & more) BETA'
+export const name = 'Agile board layout (Darcula & Compact) BETA'
 
 export const editDescription = `This tweak is based on the Andrey Cheptsov gist https://gist.github.com/cheptsov/349041fe06f953f22aaff1ef41e0d266/revisions.  It is under deep BETA development.`
 
@@ -25,8 +25,8 @@ const toggleEditor = {
 export const schema = {
   ...genericScheme(name),
   darculaMode: toggleEditor,
-  stickyHeader: toggleEditor,
   oneLineSwimlane: toggleEditor,
+  stickyHeader: toggleEditor,
   stickyFooter: {
     ...toggleEditor,
     default: false

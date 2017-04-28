@@ -19,6 +19,12 @@ const fieldsEn = {
 
 export const en = {
   ...enGeneric,
+  prependIssueId: {
+    label: 'Prepend issue summary with issue id (S size only)',
+    description: 'When S size is enabled card title is hidden. Copy id shortcut will work too',
+    left: 'Yes',
+    right: 'No'
+  },
   singleMode: {
     label: 'Fields configuration mode',
     left: 'Single',

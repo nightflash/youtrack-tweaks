@@ -7,7 +7,7 @@ function tweak(name) {
   let stopFns = [];
 
   let agileBoardNode, agileBoardController, agileBoardEventSource, configs;
-  let fieldsToShow;
+  let fieldsToShow, prependIssueID;
   let injects = {};
 
   function attachToBoardEvents() {
@@ -59,6 +59,29 @@ function tweak(name) {
 
     const scope = injects.$rootScope.$new();
     scope.ytAgileCardCtrl = cardCtrl;
+
+    if (prependIssueID && agileBoardController.cardDetailLevel === 0) {
+      const cardSummary = cardNode.querySelector('[data-test="yt-agile-board-card__summary"]');
+
+      const compiledElement = injects.$compile(`
+        <div class="yt-agile-card__summary ng-class="{'yt-agile-card__summary_3-lines': ytAgileCardCtrl.show3LinesOfSummary()}" data-test="yt-agile-board-card__summary">
+          <a class="${tweakClass} yt-issue-id yt-agile-card__id yt-dark-grey-text js-issue-id" 
+             ng-class="{'yt-issue-id_resolved': !!ytAgileCardCtrl.issue.resolved}"
+             style="margin-right: 4px;"
+             target="_blank" data-test="yt-agile-board-card__id" 
+             yt-agile-card-focus="" 
+             yt-agile-card-focus-selection=":: ytAgileCardCtrl.selection" 
+             yt-agile-card-focus-issue-id="94-93" 
+             ng-click="ytAgileCardCtrl.onIssueIdClick($event)"
+             ng-href="issue/{{ytAgileCardCtrl.readableIssueId}}">
+                {{ytAgileCardCtrl.readableIssueId}}
+           </a>
+          {{ytAgileCardCtrl.issue.summary}}
+        </div>
+      `)(scope);
+
+      cardSummary.parentNode.replaceChild(compiledElement[0], cardSummary);
+    }
 
     const fields = [];
 
@@ -172,6 +195,8 @@ function tweak(name) {
     agileBoardController = data.agileBoardController;
     agileBoardEventSource = data.agileBoardEventSource;
     configs = data.configs;
+
+    prependIssueID = configs.some(c => c.config.prependIssueId);
 
     fieldsToShow = [];
     injects = ytTweaks.inject('$compile', '$timeout', '$rootScope', '$filter');

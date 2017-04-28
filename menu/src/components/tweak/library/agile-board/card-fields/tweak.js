@@ -50,6 +50,11 @@ const toggleEditor = {
 
 export const schema = {
   ...genericScheme(name),
+  prependIssueId: {
+    simple: true,
+    ...toggleEditor,
+    default: false
+  },
   singleMode: toggleEditor,
   sizeParams0: fieldsEditor,
   sizeParams1: fieldsEditor,

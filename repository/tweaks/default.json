@@ -23,6 +23,7 @@
   {
     "config": {
       "boardName": [],
+      "prependIssueId": true,
       "singleMode": true,
       "sizeParams": [
         {
