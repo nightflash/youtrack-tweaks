@@ -64,7 +64,7 @@ function tweak(name) {
       const cardSummary = cardNode.querySelector('[data-test="yt-agile-board-card__summary"]');
 
       const compiledElement = injects.$compile(`
-        <div class="yt-agile-card__summary ng-class="{'yt-agile-card__summary_3-lines': ytAgileCardCtrl.show3LinesOfSummary()}" data-test="yt-agile-board-card__summary">
+        <div class="yt-agile-card__summary" ng-class="{'yt-agile-card__summary_3-lines': ytAgileCardCtrl.show3LinesOfSummary()}" data-test="yt-agile-board-card__summary">
           <a class="${tweakClass} yt-issue-id yt-agile-card__id yt-dark-grey-text js-issue-id" 
              ng-class="{'yt-issue-id_resolved': !!ytAgileCardCtrl.issue.resolved}"
              style="margin-right: 4px;"
@@ -177,8 +177,8 @@ function tweak(name) {
         </span>
       `)(scope);
 
+    !scope.$$phase && scope.$digest();
     cardFooter.appendChild(compiledElement[0]);
-    scope.$evalAsync();
   }
 
   function tweakNewCards() {
