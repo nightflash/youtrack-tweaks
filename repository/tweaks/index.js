@@ -1,6 +1,7 @@
 import cardsTweak from './agile-board/card-fields/tweak';
 import notificationsTweak from './agile-board/desktop-notifications/tweak';
 import layoutTweak from './agile-board/layout/tweak';
+import reportTweak from './agile-board/report/tweak';
 
 const ytTweaks = window.ytTweaks = {
   injector: null,
@@ -15,6 +16,19 @@ const ytTweaks = window.ytTweaks = {
   extensionId: null,
 
   mainWaitCancel: () => {},
+
+  init() {
+    // process browser back/forward buttons
+    window.addEventListener('popstate', () => this.runTweaks(true));
+
+    // process angular routes
+    this.inject('$rootScope').$on('$routeChangeSuccess', () => this.runTweaks(true));
+
+    this.registerTweak(cardsTweak('agile-board/card-fields'));
+    this.registerTweak(notificationsTweak('agile-board/desktop-notifications'));
+    this.registerTweak(layoutTweak('agile-board/layout'));
+    this.registerTweak(reportTweak('agile-board/report'));
+  },
 
   configure(config = []) {
     this.log('recieve configuration', config, this.registeredTweaks.size);
@@ -150,14 +164,6 @@ const ytTweaks = window.ytTweaks = {
     };
   },
 
-  init() {
-    // process browser back/forward buttons
-    window.addEventListener('popstate', () => this.runTweaks(true));
-
-    // process angular routes
-    this.inject('$rootScope').$on('$routeChangeSuccess', () => this.runTweaks(true));
-  },
-
   injectCSS(content) {
     const tag = document.createElement('style');
     tag.textContent = content;
@@ -166,7 +172,3 @@ const ytTweaks = window.ytTweaks = {
     return () => document.head.removeChild(tag);
   }
 };
-
-ytTweaks.registerTweak(cardsTweak('agile-board/card-fields'));
-ytTweaks.registerTweak(notificationsTweak('agile-board/desktop-notifications'));
-ytTweaks.registerTweak(layoutTweak('agile-board/layout'));

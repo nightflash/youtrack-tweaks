@@ -12,7 +12,11 @@
   "license": "ISC",
   "dependencies": {},
   "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-preset-env": "^1.4.0",
     "base64-image-loader": "^1.2.0",
+    "clipboard-js": "^0.3.3",
     "css-loader": "^0.28.1",
     "style-loader": "^0.17.0",
     "webpack": "^2.4.1"

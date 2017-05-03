@@ -32,5 +32,22 @@ export default {
     };
 
     return ytTweaks.wait(waitFn, runFn, errorCb, `wait run() ${tweakName}`);
+  },
+
+  getFieldValuePresentation(value) {
+    return value.name || value.fullName || value.login || value.presentation || value;
+  },
+
+  getIssueFieldValue(issue, fieldName, defaultValue = '') {
+    for (let i = 0; i < issue.fields.length; i++) {
+      const field = issue.fields[i];
+
+      if (field.projectCustomField.field.name === fieldName) {
+        console.log(field);
+        return this.getFieldValuePresentation(field.value);
+      }
+    }
+
+    return defaultValue;
   }
 }
