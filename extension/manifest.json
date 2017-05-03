@@ -26,8 +26,5 @@
     "matches" : [
       "*://*.youtrack-tweaks.com/*"
     ]
-  },
-  "web_accessible_resources": [
-    "repository.js"
-  ]
+  }
 }
