@@ -1,4 +1,6 @@
-function tweak(name, extensionId) {
+import board from '../board';
+
+export default function tweak(name) {
   const ytTweaks = window.ytTweaks;
 
   let agileBoardNode, agileBoardController, agileBoardEventSource, configs;
@@ -63,7 +65,7 @@ function tweak(name, extensionId) {
     return checkResult ? _config : false;
   }
 
-  const defaultIcon = `chrome-extension://${extensionId}/images/128.png`;
+  const defaultIcon = require('./default-icon.png');
 
   function notify(issue, message, ttl, icon) {
     addNotified(issue.id);
@@ -166,12 +168,12 @@ function tweak(name, extensionId) {
 
   function run() {
     stop();
-    agileWaitCancel = ytTweaks.agileWait(name, ready);
+    agileWaitCancel = board.agileWait(name, ready);
   }
 
-  ytTweaks.registerTweak({
+  return {
     name,
     run,
     stop
-  });
+  }
 }

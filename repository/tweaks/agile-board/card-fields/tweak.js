@@ -1,4 +1,6 @@
-function tweak(name) {
+import board from '../board';
+
+export default function tweak(name) {
   const ytTweaks = window.ytTweaks;
 
   const tweakClass = `${ytTweaks.baseClass}-${name.replace('/', '-')}`;
@@ -196,6 +198,9 @@ function tweak(name) {
     agileBoardEventSource = data.agileBoardEventSource;
     configs = data.configs;
 
+    const css = require('./index.css');
+    stopFns.push(ytTweaks.injectCSS(css));
+
     prependIssueID = configs.some(c => c.config.prependIssueId);
 
     fieldsToShow = [];
@@ -232,12 +237,12 @@ function tweak(name) {
 
   function run() {
     stop();
-    agileWaitCancel = ytTweaks.agileWait(name, ready);
+    agileWaitCancel = board.agileWait(name, ready);
   }
 
-  ytTweaks.registerTweak({
+  return {
     name,
     run,
     stop
-  });
+  };
 }

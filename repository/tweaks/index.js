@@ -1,3 +1,7 @@
+import cardsTweak from './agile-board/card-fields/tweak';
+import notificationsTweak from './agile-board/desktop-notifications/tweak';
+import layoutTweak from './agile-board/layout/tweak';
+
 const ytTweaks = window.ytTweaks = {
   injector: null,
   userTweaksConfiguration: [],
@@ -8,6 +12,7 @@ const ytTweaks = window.ytTweaks = {
   initialized: false,
   registeredTweaks: new Map(),
   running: false,
+  extensionId: null,
 
   mainWaitCancel: () => {},
 
@@ -125,10 +130,6 @@ const ytTweaks = window.ytTweaks = {
     });
   },
 
-  trimmedSplit(str = '', separator = ',') {
-    return str.split(separator).map(v => v.trim()).filter(v => v);
-  },
-
   inArray(arr, str, emptyArrayAsTrue = false) {
     return (arr.indexOf(str) !== -1) || (emptyArrayAsTrue && arr.length === 0);
   },
@@ -157,38 +158,15 @@ const ytTweaks = window.ytTweaks = {
     this.inject('$rootScope').$on('$routeChangeSuccess', () => this.runTweaks(true));
   },
 
-  agileWait(tweakName, successCb, errorCb) {
-    const agileBoardSelector = '[data-test="agileBoard"]';
-    let agileBoardNode, agileBoardController, agileBoardEventSource;
+  injectCSS(content) {
+    const tag = document.createElement('style');
+    tag.textContent = content;
+    document.head.appendChild(tag);
 
-    const waitFn = () => {
-      agileBoardNode = document.querySelector(agileBoardSelector);
-      if (agileBoardNode) {
-        agileBoardController = angular.element(agileBoardNode).controller();
-        agileBoardEventSource = this.inject('agileBoardLiveUpdater').getEventSource();
-        agileBoardEventSource = agileBoardEventSource && agileBoardEventSource._nativeEventSource;
-        return agileBoardEventSource && agileBoardController && !agileBoardController.loading;
-      }
-    };
-
-    const runFn = () => {
-      const configs = ytTweaks.getConfigsForTweak(tweakName).filter(config => {
-        return ytTweaks.inArray(config.config.sprintName, agileBoardController.sprint.name, true) &&
-            ytTweaks.inArray(config.config.boardName, agileBoardController.agile.name, true);
-      });
-
-      if (!configs.length) {
-        ytTweaks.log(tweakName, 'no suitable config, sorry');
-      } else {
-        successCb({
-          agileBoardNode,
-          agileBoardController,
-          agileBoardEventSource,
-          configs
-        })
-      }
-    };
-
-    return this.wait(waitFn, runFn, errorCb, `wait run() ${tweakName}`);
+    return () => document.head.removeChild(tag);
   }
 };
+
+ytTweaks.registerTweak(cardsTweak('agile-board/card-fields'));
+ytTweaks.registerTweak(notificationsTweak('agile-board/desktop-notifications'));
+ytTweaks.registerTweak(layoutTweak('agile-board/layout'));

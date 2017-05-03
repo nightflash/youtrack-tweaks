@@ -17,7 +17,7 @@
     },
     "default_popup": "popup.html"
   },
-  "permissions": [ "webNavigation", "*://*/*", "storage", "tabs"],
+  "permissions": [ "*://*/*", "storage", "tabs"],
   "content_scripts": [{
     "js": ["content_script.js"],
     "matches": ["*://*/*"]
@@ -28,6 +28,6 @@
     ]
   },
   "web_accessible_resources": [
-    "images/*.png"
+    "repository.js"
   ]
 }

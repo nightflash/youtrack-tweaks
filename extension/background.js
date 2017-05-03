@@ -2,13 +2,12 @@ console.log('YouTrack tweaks');
 
 const youtrackTabs = new Map();
 
-let repositoryTweaksConfig = [];
 let userTweaksConfiguration = [];
 
-function asyncLoad(path) {
-  return new Promise(function(resolve, reject) {
-    const serverUrl = `chrome-extension://${chrome.runtime.id}/repository/`;
+const serverUrl = `chrome-extension://${chrome.runtime.id}/`;
 
+function asyncLoad(path) {
+  return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', serverUrl + path, true);
     xhr.onload = () => resolve(xhr.responseText);
@@ -17,36 +16,30 @@ function asyncLoad(path) {
   });
 }
 
-function injectTagWithContent(tab, content, isJS = true, fnArgs = []) {
-  const newLineReplacement = '!nl!';
-  let escapedContent = content.trim()
-      .replace(new RegExp("'", 'g'), "\\'") // escape single quotes
-      .replace(new RegExp("\\n", 'g'), newLineReplacement);// remove new lines
+function injectTagWithContent(tab, content) {
+  return new Promise(resolve => {
+    const escapedContent = content.
+      replace(/\\/g, '\\\\').
+      replace(/'/g, "\\'").
+      replace(/\n/g, '\\n');
 
-  const getArg = arg => typeof arg === 'string' ? `\\'${arg}\\'` : arg;
+    const code = `
+      (function() {
+        const script = document.createElement('script');
+        script.textContent = '${escapedContent}';
+        document.body.appendChild(script);
+      })();
+    `;
 
-  if (isJS) { // wrap into function
-    if (escapedContent.indexOf('function') === 0) {
-      escapedContent = `(${escapedContent})(${fnArgs.map(getArg).join(',')});`;
-    } else {
-      escapedContent = `(function() { ${escapedContent} })();`;
-    }
-  }
-
-  const code = `
-    (function () {
-      const script = document.createElement('${isJS ? 'script' : 'style'}');
-      script.textContent = '${escapedContent}'.replace(new RegExp("${newLineReplacement}", 'g'), '\\n');
-      (document.head || document.body || document.documentElement).appendChild(script);
-    })(); 
-  `;
-
-  chrome.tabs.executeScript(tab.id, {code});
+    chrome.tabs.executeScript(tab.id, {code}, result => {
+      resolve(result)
+    });
+  });
 }
 
-function loadAndInject(tab, path, ...args) {
-  return asyncLoad(path).then(content => {
-    injectTagWithContent(tab, content, path.indexOf('.js') !== -1, args);
+function injectScript(tab, filename) {
+  return asyncLoad(filename).then(content => {
+    return injectTagWithContent(tab, content);
   });
 }
 
@@ -58,41 +51,16 @@ function forAllTabs(action) {
 }
 
 const configFilter = (config, tab) => {
-  console.log('config filter', tab.id)
+  console.log('config filter', tab.id);
   const url = config.config && config.config.url || '';
   return (url === '' || tab.url.indexOf(url) !== -1);
 };
 
-function sendSafeStop(tab) {
-  console.log('sending stop', tab.url);
-  injectTagWithContent(tab, `
-    window.ytTweaks && window.ytTweaks.stopTweaks();
-  `);
-  return Promise.resolve();
-}
-
 function sendConfiguration(tab) {
   const filteredConfigs = userTweaksConfiguration.filter(config => configFilter(config, tab));
   console.log('sending configuration', tab.url, filteredConfigs);
-  injectTagWithContent(tab, `
-    window.ytTweaks.configure(${JSON.stringify(filteredConfigs)});
-  `);
+  injectTagWithContent(tab, `window.ytTweaks.configure(${JSON.stringify(filteredConfigs)});`);
   return Promise.resolve();
-}
-
-function getTweaksFromJSON(json, path = '') {
-  if (json.tweaks) {
-    let result = [];
-    for (let name in json.tweaks) {
-      result = result.concat(getTweaksFromJSON(json.tweaks[name], (path ? path + '/' : '') + name));
-    }
-    return result;
-  } else {
-    return {
-      name: path,
-      config: json
-    }
-  }
 }
 
 function checkAndInject(tab) {
@@ -100,27 +68,11 @@ function checkAndInject(tab) {
 
   const tabData = youtrackTabs.get(tab.id);
 
-  const matchedConfigs = userTweaksConfiguration.slice().filter(config => configFilter(config, tab)).map(c => c.type);
-
   return Promise.resolve().then(() => {
     if (!tabData.coreInjected) {
       tabData.coreInjected = true;
-      return loadAndInject(tab, `index.js`);
+      return injectScript(tab, 'repository.js');
     }
-  }).then(() => {
-    return Promise.all(repositoryTweaksConfig.map(tweak => {
-      const filePromises = [];
-      const tweakInjected = tabData.injected.get(tweak.name);
-
-      if (!tweakInjected && matchedConfigs.indexOf(tweak.name) !== -1) {
-        tweak.config.js && filePromises.push(loadAndInject(tab, `${tweak.name}/index.js`, tweak.name, chrome.runtime.id));
-        tweak.config.css && filePromises.push(loadAndInject(tab, `${tweak.name}/index.css`));
-
-        tabData.injected.set(tweak.name, true);
-      }
-
-      return Promise.all(filePromises);
-    }));
   }).then(() => sendConfiguration(tab));
 }
 
@@ -173,7 +125,7 @@ const storage = window.browser ? chrome.storage.local : chrome.storage.sync; // 
 
 function readSavedConfiguration() {
   return new Promise(resolve => {
-    storage.get(['tweaks', 'version'], data => {
+    storage.get(['tweaks', 'version', 'welcome'], data => {
       userTweaksConfiguration = data.tweaks || [];
       console.log('initial tweaks fetched', JSON.stringify(userTweaksConfiguration));
 
@@ -198,12 +150,8 @@ function setDefaultTweaks() {
   });
 }
 
-asyncLoad('options.json').then(content => {
-  repositoryTweaksConfig = getTweaksFromJSON(JSON.parse(content));
-}).then(() => {
-  return readSavedConfiguration()
-    .then(getYoutrackTabsByQuery)
-    .then(tabs => {
-      tabs.forEach(tab => chrome.tabs.reload(tab.id));
-    });
-});
+readSavedConfiguration()
+  .then(getYoutrackTabsByQuery)
+  .then(tabs => {
+    tabs.forEach(tab => chrome.tabs.reload(tab.id));
+  });
