@@ -17,7 +17,7 @@
       "title": "Default notifications tweak",
       "url": ""
     },
-    "id": 1490620313538,
+    "id": "default-agile-board/desktop-notifications",
     "type": "agile-board/desktop-notifications"
   },
   {
@@ -62,7 +62,35 @@
       "title": "Default cards tweak",
       "url": ""
     },
-    "id": 1490620532361,
+    "id": "default-board/card-fields",
     "type": "agile-board/card-fields"
+  },
+  {
+    "config": {
+      "addNewlineAfterGroup": true,
+      "boardName": [],
+      "groupByField": "State",
+      "messageFormat": "%link%: %group%; %summary%",
+      "sprintName": [],
+      "title": "Agile board super-copy hotkey",
+      "url": "",
+      "useForSingleIssue": true
+    },
+    "id": "default-agile-board/report",
+    "type": "agile-board/report"
+  },
+  {
+    "config": {
+      "boardName": [],
+      "darculaMode": false,
+      "oneLineSwimlane": true,
+      "sprintName": [],
+      "stickyFooter": false,
+      "stickyHeader": true,
+      "title": "Agile board layout (Darcula & Compact)",
+      "url": ""
+    },
+    "id": "default-agile-board/layout",
+    "type": "agile-board/layout"
   }
 ]

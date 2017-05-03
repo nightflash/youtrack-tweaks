@@ -127,7 +127,11 @@ function readSavedConfiguration() {
   return new Promise(resolve => {
     storage.get(['tweaks', 'version', 'welcome'], data => {
       userTweaksConfiguration = data.tweaks || [];
-      console.log('initial tweaks fetched', JSON.stringify(userTweaksConfiguration));
+      console.log('initial tweaks fetched', userTweaksConfiguration.length);
+
+      userTweaksConfiguration.forEach(tweak => {
+        console.log(JSON.stringify(tweak));
+      });
 
       if (!data.welcome && userTweaksConfiguration.length === 0) {
         resolve(setDefaultTweaks());
