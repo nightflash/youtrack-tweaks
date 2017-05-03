@@ -31,7 +31,7 @@ export default function tweak(name) {
 
       selectedIssues.
         forEach(issue => {
-          const id = `${issue.project.name}-${issue.numberInProject}`;
+          const id = `${issue.project.shortName}-${issue.numberInProject}`;
           const groupKey = board.getIssueFieldValue(issue, groupByField);
 
           if (!groupsMap.has(groupKey)) {
@@ -48,11 +48,11 @@ export default function tweak(name) {
           }));
         });
 
-      groupsMap.forEach(group => {
+      Array.from(groupsMap.values()).forEach((group, index) => {
         issuesText += group.join('\n');
         issuesText += '\n';
 
-        if (addNewlineAfterGroup) {
+        if (index !== (groupsMap.size - 1) && addNewlineAfterGroup) {
           issuesText += '\n';
         }
       });

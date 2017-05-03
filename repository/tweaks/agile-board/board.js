@@ -43,7 +43,6 @@ export default {
       const field = issue.fields[i];
 
       if (field.projectCustomField.field.name === fieldName) {
-        console.log(field);
         return this.getFieldValuePresentation(field.value);
       }
     }
