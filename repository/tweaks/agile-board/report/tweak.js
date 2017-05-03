@@ -13,6 +13,7 @@ export default function tweak(name) {
   function listenToKeys(event) {
     const selectedIssues = agileBoardController.getAllSelectedIssues();
     const notify = ytTweaks.inject('notify');
+    const issueViewOpened = document.querySelector('yt-issue-view');
 
     const baseUrl = document.location.href.split('/agiles')[0];
     const format = issue => messageFormat.
@@ -21,7 +22,7 @@ export default function tweak(name) {
                               replace('%summary%', issue.summary).
                               replace('%group%', issue.value);
 
-    if (event.keyCode === 67 && (event.ctrlKey || event.metaKey) && selectedIssues.length) {
+    if (!issueViewOpened && event.keyCode === 67 && (event.ctrlKey || event.metaKey) && selectedIssues.length) {
       if (selectedIssues.length === 1 && !useForSingleIssue) {
         return;
       }
