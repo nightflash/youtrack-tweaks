@@ -5,19 +5,24 @@ export const en = {
   groupByField: {
     label: 'Group by this field'
   },
+  groupAsTitle: {
+    label: 'Show group value as a title for each issues group',
+    left: 'Yes',
+    right: 'No'
+  },
+  addNewlineAfterGroup: {
+    label: 'Add new line after each group of issues',
+    left: 'Yes',
+    right: 'No'
+  },
   messageFormat: {
     label: 'Per issue message format',
     description: 'Allowed placeholders: %id%, %link%, %group%, %summary%'
   },
   useForSingleIssue: {
-    label: 'Use this hotkey if only one issue selected',
-    left: 'Use',
-    right: 'Do not use'
-  },
-  addNewlineAfterGroup: {
-    label: 'Add new line after each group of issues',
-    left: 'Add',
-    right: 'Do not add'
+    label: 'Use this shortcut if only one issue selected',
+    left: 'Yes',
+    right: 'No'
   }
 }
 

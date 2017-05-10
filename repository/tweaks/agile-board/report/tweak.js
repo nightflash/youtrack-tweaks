@@ -5,8 +5,7 @@ import board from '../board';
 export default function tweak(name) {
   const ytTweaks = window.ytTweaks;
 
-  let agileBoardNode, agileBoardController, agileBoardEventSource,
-      groupByField, messageFormat, useForSingleIssue, addNewlineAfterGroup;
+  let agileBoardNode, agileBoardController, agileBoardEventSource, config;
 
   let stopFns = [];
 
@@ -16,14 +15,14 @@ export default function tweak(name) {
     const issueViewOpened = document.querySelector('yt-issue-view');
 
     const baseUrl = document.location.href.split('/agiles')[0];
-    const format = issue => messageFormat.
+    const format = issue => config.messageFormat.
                               replace('%id%', issue.id).
                               replace('%link%', issue.link).
                               replace('%summary%', issue.summary).
                               replace('%group%', issue.value);
 
     if (!issueViewOpened && event.keyCode === 67 && (event.ctrlKey || event.metaKey) && selectedIssues.length) {
-      if (selectedIssues.length === 1 && !useForSingleIssue) {
+      if (selectedIssues.length === 1 && !config.useForSingleIssue) {
         return;
       }
 
@@ -33,7 +32,7 @@ export default function tweak(name) {
       selectedIssues.
         forEach(issue => {
           const id = `${issue.project.shortName}-${issue.numberInProject}`;
-          const groupKey = board.getIssueFieldValue(issue, groupByField);
+          const groupKey = board.getIssueFieldValue(issue, config.groupByField);
 
           if (!groupsMap.has(groupKey)) {
             groupsMap.set(groupKey, []);
@@ -49,13 +48,20 @@ export default function tweak(name) {
           }));
         });
 
-      Array.from(groupsMap.values()).forEach((group, index) => {
+      let index = 0;
+      groupsMap.forEach((group, groupName) => {
+        if (config.groupAsTitle) {
+          issuesText += groupName + '\n';
+        }
+
         issuesText += group.join('\n');
         issuesText += '\n';
 
-        if (index !== (groupsMap.size - 1) && addNewlineAfterGroup) {
+        if (index !== (groupsMap.size - 1) && config.addNewlineAfterGroup) {
           issuesText += '\n';
         }
+
+        index++;
       });
 
       clipboardJS.copy(issuesText).then(() => {
@@ -71,20 +77,11 @@ export default function tweak(name) {
   function ready(data) {
     ({agileBoardNode, agileBoardController, agileBoardEventSource} = data);
 
-    data.configs.forEach(config => {
-      groupByField = config.config.groupByField;
-      messageFormat = config.config.messageFormat;
-      useForSingleIssue |= config.config.useForSingleIssue;
-      addNewlineAfterGroup |= config.config.addNewlineAfterGroup;
-    });
+    config = angular.copy(data.configs[0].config);
 
     document.addEventListener('keydown', listenToKeys);
 
     stopFns.push(() => document.removeEventListener('keydown', listenToKeys));
-    stopFns.push(() => {
-      useForSingleIssue = false;
-      addNewlineAfterGroup = false;
-    });
   }
 
   let agileWaitCancel = () => {};

@@ -16,7 +16,7 @@ export const type = 'agile-board/report'
 
 export const editDescription = 'Press Cmd/Ctrl + C to copy the list of selected issues to the clipboard.'
 
-export const name = 'Agile board super-copy hotkey'
+export const name = 'Agile board super-copy shortcut'
 
 const textEditor = {
   edit: TextEdit,
@@ -38,12 +38,19 @@ export const schema = {
     ...textEditor,
     default: 'State'
   },
+  groupAsTitle: {
+    ...toggleEditor,
+    depends: config => config.groupByField
+  },
+  addNewlineAfterGroup: {
+    ...toggleEditor,
+    depends: config => config.groupByField
+  },
   messageFormat: {
     ...textEditor,
-    default: '%id%: %group%; %summary%'
+    default: '%link%: %summary%'
   },
-  useForSingleIssue: toggleEditor,
-  addNewlineAfterGroup: toggleEditor
+  useForSingleIssue: toggleEditor
 }
 
 @Component
