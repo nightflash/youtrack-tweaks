@@ -4,7 +4,7 @@ const youtrackTabs = new Map();
 
 let userTweaksConfiguration = [];
 
-const serverUrl = `chrome-extension://${chrome.runtime.id}/`;
+const serverUrl = chrome.extension.getURL("/");
 
 function asyncLoad(path) {
   return new Promise((resolve, reject) => {
@@ -76,10 +76,10 @@ function checkAndInject(tab) {
   }).then(() => sendConfiguration(tab));
 }
 
-function getYoutrackTabsByQuery(query = {title: '*YouTrack*'}) {
+function getYoutrackTabsByQuery() {
   return new Promise(resolve => {
-    chrome.tabs.query(query, function(tabs) {
-      resolve(tabs);
+    chrome.tabs.query({}, tabs => {
+      resolve(tabs.filter(tab => tab.title.indexOf('YouTrack') !== -1));
     });
   });
 }
@@ -115,7 +115,7 @@ chrome.runtime.onMessage.addListener((request, sender) => {
   }
 });
 
-chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessageExternal && chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
   if (request.ping) {
     sendResponse({pong: true});
   }

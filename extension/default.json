@@ -69,6 +69,7 @@
     "config": {
       "addNewlineAfterGroup": true,
       "boardName": [],
+      "groupAsTitle": true,
       "groupByField": "State",
       "messageFormat": "%link%: %group%; %summary%",
       "sprintName": [],
