@@ -13,9 +13,7 @@ Vue.use(Vuex)
 const syncStoreToBgScriptPlugin = store => {
   store.subscribe(({payload = {}}, state) => {
     if (!payload.doNotSync) {
-      storage.set('tweaks', state.tweaks).then(() => bus.send({
-        tweaks: state.tweaks
-      }))
+      storage.set('tweaks', state.tweaks).then(() => bus.send({resync: true}))
     }
   })
 }

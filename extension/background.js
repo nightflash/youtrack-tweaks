@@ -107,11 +107,10 @@ chrome.runtime.onMessage.addListener((request, sender) => {
 
       youtrackTabs.delete(tab.id);
     }
-  } else if (request.tweaks) {
-    console.log('new config');
+  } else if (request.resync) {
+    console.log('resync config');
 
-    userTweaksConfiguration = request.tweaks;
-    forAllTabs(checkAndInject);
+    readSavedConfiguration().then(() => forAllTabs(checkAndInject));
   }
 });
 
