@@ -72,6 +72,8 @@
     "vue-class-component": "^5.0.1",
     "vue-loader": "^11.3.4",
     "vue-style-loader": "^2.0.5",
+    "node-sass": "^4.5.3",
+    "sass-loader": "^6.0.5",
     "vue-template-compiler": "^2.2.6",
     "webpack": "^2.3.3",
     "webpack-bundle-analyzer": "^2.2.1",
