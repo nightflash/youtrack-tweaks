@@ -14,7 +14,7 @@ const storeLinks = {
     propMessage: String
   }
 })
-export default class App extends Vue {
+export default class AppComponent extends Vue {
   supported = true
   installed = false
   installActon = () => {}
