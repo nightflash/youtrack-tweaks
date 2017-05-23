@@ -6,4 +6,4 @@ https://certbot.eff.org/#ubuntuxenial-nginx
 Renew: certbot renew --dry-run
 
 Upload:
-rsync -av website/vue/dist root@youtrack-tweaks.com:/var/www/public/youtrack-tweaks/landing
+scp -rp ./vue/dist/* root@youtrack-tweaks.com:/var/www/public/youtrack-tweaks/landing
