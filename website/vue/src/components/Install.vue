@@ -61,7 +61,7 @@
     mounted () {
       console.log('browser:', browser.name)
 
-      if (chrome.runtime && chrome.runtime.sendMessage) {
+      if (window.chrome && chrome.runtime && chrome.runtime.sendMessage) {
         console.log('run install detector')
 
         setInterval(() => {
