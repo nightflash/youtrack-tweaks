@@ -1,0 +1,60 @@
+.wrapper {
+  height: 100%;
+}
+
+.container {
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  color: white;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  height: 100%;
+}
+
+.before-install {
+  margin-bottom: 16px;
+
+  & a {
+    color: #3f92b0;
+  }
+}
+
+.install-block {
+  font-size: 40px;
+  text-align: center;
+  cursor: pointer;
+
+  flex: none;
+
+  &.inactive {
+    cursor: default;
+    opacity: 0.7
+  }
+}
+
+.logo-text {
+  margin-bottom: 16px;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  padding: 20px;
+}
+
+.feedback-item {
+  cursor: pointer;
+  display: inline-block;
+  padding: 0 16px;
+
+  & img {
+    width: 32px;
+    height: 32px;
+  }
+}

@@ -1,0 +1,35 @@
+<div class="wrapper">
+    <div class="container">
+        <div v-show="isOpera && !installed" class="before-install">
+            Before you will be able to install YouTrack Tweaks you have to install
+            <a target="_blank" href="https://addons.opera.com/en-gb/extensions/details/download-chrome-extension-9/">Download Chrome Extension</a>
+        </div>
+
+        <div class="install-block" @click="install()" :class="{'inactive': installed || !supported}">
+            <div class="logo-text" v-show="supported && !installed">Click to install YouTrack Tweaks</div>
+            <div class="logo-text" v-show="supported && installed">Already installed</div>
+            <div class="logo-text" v-show="!supported">Your browser is not supported</div>
+            <img src="../assets/logo.png">
+        </div>
+    </div>
+
+    <div class="footer">
+        <a href="https://t.me/youtrack" class="feedback-item"
+           target="_blank"
+           title="Telegram group - feedback, bugs and feature requests">
+            <img src="../assets/telegram-logo.png">
+        </a>
+
+        <a href="https://tweaks.myjetbrains.com" class="feedback-item"
+           target="_blank"
+           title="Extension Issue Tracker - feedback, bugs and feature requests">
+            <img src="../assets/youtrack.svg">
+        </a>
+
+        <a href="https://twitter.com/YouTrackTweaks" class="feedback-item"
+           target="_blank"
+           title="New tweaks every day in our twitter">
+            <img src="../assets/twitter.png">
+        </a>
+    </div>
+</div>

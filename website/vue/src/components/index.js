@@ -1,0 +1,72 @@
+/* global chrome */
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import browser from 'detect-browser'
+
+const storeLinks = {
+  chrome: 'https://chrome.google.com/webstore/detail/youtrack-tweaks/ialcocpchgkbmpmoipmoheklimalbcia',
+  firefox: 'https://addons.mozilla.org/en-US/firefox/addon/youtrack',
+  opera: 'https://addons.opera.com/en-gb/extensions/details/download-chrome-extension-9/'
+}
+
+@Component({
+  props: {
+    propMessage: String
+  }
+})
+export default class App extends Vue {
+  supported = true
+  installed = false
+  installActon = () => {}
+
+  mounted () {
+    console.log('browser:', browser.name)
+
+    if (window.chrome && chrome.runtime && chrome.runtime.sendMessage) {
+      console.log('run install detector')
+
+      setInterval(() => {
+        chrome.runtime.sendMessage(this.extensionId, {ping: true}, response => {
+          this.installed = response && response.pong
+        })
+      }, 250)
+    }
+
+    switch (browser.name) {
+      case 'chrome':
+        this.installActon = () => chrome.webstore.install(
+            this.extensionUrl, () => {}, error => console.error(error)
+        )
+        break
+      case 'yandexbrowser':
+        this.installActon = () => (document.location.href = storeLinks.chrome)
+        break
+      case 'firefox':
+        this.installActon = () => (document.location.href = storeLinks.firefox)
+        break
+      case 'opera':
+        this.installActon = () => (document.location.href = storeLinks.chrome)
+        break
+      default:
+        this.supported = false
+    }
+  }
+
+  install () {
+    if (this.installed || !this.supported) return
+
+    this.installActon()
+  }
+
+  get extensionUrl () {
+    return document.head.querySelector('link[rel="chrome-webstore-item"]').href
+  }
+
+  get extensionId () {
+    return this.extensionUrl.split('detail/')[1]
+  }
+
+  get isOpera () {
+    return browser.name === 'opera'
+  }
+}
