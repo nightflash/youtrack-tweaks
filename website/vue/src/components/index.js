@@ -5,7 +5,7 @@ import browser from 'detect-browser'
 
 const storeLinks = {
   chrome: 'https://chrome.google.com/webstore/detail/youtrack-tweaks/ialcocpchgkbmpmoipmoheklimalbcia',
-  firefox: 'https://addons.mozilla.org/en-US/firefox/addon/youtrack',
+  firefox: 'https://addons.mozilla.org/en-US/firefox/addon/youtrack-tweaks',
   opera: 'https://addons.opera.com/en-gb/extensions/details/download-chrome-extension-9/'
 }
 
