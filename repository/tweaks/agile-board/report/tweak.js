@@ -5,13 +5,12 @@ import board from '../board';
 export default function tweak(name) {
   const ytTweaks = window.ytTweaks;
 
-  let agileBoardNode, agileBoardController, agileBoardEventSource, config;
+  let agileBoardNode, agileBoardController, agileBoardEventSource, config, alert;
 
   let stopFns = [];
 
   function listenToKeys(event) {
     const selectedIssues = agileBoardController.getAllSelectedIssues();
-    const notify = ytTweaks.inject('notify');
     const issueViewOpened = document.querySelector('yt-issue-view');
 
     const baseUrl = document.location.href.split('/agiles')[0];
@@ -65,9 +64,9 @@ export default function tweak(name) {
       });
 
       clipboardJS.copy(issuesText).then(() => {
-        notify.success('Issues successfully copied to the clipboard!');
+        alert.successMessage('Issues successfully copied to the clipboard!');
       }, error => {
-        notify.error('Can\'t copy issues!');
+        alert.errorMessage('Can\'t copy issues!');
       });
 
       event.preventDefault();
@@ -75,7 +74,7 @@ export default function tweak(name) {
   }
 
   function ready(data) {
-    ({agileBoardNode, agileBoardController, agileBoardEventSource} = data);
+    ({agileBoardNode, agileBoardController, agileBoardEventSource, alert} = data);
 
     config = angular.copy(data.configs[0].config);
 

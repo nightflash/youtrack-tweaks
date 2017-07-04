@@ -26,7 +26,8 @@ export default {
           agileBoardNode,
           agileBoardController,
           agileBoardEventSource,
-          configs
+          configs,
+          alert: ytTweaks.inject('alert')
         })
       }
     };
