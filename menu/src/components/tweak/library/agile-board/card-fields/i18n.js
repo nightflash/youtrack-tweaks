@@ -31,6 +31,12 @@ export const en = {
     left: 'Yes',
     right: 'No'
   },
+  extendCardColorArea: {
+    label: 'Extend card color area',
+    description: 'Colorize card background like a side strip color',
+    left: 'Yes',
+    right: 'No'
+  },
   singleMode: {
     label: 'Fields configuration mode',
     left: 'Single',

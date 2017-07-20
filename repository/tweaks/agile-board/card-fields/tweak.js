@@ -9,7 +9,7 @@ export default function tweak(name) {
   let stopFns = [];
 
   let agileBoardNode, agileBoardController, agileBoardEventSource, configs;
-  let fieldsToShow, prependIssueID, showTagsInSmallModes;
+  let fieldsToShow, prependIssueID, showTagsInSmallModes, extendCardColorArea;
   let injects = {};
 
   const detailsLevelWithTags = 2;
@@ -60,6 +60,16 @@ export default function tweak(name) {
 
     const cardCtrl = angular.element(cardNode).controller('ytAgileCard');
     const cardFooter = cardNode.querySelector('.yt-agile-card__footer .yt-pull-right');
+
+    if (extendCardColorArea) {
+      const dropzone = cardNode.querySelector('yt-dropzone');
+      const initialBackground = dropzone.style.backgroundColor;
+
+      dropzone.style.backgroundColor = window.getComputedStyle(dropzone, ':before')['background-color']
+          .replace(')', ', 0.13)').replace('rgb', 'rgba');
+
+      stopFns.push(() => (dropzone.style.backgroundColor = initialBackground));
+    }
 
     const scope = injects.$rootScope.$new();
     scope.ytAgileCardCtrl = cardCtrl;
@@ -215,6 +225,7 @@ export default function tweak(name) {
 
     prependIssueID = configs.some(c => c.config.prependIssueId);
     showTagsInSmallModes = configs.some(c => c.config.showTagsInSmallModes);
+    extendCardColorArea = configs.some(c => c.config.extendCardColorArea);
 
     if (showTagsInSmallModes && agileBoardController.cardDetailLevel < detailsLevelWithTags) {
       const cardsDetailLevelUtils = ytTweaks.inject('cardsDetailLevelUtils');

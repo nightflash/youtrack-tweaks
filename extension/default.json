@@ -25,6 +25,7 @@
       "boardName": [],
       "prependIssueId": true,
       "showTagsInSmallModes": false,
+      "extendCardColorArea": false,
       "singleMode": true,
       "sizeParams": [
         {

@@ -59,6 +59,10 @@ export const schema = {
     ...toggleEditor,
     default: false
   },
+  extendCardColorArea: {
+    ...toggleEditor,
+    default: false
+  },
   singleMode: toggleEditor,
   sizeParams0: fieldsEditor,
   sizeParams1: fieldsEditor,
