@@ -25,6 +25,12 @@ export const en = {
     left: 'Yes',
     right: 'No'
   },
+  showTagsInSmallModes: {
+    label: 'Show tags for small cards',
+    description: 'Show tags for S and M card sizes',
+    left: 'Yes',
+    right: 'No'
+  },
   singleMode: {
     label: 'Fields configuration mode',
     left: 'Single',

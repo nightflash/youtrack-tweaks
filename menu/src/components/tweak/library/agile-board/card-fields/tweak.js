@@ -55,6 +55,10 @@ export const schema = {
     ...toggleEditor,
     default: false
   },
+  showTagsInSmallModes: {
+    ...toggleEditor,
+    default: false
+  },
   singleMode: toggleEditor,
   sizeParams0: fieldsEditor,
   sizeParams1: fieldsEditor,

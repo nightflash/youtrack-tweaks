@@ -24,6 +24,7 @@
     "config": {
       "boardName": [],
       "prependIssueId": true,
+      "showTagsInSmallModes": false,
       "singleMode": true,
       "sizeParams": [
         {

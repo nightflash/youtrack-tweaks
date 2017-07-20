@@ -4,6 +4,12 @@
     margin-left: 8px;
 }
 
+.yt-tweaks-fields-area {
+    overflow: auto;
+    display: inline-block;
+    float: right;
+}
+
 .yt-tweak-field-value-no.yt-tweak-field-value-colored {
     padding: 2px;
 }

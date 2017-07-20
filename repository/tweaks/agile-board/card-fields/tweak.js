@@ -9,8 +9,10 @@ export default function tweak(name) {
   let stopFns = [];
 
   let agileBoardNode, agileBoardController, agileBoardEventSource, configs;
-  let fieldsToShow, prependIssueID;
+  let fieldsToShow, prependIssueID, showTagsInSmallModes;
   let injects = {};
+
+  const detailsLevelWithTags = 2;
 
   function attachToBoardEvents() {
     const onChangeCardDetailLevel = ytTweaks.mockMethod(agileBoardController, 'onChangeCardDetailLevel', run);
@@ -170,17 +172,27 @@ export default function tweak(name) {
 
     stopFns.push(() => scope.$destroy());
 
+    const tagsTemplate = `
+        <yt-issue-tags
+          issue-id="ytAgileCardCtrl.issue.id" 
+          issue-project="ytAgileCardCtrl.issue.project" 
+          tags="ytAgileCardCtrl.issue.tags" tag-width-limit="10">           
+        </yt-issue-tags>`;
+
     const compiledElement = injects.$compile(`
         <span class="${tweakClass}">
-          <span class="yt-tweak-field" ng-repeat="field in fields track by field.id" style="opacity: {{field.opacity}}">
-            <span ng-repeat="value in field.values track by value.id" title="{{field.name}}: {{value.name}}"
-              class="{{value.classes}}">{{value.convertedName}}</span>
+          <span class="yt-tweaks-fields-area">
+            <span class="yt-tweak-field" ng-repeat="field in fields track by field.id" style="opacity: {{field.opacity}}">
+              <span ng-repeat="value in field.values track by value.id" title="{{field.name}}: {{value.name}}"
+                class="{{value.classes}}">{{value.convertedName}}</span>
+            </span>
           </span>
+          ${showTagsInSmallModes && agileBoardController.cardDetailLevel < detailsLevelWithTags ? tagsTemplate : ''}
         </span>
       `)(scope);
 
     !scope.$$phase && scope.$digest();
-    cardFooter.appendChild(compiledElement[0]);
+    cardFooter.parentNode.insertBefore(compiledElement[0], cardFooter);
   }
 
   function tweakNewCards() {
@@ -202,6 +214,18 @@ export default function tweak(name) {
     stopFns.push(ytTweaks.injectCSS(css));
 
     prependIssueID = configs.some(c => c.config.prependIssueId);
+    showTagsInSmallModes = configs.some(c => c.config.showTagsInSmallModes);
+
+    if (showTagsInSmallModes && agileBoardController.cardDetailLevel < detailsLevelWithTags) {
+      const cardsDetailLevelUtils = ytTweaks.inject('cardsDetailLevelUtils');
+      const boardModelUpdater = ytTweaks.inject('boardModelUpdater');
+      const agileBoardLiveUpdater = ytTweaks.inject('agileBoardLiveUpdater');
+
+      const fields = cardsDetailLevelUtils.getIssueFields(detailsLevelWithTags, agileBoardController.cardDetailLevel);
+      boardModelUpdater.updateCardsFields(agileBoardController.boardColumnsInstance, agileBoardController.getSprint(), fields, {
+        $topLinks: 3
+      });
+    }
 
     fieldsToShow = [];
     injects = ytTweaks.inject('$compile', '$timeout', '$rootScope', '$filter');
