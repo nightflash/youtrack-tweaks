@@ -64,11 +64,15 @@ export default function tweak(name) {
     if (extendCardColorArea) {
       const dropzone = cardNode.querySelector('yt-dropzone');
       const initialBackground = dropzone.style.backgroundColor;
+      cardNode.style.backgroundColor = 'white';
 
       dropzone.style.backgroundColor = window.getComputedStyle(dropzone, ':before')['background-color']
           .replace(')', ', 0.13)').replace('rgb', 'rgba');
 
-      stopFns.push(() => (dropzone.style.backgroundColor = initialBackground));
+      stopFns.push(() => {
+        dropzone.style.backgroundColor = initialBackground;
+        cardNode.style.backgroundColor = '';
+      });
     }
 
     const scope = injects.$rootScope.$new();

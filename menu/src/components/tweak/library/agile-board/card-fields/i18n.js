@@ -33,7 +33,7 @@ export const en = {
   },
   extendCardColorArea: {
     label: 'Extend card color area',
-    description: 'Colorize card background like a side strip color',
+    description: 'Colorize card background like a side strip color. Incompatible with Dracula mode',
     left: 'Yes',
     right: 'No'
   },
