@@ -63,16 +63,17 @@ export default function tweak(name) {
 
     if (extendCardColorArea) {
       const dropzone = cardNode.querySelector('yt-dropzone');
-      const initialBackground = dropzone.style.backgroundColor;
-      cardNode.style.backgroundColor = 'white';
 
+      const clearBackgrounds = () => {
+        dropzone.style.backgroundColor = '';
+        cardNode.style.backgroundColor = '';
+      };
+
+      cardNode.style.backgroundColor = 'white';
       dropzone.style.backgroundColor = window.getComputedStyle(dropzone, ':before')['background-color']
           .replace(')', ', 0.13)').replace('rgb', 'rgba');
 
-      stopFns.push(() => {
-        dropzone.style.backgroundColor = initialBackground;
-        cardNode.style.backgroundColor = '';
-      });
+      stopFns.push(clearBackgrounds);
     }
 
     const scope = injects.$rootScope.$new();
@@ -232,14 +233,17 @@ export default function tweak(name) {
     extendCardColorArea = configs.some(c => c.config.extendCardColorArea);
 
     if (showTagsInSmallModes && agileBoardController.cardDetailLevel < detailsLevelWithTags) {
-      const cardsDetailLevelUtils = ytTweaks.inject('cardsDetailLevelUtils');
-      const boardModelUpdater = ytTweaks.inject('boardModelUpdater');
-      const agileBoardLiveUpdater = ytTweaks.inject('agileBoardLiveUpdater');
+      if (agileBoardController.updateCardsDetalization) {
+        agileBoardController.updateCardsDetalization(detailsLevelWithTags, agileBoardController.cardDetailLevel);
+      } else {
+        const cardsDetailLevelUtils = ytTweaks.inject('cardsDetailLevelUtils');
+        const boardModelUpdater = ytTweaks.inject('boardModelUpdater');
 
-      const fields = cardsDetailLevelUtils.getIssueFields(detailsLevelWithTags, agileBoardController.cardDetailLevel);
-      boardModelUpdater.updateCardsFields(agileBoardController.boardColumnsInstance, agileBoardController.getSprint(), fields, {
-        $topLinks: 3
-      });
+        const fields = cardsDetailLevelUtils.getIssueFields(detailsLevelWithTags, agileBoardController.cardDetailLevel);
+        boardModelUpdater.updateCardsFields(agileBoardController.boardColumnsInstance, agileBoardController.getSprint(), fields, {
+          $topLinks: 3
+        });
+      }
     }
 
     fieldsToShow = [];
