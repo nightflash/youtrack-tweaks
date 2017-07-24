@@ -5,6 +5,7 @@ export default function tweak(name) {
 
   const tweakClass = `${ytTweaks.baseClass}-${name.replace('/', '-')}`;
   const tweakAttribute = `${ytTweaks.baseAttribute}-${name.replace('/', '-')}`;
+  const extendColorAreaClass = `${tweakClass}-extend-color-area`;
 
   let stopFns = [];
 
@@ -60,21 +61,6 @@ export default function tweak(name) {
 
     const cardCtrl = angular.element(cardNode).controller('ytAgileCard');
     const cardFooter = cardNode.querySelector('.yt-agile-card__footer .yt-pull-right');
-
-    if (extendCardColorArea) {
-      const dropzone = cardNode.querySelector('yt-dropzone');
-
-      const clearBackgrounds = () => {
-        dropzone.style.backgroundColor = '';
-        cardNode.style.backgroundColor = '';
-      };
-
-      cardNode.style.backgroundColor = 'white';
-      dropzone.style.backgroundColor = window.getComputedStyle(dropzone, ':before')['background-color']
-          .replace(')', ', 0.13)').replace('rgb', 'rgba');
-
-      stopFns.push(clearBackgrounds);
-    }
 
     const scope = injects.$rootScope.$new();
     scope.ytAgileCardCtrl = cardCtrl;
@@ -244,6 +230,33 @@ export default function tweak(name) {
           $topLinks: 3
         });
       }
+    }
+
+    if (extendCardColorArea) {
+      let styles = '';
+      const testElement = document.createElement('div');
+      testElement.hidden = true;
+      document.body.appendChild(testElement);
+
+      for (let i = 0; i <= 35; i++) {
+        testElement.className = `yt-agile-card_color-${i}`;
+        const colorParts = window.getComputedStyle(testElement, ':before')['background-color']
+            .replace('rgb(', '').replace(')', '').split(',');
+        const modifier = 0.85;
+
+        for (let z = 0; z < 3; z++) {
+          colorParts[z] = Math.round(+colorParts[z] + (modifier * (255 - +colorParts[z])));
+        }
+
+        styles += `
+          .yt-agile-card_color-${i}:not(.yt-agile-card_selected) {
+            background-color: rgb(${colorParts.join(', ')});
+          }
+        `;
+      }
+
+      document.body.removeChild(testElement);
+      stopFns.push(ytTweaks.injectCSS(styles));
     }
 
     fieldsToShow = [];
