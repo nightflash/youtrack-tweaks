@@ -13,7 +13,7 @@ export default function tweak(name) {
   let fieldsToShow, prependIssueID, showTagsInSmallModes, extendCardColorArea;
   let injects = {};
 
-  const detailsLevelWithTags = 2;
+  const detailsLevelWithTags = 3;
 
   function attachToBoardEvents() {
     const onChangeCardDetailLevel = ytTweaks.mockMethod(agileBoardController, 'onChangeCardDetailLevel', run);
