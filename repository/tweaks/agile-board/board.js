@@ -1,14 +1,16 @@
 export default {
   agileWait(tweakName, successCb, errorCb) {
     const agileBoardSelector = '[data-test="agileBoard"]';
-    let agileBoardNode, agileBoardController, agileBoardEventSource;
+    let agileBoardNode, agileBoardController, agileBoardEventSource, agileBoardLiveUpdater;
 
     const waitFn = () => {
       agileBoardNode = document.querySelector(agileBoardSelector);
       if (agileBoardNode) {
         agileBoardController = angular.element(agileBoardNode).controller();
-        agileBoardEventSource = ytTweaks.inject('agileBoardLiveUpdater').getEventSource();
+        agileBoardLiveUpdater = ytTweaks.inject('agileBoardLiveUpdater');
+        agileBoardEventSource = agileBoardLiveUpdater.getEventSource();
         agileBoardEventSource = agileBoardEventSource && agileBoardEventSource._nativeEventSource;
+
         return agileBoardEventSource && agileBoardController && !agileBoardController.loading;
       }
     };
@@ -25,6 +27,7 @@ export default {
         successCb({
           agileBoardNode,
           agileBoardController,
+          agileBoardLiveUpdater,
           agileBoardEventSource,
           configs,
           alert: ytTweaks.inject('alert')

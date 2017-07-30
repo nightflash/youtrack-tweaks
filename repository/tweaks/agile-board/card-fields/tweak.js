@@ -9,7 +9,7 @@ export default function tweak(name) {
 
   let stopFns = [];
 
-  let agileBoardNode, agileBoardController, agileBoardEventSource, configs;
+  let agileBoardNode, agileBoardController, agileBoardEventSource, agileBoardLiveUpdater, configs;
   let fieldsToShow, prependIssueID, showTagsInSmallModes, extendCardColorArea;
   let injects = {};
 
@@ -36,6 +36,10 @@ export default function tweak(name) {
     };
 
     agileBoardEventSource.addEventListener('sprintCellUpdate', onSprintCellUpdate);
+
+    agileBoardEventSource.addEventListener('close', () => {
+      console.error('11111');
+    });
 
     stopFns.push(() => agileBoardEventSource.removeEventListener('sprintCellUpdate', onSprintCellUpdate));
   }
@@ -208,7 +212,7 @@ export default function tweak(name) {
   function ready(data) {
     agileBoardNode = data.agileBoardNode;
     agileBoardController = data.agileBoardController;
-    agileBoardEventSource = data.agileBoardEventSource;
+    agileBoardLiveUpdater = data.agileBoardLiveUpdater;
     configs = data.configs;
 
     const css = require('./index.css');
@@ -217,20 +221,6 @@ export default function tweak(name) {
     prependIssueID = configs.some(c => c.config.prependIssueId);
     showTagsInSmallModes = configs.some(c => c.config.showTagsInSmallModes);
     extendCardColorArea = configs.some(c => c.config.extendCardColorArea);
-
-    if (showTagsInSmallModes && agileBoardController.cardDetailLevel < detailsLevelWithTags) {
-      if (agileBoardController.updateCardsDetalization) {
-        agileBoardController.updateCardsDetalization(detailsLevelWithTags, agileBoardController.cardDetailLevel);
-      } else {
-        const cardsDetailLevelUtils = ytTweaks.inject('cardsDetailLevelUtils');
-        const boardModelUpdater = ytTweaks.inject('boardModelUpdater');
-
-        const fields = cardsDetailLevelUtils.getIssueFields(detailsLevelWithTags, agileBoardController.cardDetailLevel);
-        boardModelUpdater.updateCardsFields(agileBoardController.boardColumnsInstance, agileBoardController.getSprint(), fields, {
-          $topLinks: 3
-        });
-      }
-    }
 
     if (extendCardColorArea) {
       let styles = '';
@@ -278,8 +268,23 @@ export default function tweak(name) {
 
     ytTweaks.log(name, 'fields to show', fieldsToShow);
 
-    attachToBoardEvents();
     tweakNewCards();
+
+    if (showTagsInSmallModes && agileBoardController.cardDetailLevel < detailsLevelWithTags) {
+      const initialCardDetailLevel = agileBoardController.cardDetailLevel;
+      const agileBoardUserProfile = ytTweaks.inject('agileBoardUserProfile');
+
+      agileBoardController.onChangeCardDetailLevel(detailsLevelWithTags, initialCardDetailLevel).then(() => {
+        return agileBoardUserProfile.update({
+          cardDetailLevel: initialCardDetailLevel
+        });
+      }).then(() => {
+        agileBoardEventSource = agileBoardLiveUpdater.getEventSource()._nativeEventSource;
+        attachToBoardEvents();
+      });
+    } else {
+      attachToBoardEvents();
+    }
   }
 
   let agileWaitCancel = () => {};
