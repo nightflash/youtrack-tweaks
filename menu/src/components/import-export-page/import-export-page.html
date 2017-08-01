@@ -1,0 +1,13 @@
+<div>
+    <div>
+        You can simply share configuration with your team using this page.<br/>
+        Just copy whole content of the textarea and send it to your teammates.
+    </div>
+
+    <textarea ref="editTextarea" class="config-area"></textarea>
+
+    <footer-toolbar
+            :left="{label: 'Save', action: () => save()}"
+            :right="{label: 'Back', action: () => cancel()}"
+    ></footer-toolbar>
+</div>

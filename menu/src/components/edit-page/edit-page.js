@@ -1,11 +1,17 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 
+import footer from '../footer/footer.vue'
+
 import tweaksLibrary from '../tweak/library/index'
 
 import {UPDATE_TWEAK, REMOVE_TWEAK} from '../../vuex/actions'
 
-@Component()
+@Component({
+  components: {
+    footerToolbar: footer
+  }
+})
 export default class extends Vue {
   url = ''
   config = {}

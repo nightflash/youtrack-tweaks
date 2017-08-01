@@ -4,6 +4,8 @@
             <option value="">Select tweak to add new one</option>
             <option :value="option.type" v-for="option in addOptions">{{option.name}}</option>
         </select>
+
+        <button @click="importExport()" class="import-export">Import/Export tweaks</button>
     </div>
 
     <draggable v-model="tweaks" @end="dragEnd()">

@@ -9,17 +9,9 @@
 
     <component :is="tweakExports.Edit" :tweak="tweak" :schema="tweakExports.schema" :changed="changed" :expert-view="!simpleView"></component>
 
-    <div class="footer">
-        <div class="footer__left">
-            <button @click="remove()">Remove</button>
-        </div>
-
-        <div class="footer__center">
-            <button @click="save(config)">Save and apply</button>
-        </div>
-
-        <div class="footer__right">
-            <button @click="cancel()">Back</button>
-        </div>
-    </div>
+    <footer-toolbar
+            :left="{label: 'Remove', action: () => remove()}"
+            :center="{label: 'Save and apply', action: () => save(config)}"
+            :right="{label: 'Back', action: () => cancel()}"
+    ></footer-toolbar>
 </div>

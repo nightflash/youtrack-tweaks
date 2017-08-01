@@ -1,26 +1,5 @@
 @import '../editor/editor-mixin/edit-mixin';
-
-.footer {
-  width: 100%;
-  text-align: center;
-  display: flex;
-
-  background-color: rgb(243, 243, 243);
-  padding: 4px 0;
-  margin-top: 20px;
-
-  &__center {
-    flex-grow: 1;
-  }
-
-  &__left {
-    padding-left: 8px;
-  }
-
-  &__right {
-    padding-right: 8px;
-  }
-}
+@import "../footer/footer";
 
 .title {
   font-size: 16px;

@@ -67,6 +67,10 @@ export default class extends Vue {
     this.edit(newIndex)
   }
 
+  importExport() {
+    this.$router.push(`/import-export`)
+  }
+
   edit(index) {
     this.$router.push(`/edit/${index}`)
   }

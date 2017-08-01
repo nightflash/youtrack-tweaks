@@ -1,0 +1,13 @@
+<div class="footer">
+    <div class="footer__left">
+        <button v-if="left" @click="left.action()">{{left.label}}</button>
+    </div>
+
+    <div class="footer__center">
+        <button v-if="center" @click="center.action()">{{center.label}}</button>
+    </div>
+
+    <div class="footer__right">
+        <button v-if="right" @click="right.action()">{{right.label}}</button>
+    </div>
+</div>
