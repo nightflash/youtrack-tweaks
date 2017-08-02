@@ -9,7 +9,7 @@ export default function tweak(name) {
 
   let stopFns = [];
 
-  let agileBoardNode, agileBoardController, agileBoardEventSource, agileBoardLiveUpdater, configs;
+  let agileBoardNode, agileBoardController, agileBoardEventSource, configs;
   let fieldsToShow, prependIssueID, showTagsInSmallModes, extendCardColorArea;
   let injects = {};
 
@@ -36,10 +36,6 @@ export default function tweak(name) {
     };
 
     agileBoardEventSource.addEventListener('sprintCellUpdate', onSprintCellUpdate);
-
-    agileBoardEventSource.addEventListener('close', () => {
-      console.error('11111');
-    });
 
     stopFns.push(() => agileBoardEventSource.removeEventListener('sprintCellUpdate', onSprintCellUpdate));
   }
@@ -212,7 +208,7 @@ export default function tweak(name) {
   function ready(data) {
     agileBoardNode = data.agileBoardNode;
     agileBoardController = data.agileBoardController;
-    agileBoardLiveUpdater = data.agileBoardLiveUpdater;
+    agileBoardEventSource = data.agileBoardEventSource;
     configs = data.configs;
 
     const css = require('./index.css');
@@ -279,7 +275,6 @@ export default function tweak(name) {
           cardDetailLevel: initialCardDetailLevel
         });
       }).then(() => {
-        agileBoardEventSource = agileBoardLiveUpdater.getEventSource()._nativeEventSource;
         attachToBoardEvents();
       });
     } else {
