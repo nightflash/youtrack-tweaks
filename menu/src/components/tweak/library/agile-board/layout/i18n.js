@@ -9,8 +9,8 @@ export const en = {
   },
   stickyHeader: {
     label: 'Sticky header',
-    left: 'Visible',
-    right: 'Hidden'
+    left: 'Full',
+    right: 'Slim'
   },
   stickyFooter: {
     label: 'Sticky footer',

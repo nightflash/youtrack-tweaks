@@ -1,4 +1,7 @@
-.yt-sticky-panel__container.yt-sticky-panel__container_pinned.yt-agile-table__row-container__head_sticky,
 .yt-sticky-panel__container.yt-sticky-panel__container_pinned.yt-agile-board__toolbar_sticky {
     visibility: hidden;
+}
+
+.yt-sticky-panel__container.yt-sticky-panel__container_pinned.yt-agile-table__row-container__head_sticky {
+    margin-top: -50px;
 }
