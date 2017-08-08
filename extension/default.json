@@ -89,7 +89,7 @@
       "oneLineSwimlane": true,
       "sprintName": [],
       "stickyFooter": false,
-      "stickyHeader": true,
+      "stickyHeader": false,
       "title": "Agile board layout (Darcula & Compact)",
       "url": ""
     },
