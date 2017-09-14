@@ -111,12 +111,8 @@ chrome.runtime.onMessage.addListener((request, sender) => {
     console.log('resync config');
 
     readSavedConfiguration().then(() => forAllTabs(checkAndInject));
-  }
-});
-
-chrome.runtime.onMessageExternal && chrome.runtime.onMessageExternal.addListener((request, sender, sendResponse) => {
-  if (request.ping) {
-    sendResponse({pong: true});
+  } else if (request.ping) {
+    injectTagWithContent(tab, `window.pong && window.pong(true);`);
   }
 });
 

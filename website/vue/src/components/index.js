@@ -22,15 +22,15 @@ export default class AppComponent extends Vue {
   mounted () {
     console.log('browser:', browser.name)
 
-    if (window.chrome && chrome.runtime && chrome.runtime.sendMessage) {
-      console.log('run install detector')
+    console.log('run install detector')
 
-      setInterval(() => {
-        chrome.runtime.sendMessage(this.extensionId, {ping: true}, response => {
-          this.installed = response && response.pong
-        })
-      }, 250)
+    window.pong = value => {
+      this.installed = value
     }
+
+    setInterval(() => {
+      window.postMessage({ping: true, extensionId: this.extensionId}, window.location.origin)
+    }, 250)
 
     switch (browser.name) {
       case 'chrome':
