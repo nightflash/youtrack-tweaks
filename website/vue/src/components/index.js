@@ -31,11 +31,11 @@ export default class AppComponent extends Vue {
     }
 
     setInterval(() => {
-      if (attempts > 10) {
+      if (attempts > 5) {
         this.installed = false
       }
 
-      window.postMessage({ping: true, extensionId: this.extensionId}, window.location.origin)
+      window.postMessage({ping: true, ytTweaks: true}, window.location.origin)
       attempts++
     }, 250)
 

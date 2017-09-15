@@ -91,6 +91,7 @@ chrome.tabs.onRemoved.addListener(tabId => {
 
 chrome.runtime.onMessage.addListener((request, sender) => {
   const tab = sender.tab;
+  console.log('<<<<', request);
 
   if (request.probe !== undefined) {
     if (request.probe) {
