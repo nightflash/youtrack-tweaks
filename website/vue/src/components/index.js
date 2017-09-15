@@ -21,15 +21,22 @@ export default class AppComponent extends Vue {
 
   mounted () {
     console.log('browser:', browser.name)
-
     console.log('run install detector')
 
-    window.pong = value => {
-      this.installed = value
+    let attempts = 0
+
+    window.pong = () => {
+      attempts = 0
+      this.installed = true
     }
 
     setInterval(() => {
+      if (attempts > 10) {
+        this.installed = false
+      }
+
       window.postMessage({ping: true, extensionId: this.extensionId}, window.location.origin)
+      attempts++
     }, 250)
 
     switch (browser.name) {
