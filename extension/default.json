@@ -87,7 +87,6 @@
     "config": {
       "boardName": [],
       "darculaMode": false,
-      "oneLineSwimlane": true,
       "sprintName": [],
       "stickyFooter": false,
       "stickyHeader": false,
