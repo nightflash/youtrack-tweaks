@@ -24,6 +24,7 @@
     "config": {
       "boardName": [],
       "prependIssueId": true,
+      "disableFixedHeight": true,
       "showTagsInSmallModes": false,
       "extendCardColorArea": false,
       "singleMode": true,

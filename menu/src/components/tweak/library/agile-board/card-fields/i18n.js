@@ -25,6 +25,12 @@ export const en = {
     left: 'Yes',
     right: 'No'
   },
+  disableFixedHeight: {
+    label: 'Dynamic cards height',
+    description: 'Cards should be as thin as possible and grow if needed',
+    left: 'Yes',
+    right: 'No'
+  },
   showTagsInSmallModes: {
     label: 'Show tags for small cards',
     description: 'Show tags for S and M card sizes',

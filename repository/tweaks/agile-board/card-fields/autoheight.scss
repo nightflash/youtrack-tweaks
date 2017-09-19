@@ -1,0 +1,25 @@
+.yt-agile-card_small, .yt-agile-card_middle, .yt-agile-card_large, .yt-agile-card_xlarge {
+    height: auto;
+    min-height: 0;
+}
+
+.yt-agile-card_small {
+    padding-top: 6px;
+    padding-bottom: 6px;
+
+    & .yt-agile-card__summary {
+        margin-bottom: 2px;
+    }
+}
+
+.yt-agile-card__tags-line {
+    height: auto;
+}
+
+.yt-agile-card__footer {
+    position: static;
+}
+
+.yt-agile-card__footer-placeholder {
+    display: none;
+}

@@ -119,6 +119,8 @@ chrome.runtime.onMessage.addListener((request, sender) => {
 
 const storage = window.browser ? chrome.storage.local : chrome.storage.sync; // fix for firefox
 
+const getVersion = () => chrome.runtime.getManifest().version;
+
 function readSavedConfiguration() {
   return new Promise(resolve => {
     storage.get(['tweaks', 'version', 'welcome'], data => {
@@ -131,6 +133,8 @@ function readSavedConfiguration() {
 
       if (!data.welcome && userTweaksConfiguration.length === 0) {
         resolve(setDefaultTweaks());
+      } else if (data.welcome && data.version !== getVersion()) {
+        resolve(checkMigration());
       } else {
         resolve();
       }
@@ -143,10 +147,44 @@ function setDefaultTweaks() {
   then(content => {
     const tweaks = JSON.parse(content);
     storage.set({
+      version: getVersion(),
       welcome: true,
       tweaks
     });
     userTweaksConfiguration = tweaks;
+  });
+}
+
+function checkMigration() {
+  console.log('check migration');
+
+  return asyncLoad('default.json').then(content => {
+    const defaultTweaks = JSON.parse(content);
+
+    userTweaksConfiguration.forEach(tweak => {
+      let defaultTweak = null;
+      for (let i = 0; i < defaultTweaks.length; i++) {
+        if (defaultTweaks[i].type === tweak.type) {
+          defaultTweak = defaultTweaks[i];
+          break;
+        }
+      }
+
+      if (defaultTweak) {
+        for (let configProp in defaultTweak.config) {
+          if (defaultTweak.config.hasOwnProperty(configProp) && tweak.config[configProp] === undefined) {
+            tweak.config[configProp] = defaultTweak.config[configProp];
+            console.log('Config property', configProp, 'was set to', defaultTweak.config[configProp], 'for', tweak);
+          }
+        }
+      }
+    });
+
+
+    storage.set({
+      version: getVersion(),
+      tweaks: userTweaksConfiguration
+    });
   });
 }
 

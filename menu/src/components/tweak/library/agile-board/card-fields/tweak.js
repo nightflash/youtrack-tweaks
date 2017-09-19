@@ -17,7 +17,7 @@ import * as i18n from './i18n'
 
 export const type = 'agile-board/card-fields'
 
-export const name = 'Agile board card fields'
+export const name = 'Agile board card'
 
 const fieldsEditor = {
   simple: true,
@@ -53,7 +53,12 @@ export const schema = {
   prependIssueId: {
     simple: true,
     ...toggleEditor,
-    default: false
+    default: true
+  },
+  disableFixedHeight: {
+    simple: true,
+    ...toggleEditor,
+    default: true
   },
   showTagsInSmallModes: {
     ...toggleEditor,

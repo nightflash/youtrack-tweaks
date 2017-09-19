@@ -10,10 +10,10 @@ export default function tweak(name) {
   let stopFns = [];
 
   let agileBoardNode, agileBoardController, agileBoardEventSource, configs;
-  let fieldsToShow, prependIssueID, showTagsInSmallModes, extendCardColorArea;
+  let fieldsToShow, prependIssueID, disableFixedHeight, showTagsInSmallModes, extendCardColorArea;
   let injects = {};
 
-  const detailsLevelWithTags = 3;
+  const detailsLevelWithTags = 2;
 
   function attachToBoardEvents() {
     const onChangeCardDetailLevel = ytTweaks.mockMethod(agileBoardController, 'onChangeCardDetailLevel', run);
@@ -65,7 +65,7 @@ export default function tweak(name) {
     const scope = injects.$rootScope.$new();
     scope.ytAgileCardCtrl = cardCtrl;
 
-    if (prependIssueID && agileBoardController.cardDetailLevel === 0) {
+    if (prependIssueID && agileBoardController.cardDetailLevel === 0 && !cardNode.querySelector('.yt-issue-id')) {
       const cardSummary = cardNode.querySelector('[data-test="yt-agile-board-card__summary"]');
 
       const compiledElement = injects.$compile(`
@@ -215,8 +215,11 @@ export default function tweak(name) {
     stopFns.push(ytTweaks.injectCSS(css));
 
     prependIssueID = configs.some(c => c.config.prependIssueId);
+    disableFixedHeight = configs.some(c => c.config.disableFixedHeight);
     showTagsInSmallModes = configs.some(c => c.config.showTagsInSmallModes);
     extendCardColorArea = configs.some(c => c.config.extendCardColorArea);
+
+    disableFixedHeight && stopFns.push(ytTweaks.injectCSS(require('./autoheight.scss')));
 
     if (extendCardColorArea) {
       let styles = '';
