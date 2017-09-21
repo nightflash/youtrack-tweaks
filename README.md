@@ -1,7 +1,8 @@
 Chrome Webstore:
-https://chrome.google.com/webstore/developer/dashboard?hl=ru
+https://chrome.google.com/webstore/developer/dashboard
 
 Firefox Store:
+https://addons.mozilla.org/en-US/firefox/
 
 
 Production build (will generate extension.zip in root directory):
