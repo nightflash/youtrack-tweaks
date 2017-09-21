@@ -1,3 +1,6 @@
+Try latest version here:
+https://youtrack-tweaks.com
+
 Chrome Webstore:
 https://chrome.google.com/webstore/developer/dashboard
 
