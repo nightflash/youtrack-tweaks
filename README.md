@@ -13,3 +13,7 @@ Production build (will generate extension.zip in root directory):
 
 Development (will run watched menu and repository build for ./extension directory):
 ./build/dev.sh
+
+Features that were merged into YouTrack (and removed from extension):
+* One-line swimlane title
+* Issue ID for Small cards
