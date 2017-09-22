@@ -1,4 +1,8 @@
 .global_agile-board .app__footer.app__footer {
-    margin-top: 0px;
-    margin-bottom: 0px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.agile-sort-connection {
+    min-height: 0;
 }
