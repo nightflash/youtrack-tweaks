@@ -2,10 +2,10 @@ Try latest version here:
 https://youtrack-tweaks.com
 
 Chrome Webstore:
-https://chrome.google.com/webstore/developer/dashboard
+https://chrome.google.com/webstore/detail/youtrack-tweaks/ialcocpchgkbmpmoipmoheklimalbcia
 
 Firefox Store:
-https://addons.mozilla.org/en-US/firefox/
+https://addons.mozilla.org/en-US/firefox/addon/youtrack-tweaks/
 
 
 Production build (will generate extension.zip in root directory):
