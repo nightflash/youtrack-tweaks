@@ -32,13 +32,23 @@ const fakeEventSource = {
     if (this._currentEventSource) {
       this._listeners.forEach(listener => {
         this._currentEventSource.removeEventListener(listener.name, listener.cb);
+        this._currentEventSource.removeEventListener('message', this._onMessage.bind(this));
       });
     }
 
     this._currentEventSource = newEventSource;
     this._listeners.forEach(listener => {
       this._currentEventSource.addEventListener(listener.name, listener.cb);
+      this._currentEventSource.addEventListener('message', this._onMessage.bind(this));
     });
+  },
+  _onMessage(message) {
+    try {
+      const packet = JSON.parse(message.data);
+      this._listeners.filter(listener => listener.name === packet.eventType).forEach(listener => {
+        listener.cb(message);
+      });
+    } catch(e) {}
   },
   init() {
     if (this._started) {
