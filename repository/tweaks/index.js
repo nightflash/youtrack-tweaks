@@ -3,6 +3,8 @@ import notificationsTweak from './agile-board/desktop-notifications/tweak';
 import layoutTweak from './agile-board/layout/tweak';
 import reportTweak from './agile-board/report/tweak';
 
+const LOG_KEY = 'ytTweaks.log';
+
 const ytTweaks = window.ytTweaks = {
   injector: null,
   userTweaksConfiguration: [],
@@ -56,8 +58,8 @@ const ytTweaks = window.ytTweaks = {
     this.registeredTweaks.set(tweak.name, tweak);
   },
 
-  runTweaks(forceRerun) {
-    console.log('runTweaks', forceRerun);
+  runTweaks(forceRerun = false) {
+    this.log('runTweaks', forceRerun);
 
     this.registeredTweaks.forEach(tweak => {
       this.log('running tweak', tweak.name);
@@ -148,12 +150,28 @@ const ytTweaks = window.ytTweaks = {
     return (arr.indexOf(str) !== -1) || (emptyArrayAsTrue && arr.length === 0);
   },
 
+  isLogEnabled() {
+    return window.localStorage && window.localStorage.getItem(LOG_KEY);
+  },
+
+  toggleLog() {
+    if (window.localStorage) {
+      if (this.isLogEnabled()) {
+        window.localStorage.removeItem(LOG_KEY);
+        return "disabled";
+      } else {
+        window.localStorage.setItem(LOG_KEY, 1);
+        return "enabled";
+      }
+    }
+  },
+
   log(...args) {
-    console.log('YouTrack Tweaks:', ...args);
+    this.isLogEnabled() && console.log('YouTrack Tweaks:', ...args);
   },
 
   error(...args) {
-    console.error('YouTrack Tweaks:', ...args);
+    this.isLogEnabled() && console.error('YouTrack Tweaks:', ...args);
   },
 
   storage(type) {
