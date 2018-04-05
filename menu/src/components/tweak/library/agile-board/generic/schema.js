@@ -1,8 +1,7 @@
+import genericScheme from '../../generic/schema'
+
 import TagsInputEdit from '@/components/editor/tags-input/edit.vue'
 import TagsInputView from '@/components/editor/tags-input/view.vue'
-
-import TextEdit from '@/components/editor/text/edit.vue'
-import TextView from '@/components/editor/text/view.vue'
 
 const tagsEditor = {
   edit: TagsInputEdit,
@@ -11,19 +10,8 @@ const tagsEditor = {
   options: {}
 }
 
-const textEditor = {
-  edit: TextEdit,
-  view: TextView,
-  default: '',
-  options: {}
-}
-
 export default name => ({
-  title: {
-    ...textEditor,
-    default: name
-  },
-  url: textEditor,
+  ...genericScheme(name),
   boardName: tagsEditor,
   sprintName: tagsEditor
 })

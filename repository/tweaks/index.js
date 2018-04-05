@@ -2,6 +2,7 @@ import cardsTweak from './agile-board/card-fields/tweak';
 import notificationsTweak from './agile-board/desktop-notifications/tweak';
 import layoutTweak from './agile-board/layout/tweak';
 import reportTweak from './agile-board/report/tweak';
+import issueScreen from './issue-screen/general/tweak';
 
 const LOG_KEY = 'ytTweaks.log';
 
@@ -30,6 +31,7 @@ const ytTweaks = window.ytTweaks = {
     this.registerTweak(notificationsTweak('agile-board/desktop-notifications'));
     this.registerTweak(layoutTweak('agile-board/layout'));
     this.registerTweak(reportTweak('agile-board/report'));
+    this.registerTweak(issueScreen('issue-screen/general'));
   },
 
   configure(config = []) {

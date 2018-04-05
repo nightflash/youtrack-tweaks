@@ -1,10 +1,7 @@
+import genericI18 from '../../generic/i18n'
+
 export const en = {
-  title: {
-    label: 'Tweak title'
-  },
-  url: {
-    label: 'Youtrack instance url'
-  },
+  ...genericI18,
   boardName: {
     label: 'Board names',
     add: 'Add',

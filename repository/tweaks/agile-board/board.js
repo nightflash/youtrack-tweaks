@@ -104,7 +104,12 @@ export default {
       }
     };
 
-    return ytTweaks.wait(waitFn, runFn, errorCb, `wait run() ${tweakName}`);
+
+    if (document.location.pathname.indexOf('/agiles') !== -1) {
+      return ytTweaks.wait(waitFn, runFn, errorCb, `wait run() ${tweakName}`);
+    } else {
+      return () => {};
+    }
   },
 
   getFieldValuePresentation(value) {
