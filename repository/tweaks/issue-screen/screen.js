@@ -1,13 +1,13 @@
 export default {
   issueWait(tweakName, successCb, errorCb) {
     const issueSelector = '[data-test="yt-issue-view"]';
-    let issueNode, controller;
+    let issueNode, issueController;
 
     const waitFn = () => {
       issueNode = document.querySelector(issueSelector);
-      controller = angular.element(issueNode).controller();
+      issueController = angular.element(issueNode).controller();
 
-      if (issueNode && controller) {
+      if (issueNode && issueController) {
         return true;
       }
     };
@@ -17,7 +17,8 @@ export default {
 
       successCb({
         configs,
-        issue: controller.issue,
+        issueViewController: angular.element(issueNode).controller('ytIssueView'),
+        issue: issueController.issue,
         issueNode
       });
     };

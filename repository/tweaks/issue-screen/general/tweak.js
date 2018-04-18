@@ -1,23 +1,37 @@
 import screen from '../screen';
 
 export default function tweak(name) {
-  const ytTweaks = window.ytTweaks;
-
   let stopFns = [];
 
-  function ready({issue, configs}) {
+  function ready({issue, configs, issueViewController}) {
     if (!configs.length) {
       return;
     }
 
     const config = [...configs].pop();
+    tabTitle(issue, config);
+    formattedCopy(issue, issueViewController, config);
+  }
+
+  function formattedCopy(issue, ctrl, config) {
+    const mockUndo = ytTweaks.mockMethod(ctrl, 'getIssueIdAndSummary', original =>
+        formatter(config.config.formattedCopy, issue) || original, false);
+
+    stopFns.push(mockUndo);
+  }
+
+  function tabTitle(issue, config) {
     const currentTitle = document.title;
 
     stopFns.push(() => {
       document.title = currentTitle;
     });
 
-    document.title = config.config.tabTitle.replace('%id%', issue.idReadable).replace('%summary%', issue.summary);
+    document.title = formatter(config.config.tabTitle, issue);
+  }
+
+  function formatter(template = '', issue) {
+    return template.replace('%id%', issue.idReadable).replace('%summary%', issue.summary);
   }
 
   let issueWaitCancel = () => {};

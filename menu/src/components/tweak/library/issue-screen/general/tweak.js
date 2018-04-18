@@ -26,6 +26,10 @@ export const schema = {
   tabTitle: {
     ...textEditor,
     default: '%id%: %summary%'
+  },
+  formattedCopy: {
+    ...textEditor,
+    default: '%id%: Fixed; %summary%'
   }
 }
 

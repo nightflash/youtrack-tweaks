@@ -74,16 +74,14 @@ const ytTweaks = window.ytTweaks = {
     });
   },
 
-  mockMethod(object, propertyName, mockFn) {
+  mockMethod(object, propertyName, mockFn, returnOriginal = true) {
     if (!object[propertyName].ytTweaks) {
       const original = object[propertyName];
 
       object[propertyName] = function (...args) {
         const originalResult = original(...args);
-        object[propertyName].ytTweaks.fns.forEach(f => {
-          f(originalResult, ...args);
-        });
-        return originalResult;
+        const results = object[propertyName].ytTweaks.fns.map(f => f(originalResult, ...args));
+        return returnOriginal ? originalResult : results.pop();
       };
 
       object[propertyName].ytTweaks = {
